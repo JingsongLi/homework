@@ -97,7 +97,7 @@ public class MainFrame extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("\u9898\u5E93\u76EE\u5F55");
 		panel_2.add(lblNewLabel_1);
 
-		JTree tree = new JTree();
+		CatalogTree tree = new CatalogTree();
 		JScrollPane scrollPane = new JScrollPane(tree);
 		panel.add(scrollPane, BorderLayout.CENTER);
 
