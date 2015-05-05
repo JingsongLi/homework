@@ -1,4 +1,4 @@
-package org.homework;
+package org.homework.main;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -6,11 +6,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.GroupLayout.Alignment;
+import static org.homework.utils.Utils.*;
+
 
 public class MainFrame extends JFrame {
 
-	public static final String PRE = "C:\\Users\\hasee\\workspace\\Homework\\images\\";
+	public static final String PRE = "images\\";
 	public static final String MENU_TESTPAPER = "testPaper.JPG";
 	public static final String MENU_SIMULATE = "simulate.JPG";
 	public static final String MENU_FAVORITE = "favorite.JPG";
@@ -32,8 +33,7 @@ public class MainFrame extends JFrame {
 		setJMenuBar(menuBar);
 
 		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon(
-				PRE + MENU_TESTPAPER));
+		lblNewLabel.setIcon(getIcon(PRE + MENU_TESTPAPER));
 		lblNewLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -50,8 +50,7 @@ public class MainFrame extends JFrame {
 				simulateClick();
 			}
 		});
-		label.setIcon(new ImageIcon(
-				PRE + MENU_SIMULATE));
+		label.setIcon(getIcon(PRE + MENU_SIMULATE));
 		label.setPreferredSize(new Dimension(59, -1));
 		menuBar.add(label);
 		
@@ -62,8 +61,7 @@ public class MainFrame extends JFrame {
 				favoriteClick();
 			}
 		});
-		label_1.setIcon(new ImageIcon(
-				PRE + MENU_FAVORITE));
+		label_1.setIcon(getIcon(PRE + MENU_FAVORITE));
 		label_1.setPreferredSize(new Dimension(59, -1));
 		menuBar.add(label_1);
 
@@ -74,8 +72,7 @@ public class MainFrame extends JFrame {
 				importClick();
 			}
 		});
-		label_2.setIcon(new ImageIcon(
-				PRE + MENU_FAVORITE));
+		label_2.setIcon(getIcon(PRE + MENU_FAVORITE));
 		label_2.setPreferredSize(new Dimension(59, -1));
 		menuBar.add(label_2);
 
