@@ -16,13 +16,12 @@ public class DBConnecter {
         Connection c = null;
         try {
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:" + getPath("Maindb.db"));
+            c = DriverManager.getConnection("jdbc:sqlite:" + getPath("main.db"));
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
         ResultSet tableSet = c.getMetaData().getTables(null, "%", "%", new String[]{"TABLE"});
-        System.out.println(tableSet);
 
     }
 }
