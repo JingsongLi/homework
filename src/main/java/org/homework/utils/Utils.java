@@ -60,13 +60,23 @@ public class Utils {
         return ret;
     }
 
-    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题", "填空题", "主观题"};
+    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "简答题"};
+    static final String[] TYPE_EXPLAIN = {
+            "单向选择题：每题只有一个正确答案。",
+            "多向选择题：每题有一个或多个正确答案。",
+            "判断题：对或错，请选择。",
+            "填空题：填空，以逗号分隔答案。",
+            "简答题：请写到下面的框中。"};
+    public static final String[] JUDGE_OPTION = {"对", "错"};
+    public static final String SPLIT = "#";
     public static String getTypeWord(int i){
         return TYPE_INDEX[i-1];
     }
+    public static String getTypeExplain(int i){
+        return TYPE_EXPLAIN[i-1];
+    }
 
     public static void main(String[] args){
-        System.out.println("怎么可能");
-        System.out.println(getChineseNum(56));
+        System.out.println("A#B#C".split("#").length);
     }
 }

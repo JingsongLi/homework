@@ -15,6 +15,7 @@ public class MainFrame extends JFrame {
 	public static final String MENU_TESTPAPER = "testPaper.JPG";
 	public static final String MENU_SIMULATE = "simulate.JPG";
 	public static final String MENU_FAVORITE = "favorite.JPG";
+	public static final String MENU_IMPORT = "import.JPG";
 
 	ContentPanel contentPanel;
 
@@ -72,7 +73,7 @@ public class MainFrame extends JFrame {
 				importClick();
 			}
 		});
-		label_2.setIcon(getIcon(PRE + MENU_FAVORITE));
+		label_2.setIcon(getIcon(PRE + MENU_IMPORT));
 		label_2.setPreferredSize(new Dimension(59, -1));
 		menuBar.add(label_2);
 
@@ -90,8 +91,7 @@ public class MainFrame extends JFrame {
 		panel_1.setLayout(new BorderLayout(0, 0));
 
 		contentPanel = ContentPanel.getContentPanel();
-		JScrollPane contentSP = new JScrollPane(contentPanel);
-		panel_1.add(contentSP, BorderLayout.CENTER);
+		panel_1.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
 
 		//2.2 左目录
 		JPanel panel = new JPanel();
@@ -141,7 +141,13 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					try {
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					MainFrame frame = new MainFrame();
+					frame.setTitle("作业系统");
 					frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 					frame.setVisible(true);
 				} catch (Exception e) {
