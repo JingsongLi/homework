@@ -3,14 +3,42 @@ package org.homework.utils;
 import org.homework.db.model.TableQuestion;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicHTML;
+import java.awt.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import javax.swing.text.*;
 
 /**
  * Created by hasee on 2015/5/5.
  */
 public class Utils {
+
+    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "简答题"};
+    static final String[] TYPE_EXPLAIN = {
+            "单向选择题：每题只有一个正确答案。",
+            "多向选择题：每题有一个或多个正确答案。",
+            "判断题：对或错，请选择。",
+            "填空题：填空，以逗号分隔答案。",
+            "简答题：请写到下面的框中。"};
+    public static final String[] JUDGE_OPTION = {"对", "错"};
+    public static final String SPLIT = "#";
+    static final int LABEL_MAX_LENGTH = 500;
+
+    public static String getTypeWord(int i){
+        return TYPE_INDEX[i-1];
+    }
+    public static String getTypeExplain(int i){
+        return TYPE_EXPLAIN[i-1];
+    }
+    public static JLabel buildLabel() {
+        JLabel label = new JLabel();
+        label.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        label.setFont(new Font("宋体", Font.BOLD, 15));
+        return label;
+    }
 
     public static ImageIcon getIcon(String url){
         return new ImageIcon(Utils.class.getClassLoader().getResource(url));
@@ -19,6 +47,11 @@ public class Utils {
     public static String getPath(String url){
         return Utils.class.getClassLoader().getResource(url).getPath();
     }
+
+    public static URL getURL(String url){
+        return Utils.class.getClassLoader().getResource(url);
+    }
+
 
     public static void add3Index(TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> map,
                                  List<TableQuestion> questions){
@@ -59,24 +92,23 @@ public class Utils {
         }
         return ret;
     }
-
-    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "简答题"};
-    static final String[] TYPE_EXPLAIN = {
-            "单向选择题：每题只有一个正确答案。",
-            "多向选择题：每题有一个或多个正确答案。",
-            "判断题：对或错，请选择。",
-            "填空题：填空，以逗号分隔答案。",
-            "简答题：请写到下面的框中。"};
-    public static final String[] JUDGE_OPTION = {"对", "错"};
-    public static final String SPLIT = "#";
-    public static String getTypeWord(int i){
-        return TYPE_INDEX[i-1];
+    public static String num2ABC(int num){
+        return (char)(num+65) + "";
     }
-    public static String getTypeExplain(int i){
-        return TYPE_EXPLAIN[i-1];
+
+    public static JTextArea getMutiLineArea(){
+        JTextArea jTextArea = new JTextArea();
+        jTextArea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        jTextArea.setWrapStyleWord(true);
+        jTextArea.setBackground(null);//背景透明
+        jTextArea.setEditable(false);//不可编辑
+        jTextArea.setLineWrap(true);
+        jTextArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 0));
+        return jTextArea;
     }
 
     public static void main(String[] args){
-        System.out.println("A#B#C".split("#").length);
+
     }
+
 }

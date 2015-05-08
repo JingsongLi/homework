@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
 	 */
 	public MainFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 740, 736);
+		setExtendedState(Frame.MAXIMIZED_BOTH);
 
 		//1.menu
 		JMenuBar menuBar = new JMenuBar();
@@ -148,7 +148,6 @@ public class MainFrame extends JFrame {
 					}
 					MainFrame frame = new MainFrame();
 					frame.setTitle("作业系统");
-					frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

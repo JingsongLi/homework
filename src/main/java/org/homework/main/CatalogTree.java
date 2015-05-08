@@ -6,11 +6,11 @@ import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
@@ -42,7 +42,7 @@ public class CatalogTree{
             top.add(node1);
             for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()){
                 DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(
-                        new ChapterNode(entry2.getKey(),entry2.getValue()));
+                        new ChapterNode(entry2.getKey(),entry1.getKey(),entry2.getValue()));
                 node1.add(node2);
                 for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()){
                     DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(new TypeNode(entry3.getKey(),entry3.getValue()));
@@ -71,17 +71,15 @@ public class CatalogTree{
                     final ChapterNode chapterNode = (ChapterNode) object;
                     JPopupMenu jPopupMenu = new JPopupMenu();
                     JMenuItem jmenuItem1 = new JMenuItem("提交");
-                    jmenuItem1.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            IoOperator.submitWork(chapterNode.chapter, chapterNode.map);
+                    jmenuItem1.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            IoOperator.submitWork(chapterNode.chapter, chapterNode.course, chapterNode.map);
                         }
                     });
                     JMenuItem jmenuItem2 = new JMenuItem("导出");
-                    jmenuItem2.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            IoOperator.generateTxt(chapterNode.chapter, chapterNode.map);
+                    jmenuItem2.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            IoOperator.generatePDF(chapterNode.chapter, chapterNode.map);
                         }
                     });
                     jPopupMenu.add(jmenuItem1);
@@ -90,28 +88,6 @@ public class CatalogTree{
                 }
             }
         });
-//        tree.addTreeSelectionListener(new TreeSelectionListener() {
-//            public void valueChanged(TreeSelectionEvent e) {
-//                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-//                        .getLastSelectedPathComponent();
-//
-//                if (node == null)
-//                    return;
-//
-//                Object object = node.getUserObject();
-//                if (node.isLeaf()) {
-//                    click(object);
-//                } else if (object instanceof ChapterNode) {
-//                    ChapterNode chapterNode = (ChapterNode) object;
-//                    JPopupMenu jPopupMenu = new JPopupMenu();
-//                    JMenuItem jmenuItem1 = new JMenuItem("提交");
-//                    JMenuItem jmenuItem2 = new JMenuItem("导出");
-//                    jPopupMenu.add(jmenuItem1);
-//                    jPopupMenu.add(jmenuItem2);
-////                    jPopupMenu.show(tree,e.get);
-//                }
-//            }
-//        });
         tree.setRootVisible(false);
 //        tree.setShowsRootHandles(true);
         ecTreeTest(tree);
@@ -158,10 +134,12 @@ public class CatalogTree{
 
     public static class ChapterNode{
         int chapter;
+        String course;
         TreeMap<Integer,List<TableQuestion>> map;
 
-        public ChapterNode(int chapter, TreeMap<Integer,List<TableQuestion>> map){
+        public ChapterNode(int chapter,String course, TreeMap<Integer,List<TableQuestion>> map){
             this.chapter = chapter;
+            this.course = course;
             this.map = map;
         }
 

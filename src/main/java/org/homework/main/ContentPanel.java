@@ -16,6 +16,8 @@ import static org.homework.utils.Utils.*;
 
 public class ContentPanel extends JPanel {
 
+    public static final String PRE = "question\\";
+
     JLabel labelTitle;
     JScrollPane scrollPane;
 
@@ -68,10 +70,23 @@ public class ContentPanel extends JPanel {
 
     public void addPanel(int index,final TableQuestion t){
         //1.题干
-        JLabel lblNewLabel = buildLabel();
-        lblNewLabel.setText(index + ". " + t.getMain_content());
-        lblNewLabel.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
-        add(lblNewLabel);
+        String startSentence = t.getMain_content();
+        if(startSentence.startsWith("[")){//图片
+            JLabel numLabel = new JLabel();
+            numLabel.setText(index + ". ");
+            numLabel.setBorder(BorderFactory.createEmptyBorder(5, 15, 0, 0));
+            add(numLabel);
+
+            JLabel startLabel = new JLabel();
+            startLabel.setIcon(getIcon(PRE + startSentence.substring(1,startSentence.length()-1)));
+            startLabel.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
+            add(startLabel);
+        }else {
+            JTextArea area = getMutiLineArea();
+            area.setText(index + ". " + startSentence);
+            area.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
+            add(area);
+        }
 
         //2.选项或答题空白
         if(t.getType()==1 || t.getType()==3){//单选或判断
@@ -86,7 +101,7 @@ public class ContentPanel extends JPanel {
                     final String value;
                     JRadioButton radioButton;
                     if(t.getType() == 1){
-                        value = (char)(i+65) + "";
+                        value = num2ABC(i);
                         radioButton = new JRadioButton(value + "、  " + eles[i]);// 创建单选按钮
                     }else{
                         value = eles[i];
@@ -114,7 +129,7 @@ public class ContentPanel extends JPanel {
                 if(!eles[i].equals("")){
                     final String value;
                     final JCheckBox jCheckBox;
-                    value = (char)(i+65) + "";
+                    value = num2ABC(i);
                     jCheckBox = new JCheckBox(value + "、  " + eles[i]);// 创建复选按钮
                     boxList.add(jCheckBox);
                     jCheckBox.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
@@ -174,7 +189,7 @@ public class ContentPanel extends JPanel {
 
         final JButton buttonAnswer = new JButton("显示答案");
         buttonAnswer.addMouseListener(new MouseAdapter() {
-            JLabel answer = new JLabel();
+            JTextArea answer = getMutiLineArea();
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -199,8 +214,8 @@ public class ContentPanel extends JPanel {
                 if (t.getMyAnswer() != null && !t.getMyAnswer().equals("")) {
                     myAnswer = t.getMyAnswer();
                 }
-                answer.setText("<html>我的答案：" + myAnswer + "   " + "<br/>" +
-                        "正确答案：" + t.getAnswer() + "   " + "<br/>" +
+                answer.setText("我的答案：" + myAnswer + "   " + "\n\r" +
+                        "正确答案：" + t.getAnswer()+ "   " + "\n\r" +
                         "解题思路：" + t.getAnswerExplain());
                 answer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
             }
@@ -241,12 +256,7 @@ public class ContentPanel extends JPanel {
 
     }
 
-    public JLabel buildLabel() {
-        JLabel label = new JLabel();
-        label.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-        label.setFont(new Font("宋体", Font.BOLD, 15));
-        return label;
-    }
+
 
     public static void main(String[] args) {
     }

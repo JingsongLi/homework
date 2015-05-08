@@ -5,13 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
+import java.io.Serializable;
+
 /**
  * Created by hasee on 2015/5/5.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TableQuestion {
+public class TableQuestion implements Serializable{
     public static final String ID = "id";
     public static final String COURSE = "course";
     public static final String CHAPTER = "chapter";
@@ -31,11 +33,11 @@ public class TableQuestion {
     String course;
     int chapter;
     int type;
-    String main_content;
-    String ele_content;
-    String answer;
-    String answerExplain;
+    transient String main_content;
+    transient String ele_content;
+    transient String answer;
+    transient String answerExplain;
     String myAnswer;
-    String note;
-    int collectStatus;
+    transient String note;
+    transient int collectStatus;
 }
