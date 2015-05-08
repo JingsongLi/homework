@@ -1,5 +1,6 @@
 package org.homework.utils;
 
+import org.homework.db.model.Score;
 import org.homework.db.model.TableQuestion;
 
 import javax.swing.*;
@@ -78,6 +79,22 @@ public class Utils {
                 sub2Map.put(type,subList);
             }
             subList.add(q);
+        }
+    }
+
+    public static void add2Index(TreeMap<String,TreeMap<Integer,Integer>> map,
+                                 List<Score> scores){
+        for(Score s : scores){
+            //1级目录
+            String course = s.getCourse();
+            TreeMap<Integer,Integer> sub1Map = map.get(course);
+            if(sub1Map == null){
+                sub1Map = new TreeMap();
+                map.put(course,sub1Map);
+            }
+            //2级目录
+            int  chapter = s.getChapter();
+            sub1Map.put(chapter,s.getScore());
         }
     }
 

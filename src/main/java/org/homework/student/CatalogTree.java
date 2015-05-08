@@ -1,12 +1,14 @@
-package org.homework.main;
+package org.homework.student;
 
 import lombok.Getter;
 import org.homework.db.DBConnecter;
+import org.homework.db.model.Score;
 import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
@@ -25,25 +27,39 @@ import static org.homework.utils.Utils.*;
 public class CatalogTree{
 
     @Getter
-    final JTree tree;
-    public final static TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> allData = new TreeMap();;
+    static JTree tree;
+    public final static TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> allData = new TreeMap();
+    public final static TreeMap<String,TreeMap<Integer,Integer>> allScore = new TreeMap();;
     public static Object firstLeafObect;
     static {
         List<TableQuestion> questions = DBConnecter.getAllQuestion();
-        add3Index(allData,questions);
+        add3Index(allData, questions);
+        updateAllScore();
+    }
+
+    private static DefaultTreeModel defaultTreeModel;
+
+    public static void updateAllScore(){
+        List<Score> scores = DBConnecter.getAllScore();
+        add2Index(allScore, scores);
     }
 
 
     public CatalogTree() {
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("catalog");
         DefaultMutableTreeNode firstLeaf = null;
-
         for (Map.Entry<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> entry1 : allData.entrySet()){
             DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(entry1.getKey());
             top.add(node1);
             for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()){
+                //1.get score
+                Integer score = null;
+                if(allScore.containsKey(entry1.getKey()) &&
+                        allScore.get(entry1.getKey()).containsKey(entry2.getKey()))
+                    score = allScore.get(entry1.getKey()).get(entry2.getKey());
+                //2.chapter name
                 DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(
-                        new ChapterNode(entry2.getKey(),entry1.getKey(),entry2.getValue()));
+                        new ChapterNode(entry2.getKey(),entry1.getKey(),entry2.getValue(),score));
                 node1.add(node2);
                 for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()){
                     DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(new TypeNode(entry3.getKey(),entry3.getValue()));
@@ -54,7 +70,8 @@ public class CatalogTree{
             }
         }
 
-        tree = new JTree(top);
+        defaultTreeModel =new DefaultTreeModel(top);
+        tree = new JTree(defaultTreeModel);
         // 添加选择事件
         tree.addMouseListener(new MouseAdapter() {
             @Override
@@ -67,7 +84,7 @@ public class CatalogTree{
 
                 Object object = node.getUserObject();
                 if (node.isLeaf()) {
-                    click(object);
+                    click(object,false);
                 } else if (object instanceof ChapterNode && e.getButton()==MouseEvent.BUTTON3) {
                     final ChapterNode chapterNode = (ChapterNode) object;
                     JPopupMenu jPopupMenu = new JPopupMenu();
@@ -97,23 +114,27 @@ public class CatalogTree{
     }
 
     public static void clickFirst(){
-        click(firstLeafObect);
+        click(firstLeafObect, true);
     }
 
-    private static void click(Object object){
+    private static void click(Object object,boolean isReload){
         TypeNode typeNode = (TypeNode) object;
         System.out.println("你选择了：" + typeNode.list);
         TreeMap<Integer, List<TableQuestion>> listMap = new TreeMap<Integer, List<TableQuestion>>();
         listMap.put(typeNode.type,typeNode.list);
         ContentPanel.getContentPanel().fullContent(getTypeWord(typeNode.type), listMap);
+        if(isReload){
+            defaultTreeModel.reload();
+            ecTreeTest(tree);
+        }
     }
 
-    public void ecTreeTest(JTree tree) {
+    public static void ecTreeTest(JTree tree) {
         TreeNode root = (TreeNode) tree.getModel().getRoot();
         expandTree(tree, new TreePath(root));
     }
 
-    private void expandTree(JTree tree, TreePath parent) {
+    private static void expandTree(JTree tree, TreePath parent) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
             for (Enumeration<?> e = node.children(); e.hasMoreElements();) {
@@ -144,16 +165,21 @@ public class CatalogTree{
         int chapter;
         String course;
         TreeMap<Integer,List<TableQuestion>> map;
+        Integer score;
 
-        public ChapterNode(int chapter,String course, TreeMap<Integer,List<TableQuestion>> map){
+        public ChapterNode(int chapter,String course, TreeMap<Integer,List<TableQuestion>> map, Integer score){
             this.chapter = chapter;
             this.course = course;
             this.map = map;
+            this.score = score;
         }
 
         @Override
         public String toString(){
-            return  "第" + getChineseNum(chapter) + "章";
+            String name = "第" + getChineseNum(chapter) + "章";
+            if(score != null)
+                name += "(" + score + ")";
+            return name;
         }
     }
 

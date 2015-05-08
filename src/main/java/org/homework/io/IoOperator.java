@@ -1,10 +1,11 @@
 package org.homework.io;
 
-import com.lowagie.text.BadElementException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
+import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
-import org.homework.main.ContentPanel;
+import org.homework.student.CatalogTree;
+import org.homework.student.ContentPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -105,6 +106,8 @@ public class IoOperator {
         if(returnVal == JFileChooser.APPROVE_OPTION){
             String filePath= fileChooser.getSelectedFile().getAbsolutePath();
             //file½âÎö
+            DBConnecter.updateScore("ÊýÑ§", 1,69);
+            CatalogTree.updateAllScore();
         }
     }
 

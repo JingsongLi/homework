@@ -1,4 +1,4 @@
-package org.homework.main;
+package org.homework.student;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;

@@ -1,6 +1,11 @@
 package org.homework.main;
 
 import org.homework.io.IoOperator;
+import org.homework.student.CatalogTree;
+import org.homework.student.ContentPanel;
+import org.homework.student.SimulateDialog;
+import org.homework.utils.MyButton;
+import sun.plugin2.util.ColorUtil;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -32,53 +37,15 @@ public class MainFrame extends JFrame {
 		//1.menu
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setMargin(new Insets(1, 1, 1, 1));
-		menuBar.setPreferredSize(new Dimension(-1, 74));
-	
+//		menuBar.setMaximumSize(new Dimension(60, 500));
+//		menuBar.setMinimumSize(new Dimension(60, 100));
+		menuBar.setPreferredSize(new Dimension(60, 40));
+
 		setJMenuBar(menuBar);
 
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(getIcon(PRE + MENU_TESTPAPER));
-		lblNewLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				testPaperClick();
-			}
-		});
-		lblNewLabel.setPreferredSize(new Dimension(59, -1));
-		menuBar.add(lblNewLabel);
-		
-		JLabel label = new JLabel("");
-		label.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				simulateClick();
-			}
-		});
-		label.setIcon(getIcon(PRE + MENU_SIMULATE));
-		label.setPreferredSize(new Dimension(59, -1));
-		menuBar.add(label);
-		
-		JLabel label_1 = new JLabel("");
-		label_1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				favoriteClick();
-			}
-		});
-		label_1.setIcon(getIcon(PRE + MENU_FAVORITE));
-		label_1.setPreferredSize(new Dimension(59, -1));
-		menuBar.add(label_1);
+		addMenu(menuBar);
 
-		JLabel label_2 = new JLabel("");
-		label_2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				importClick();
-			}
-		});
-		label_2.setIcon(getIcon(PRE + MENU_IMPORT));
-		label_2.setPreferredSize(new Dimension(59, -1));
-		menuBar.add(label_2);
+
 
 		//2.ÏÂÃæµÄÃæ°å
 		JPanel mainPane = new JPanel();
@@ -106,11 +73,12 @@ public class MainFrame extends JFrame {
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_2.setBackground(Color.WHITE);
+		panel_2.setBackground(new Color(184, 208, 238));
 		panel_2.setPreferredSize(new Dimension(-1, 30));
 		leftPanel.add(panel_2, BorderLayout.NORTH);
 		
-		JLabel lblNewLabel_1 = new JLabel("\u9898\u5E93\u76EE\u5F55");
+		JLabel lblNewLabel_1 = new JLabel("Ìâ¿âÄ¿Â¼");
+		lblNewLabel_1.setFont(new Font("ËÎÌå", Font.BOLD, 15));
 		panel_2.add(lblNewLabel_1);
 
 		CatalogTree cata = new CatalogTree();
@@ -119,6 +87,91 @@ public class MainFrame extends JFrame {
 
 
 
+	}
+
+	private void addMenu(JMenuBar menuBar){
+
+		final MyButton testPaper = new MyButton(" ÊÔ Ìâ ¿â ");
+		final MyButton simulate = new MyButton(" Ä£Äâ¿¼³¡ ");
+		final MyButton favorite = new MyButton(" ÊÕ ²Ø ¼Ð ");
+		final MyButton importL = new MyButton(" µ¼Èë³É¼¨ ");
+
+//		JLabel testPaper = new JLabel("");
+//		testPaper.setIcon(getIcon(PRE + MENU_TESTPAPER));
+//
+//		JLabel simulate = new JLabel("");
+//		simulate.setIcon(getIcon(PRE + MENU_SIMULATE));
+//		simulate.setPreferredSize(new Dimension(59, -1));
+//		JLabel favorite = new JLabel("");
+//		favorite.setIcon(getIcon(PRE + MENU_FAVORITE));
+//		favorite.setPreferredSize(new Dimension(59, -1));
+//		menuBar.add(favorite);
+//		JLabel importL = new JLabel("");
+//		importL.setIcon(getIcon(PRE + MENU_IMPORT));
+//		importL.setPreferredSize(new Dimension(59, -1));
+//		menuBar.add(importL);
+
+		testPaper.setBorder(new EmptyBorder(7, 8, 7, 8));
+		simulate.setBorder(new EmptyBorder(7, 8, 7, 8));
+		favorite.setBorder(new EmptyBorder(7, 8, 7, 8));
+		importL.setBorder(new EmptyBorder(7, 8, 7, 8));
+
+		testPaper.setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 15));
+		simulate.setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 15));
+		favorite.setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 15));
+		importL.setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 15));
+
+		testPaper.setMinimumSize(new Dimension(100, 50));
+		simulate.setPreferredSize(new Dimension(80, 59));
+		favorite.setPreferredSize(new Dimension(80, 40));
+		importL.setPreferredSize(new Dimension(80, 40));
+
+		menuBar.add(testPaper);
+		menuBar.add(simulate);
+		menuBar.add(favorite);
+		menuBar.add(importL);
+
+		testPaper.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				simulate.notClick();
+				favorite.notClick();
+				importL.notClick();
+				testPaperClick();
+			}
+		});
+		simulate.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				simulateClick();
+				if(MainFrame.leftPanel.isVisible())//Î´ÇÐ»»µ½Ä£Äâ¿¼ÊÔ
+					simulate.notClick();
+				else {
+					testPaper.notClick();
+					favorite.notClick();
+					importL.notClick();
+				}
+			}
+		});
+		favorite.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				testPaper.notClick();
+				simulate.notClick();
+				importL.notClick();
+				favoriteClick();
+			}
+		});
+		importL.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+//				testPaper.notClick();
+//				simulate.notClick();
+//				favorite.notClick();
+				importClick();
+				importL.notClick();
+			}
+		});
 	}
 
 	private void testPaperClick() {

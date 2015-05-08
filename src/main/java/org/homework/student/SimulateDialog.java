@@ -1,6 +1,7 @@
-package org.homework.main;
+package org.homework.student;
 
 import org.homework.db.model.TableQuestion;
+import org.homework.main.MainFrame;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -8,7 +9,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
-import java.util.List;
 
 import static org.homework.utils.Utils.getChineseNum;
 

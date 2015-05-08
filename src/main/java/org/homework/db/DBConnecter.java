@@ -1,11 +1,10 @@
 package org.homework.db;
 
+import org.homework.db.model.Score;
 import org.homework.db.model.TableQuestion;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,27 +17,35 @@ import static org.homework.utils.Utils.*;
 public class DBConnecter {
 
     static Connection c;
+    static Connection ownConn;
     static {
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:" + getPath("main.db"));
+            ownConn = DriverManager.getConnection("jdbc:sqlite:" + getPath("own.db"));
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
     }
+    public static final String QUESTION_OWN_TABLE = "question_own";
     public static final String QUESTION_TABLE = "question";
+    public static final String SCORE_OWN_TABLE = "score_own";
 
+    //需要手动join两个库中的表
     public static List<TableQuestion> getAllQuestion(){
         List<TableQuestion> list = new ArrayList<TableQuestion>();
+        Map<Integer,TableQuestion> map = new HashMap<Integer, TableQuestion>();
         Statement sql_statement = null;
+        Statement ownStatement = null;
         try {
             sql_statement = c.createStatement();
+
             ResultSet result = sql_statement.executeQuery("select * from " + QUESTION_TABLE +";");
+
             while (result.next()) {
                 TableQuestion question = new TableQuestion();
                 question.setId(result.getInt(TableQuestion.ID));
-
                 question.setCourse(result.getString(TableQuestion.COURSE));
                 question.setChapter(result.getInt(TableQuestion.CHAPTER));
                 question.setType(result.getInt(TableQuestion.TYPE));
@@ -46,15 +53,23 @@ public class DBConnecter {
                 question.setEle_content(result.getString(TableQuestion.ELE_CONTENT));
                 question.setAnswer(result.getString(TableQuestion.ANSWER));
                 question.setAnswerExplain(result.getString(TableQuestion.ANSWER_EXPLAIN));
-
-                question.setMyAnswer(result.getString(TableQuestion.MY_ANSWER));
-                question.setNote(result.getString(TableQuestion.NOTE));
-                question.setCollectStatus(result.getInt(TableQuestion.COLLECT_STATUS));
-//                System.out.println(question);
                 list.add(question);
+                map.put(question.getId(),question);
+            }
+
+            ownStatement = ownConn.createStatement();
+            ResultSet ownResult = ownStatement.executeQuery("select * from " + QUESTION_OWN_TABLE +";");
+            while (ownResult.next()) {
+                TableQuestion question = map.get(ownResult.getInt(TableQuestion.ID));
+                if(question != null){
+                    question.setMyAnswer(ownResult.getString(TableQuestion.MY_ANSWER));
+                    question.setNote(ownResult.getString(TableQuestion.NOTE));
+                    question.setCollectStatus(ownResult.getInt(TableQuestion.COLLECT_STATUS));
+                }
             }
             //关闭连接和声明
             sql_statement.close();
+            ownStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -63,7 +78,7 @@ public class DBConnecter {
 
 
     public static void updateQuestion(int id, String name, Object value){
-        update(QUESTION_TABLE,id ,name,value);
+        update(QUESTION_OWN_TABLE, id, name, value);
     }
     public static void update(String tablename,int id, String name, Object value){
         Updater.queue.add(new Updater(tablename,id, name, value));
@@ -82,13 +97,17 @@ public class DBConnecter {
                             Updater u = queue.take();
                             String sql = "update " + u.tablename + " set " +
                                     u.name + " = ";
+                            String sqlValue = "";
                             if(u.value instanceof Integer)
-                                sql += u.value;
+                                sqlValue += u.value;
                             else if(u.value instanceof String)
-                                sql += "'" + u.value + "'";
-                            sql += " where id = " + u.id;
-                            System.out.println(sql);
-                            update(sql);
+                                sqlValue += "'" + u.value + "'";
+                            sql += sqlValue + " where id = " + u.id;
+                            if(update(sql) == 0){//需要插入
+                                String insertSql = "insert into " + u.tablename + " (" + u.name + ")" +
+                                        " values " + "(" + sqlValue + ")";
+                                update(insertSql);
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -98,17 +117,26 @@ public class DBConnecter {
             t.setDaemon(true);
             t.start();
         }
-        public static void  update(String sql){
+
+        public static int  update(String sql){
             Statement sql_statement = null;
+            System.out.println(sql);
             try {
-                sql_statement = c.createStatement();
-                sql_statement.executeUpdate(sql);
-                //关闭连接和声明
-                sql_statement.close();
+                sql_statement = ownConn.createStatement();
+                int upRet = sql_statement.executeUpdate(sql);
+                return upRet;
             } catch (SQLException e) {
                 e.printStackTrace();
+                return -1;
+            }finally {
+                try {
+                    sql_statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         public Updater(String tablename,int id, String name, Object value) {
             this.tablename = tablename;
             this.id = id;
@@ -118,29 +146,83 @@ public class DBConnecter {
     }
 
 
+    public static List<Score> getAllScore(){
+        List<Score> list = new ArrayList<Score>();
+        Statement sql_statement = null;
+        try {
+            sql_statement = ownConn.createStatement();
+
+            ResultSet result = sql_statement.executeQuery("select * from " + SCORE_OWN_TABLE +";");
+
+            while (result.next()) {
+                Score score = new Score();
+                score.setId(result.getInt(Score.ID));
+                score.setCourse(result.getString(Score.COURSE));
+                score.setChapter(result.getInt(Score.CHAPTER));
+                score.setScore(result.getInt(Score.SCORE));
+                list.add(score);
+            }
+        }catch (SQLException e) {
+                e.printStackTrace();
+        }finally {
+            try {
+                sql_statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return list;
+    }
+
+
+    public static void  updateScore(String course, int chapter, int score){
+        Statement sql_statement = null;
+        course = "'" + course + "'";
+        try {
+            sql_statement = ownConn.createStatement();
+            String sql =  "update " + SCORE_OWN_TABLE +
+                    " set " + Score.SCORE + " = " + score +
+                    " where " + Score.COURSE +" = " + course +
+                    " and " + Score.CHAPTER + " = " + chapter;
+            int upRet = sql_statement.executeUpdate(sql);
+            System.out.println(sql);
+            if (upRet == 0){
+                String insertSql = "insert into " + SCORE_OWN_TABLE +
+                        " (" + Score.COURSE + "," + Score.CHAPTER + "," + Score.SCORE + ")" +
+                        " values " + "(" + course + "," + chapter + "," + score + ")";
+                sql_statement.executeUpdate(insertSql);
+                System.out.println(insertSql);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                sql_statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     public static void main(String[] args) throws SQLException {
 
-        updateQuestion(2,"note","我勒个去啊");
+        System.out.println(getAllScore());
+//        updateQuestion(2,"note","我勒个去啊");
 
-        System.out.println(getAllQuestion());
+//        System.out.println(getAllQuestion());
 
 //        Statement sql_statement = null;
 //        try {
-//            sql_statement = c.createStatement();
+//            sql_statement = ownConn.createStatement();
 //            boolean bool = sql_statement.execute("" +
-//                    "CREATE TABLE question (\n" +
+//                    "CREATE TABLE score_own (\n" +
 //                    "  [id] INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-//                    "  [course] VARCHAR(50) NOT NULL ON CONFLICT ABORT, \n" +
-//                    "  [chapter] TINYINT NOT NULL ON CONFLICT ABORT, \n" +
-//                    "  [type] TINYINT NOT NULL ON CONFLICT ABORT, \n" +
-//                    "  [main_content] VARCHAR(3000) NOT NULL ON CONFLICT ABORT, \n" +
-//                    "  [element_content] VARCHAR(200), \n" +
-//                    "  [answer] VARCHAR(500), \n" +
-//                    "  [answer_explain] VARCHAR(500), \n" +
-//                    "  [my_answer] VARCHAR(500), \n" +
-//                    "  [note] VARCHAR(1000), \n" +
-//                    "  [collect_status] TINYINT);");
+//                    "  [course] VARCHAR(50) NOT NULL ON CONFLICT ABORT,  \n" +
+//                    "  [chapter] TINYINT NOT NULL ON CONFLICT ABORT,  \n" +
+//                    "  [score] INT);");
 //            System.out.println(bool);
 //            //关闭连接和声明
 //            sql_statement.close();
