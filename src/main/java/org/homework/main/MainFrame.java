@@ -1,5 +1,7 @@
 package org.homework.main;
 
+import org.homework.io.IoOperator;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,6 +18,7 @@ public class MainFrame extends JFrame {
 	public static final String MENU_SIMULATE = "simulate.JPG";
 	public static final String MENU_FAVORITE = "favorite.JPG";
 	public static final String MENU_IMPORT = "import.JPG";
+	public static JPanel leftPanel;
 
 	ContentPanel contentPanel;
 
@@ -94,44 +97,49 @@ public class MainFrame extends JFrame {
 		panel_1.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
 
 		//2.2 ×óÄ¿Â¼
-		JPanel panel = new JPanel();
-		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel.setBackground(Color.WHITE);
-		panel.setPreferredSize(new Dimension(280, -1));
-		mainPane.add(panel, BorderLayout.WEST);
-		panel.setLayout(new BorderLayout(0, 0));
+		leftPanel = new JPanel();
+		leftPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		leftPanel.setBackground(Color.WHITE);
+		leftPanel.setPreferredSize(new Dimension(280, -1));
+		mainPane.add(leftPanel, BorderLayout.WEST);
+		leftPanel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_2.setBackground(Color.WHITE);
 		panel_2.setPreferredSize(new Dimension(-1, 30));
-		panel.add(panel_2, BorderLayout.NORTH);
+		leftPanel.add(panel_2, BorderLayout.NORTH);
 		
 		JLabel lblNewLabel_1 = new JLabel("\u9898\u5E93\u76EE\u5F55");
 		panel_2.add(lblNewLabel_1);
 
 		CatalogTree cata = new CatalogTree();
 		JScrollPane scrollPane = new JScrollPane(cata.getTree());
-		panel.add(scrollPane, BorderLayout.CENTER);
+		leftPanel.add(scrollPane, BorderLayout.CENTER);
 
 
 
 	}
 
 	private void testPaperClick() {
-		System.out.println("fuck you~ testPaperClick!");
+		MainFrame.leftPanel.setVisible(true);
+		ContentPanel.isCollectPanel = false;
+		CatalogTree.clickFirst();
 	}
 
 	private void simulateClick() {
-		System.out.println("fuck you~ simulateClick!");
+		ContentPanel.isCollectPanel = false;
+		SimulateDialog sd = new SimulateDialog(this);
 	}
 
 	private void favoriteClick() {
-		System.out.println("fuck you~ favoriteClick!");
+		MainFrame.leftPanel.setVisible(true);
+		ContentPanel.isCollectPanel = true;
+		CatalogTree.clickFirst();
 	}
 
 	private void importClick() {
-		System.out.println("fuck you~ importClick!");
+		IoOperator.importScore();
 	}
 
 	/**

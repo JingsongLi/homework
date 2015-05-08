@@ -98,6 +98,16 @@ public class IoOperator {
         }
     }
 
+    public static void importScore(){
+        JFileChooser fileChooser = new JFileChooser("F:\\");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int returnVal = fileChooser.showOpenDialog(fileChooser);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            String filePath= fileChooser.getSelectedFile().getAbsolutePath();
+            //file½âÎö
+        }
+    }
+
     public static String getFileDirectChoose(){
         JFileChooser fileChooser = new JFileChooser("F:\\");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

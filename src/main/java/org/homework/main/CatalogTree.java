@@ -27,6 +27,7 @@ public class CatalogTree{
     @Getter
     final JTree tree;
     public final static TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> allData = new TreeMap();;
+    public static Object firstLeafObect;
     static {
         List<TableQuestion> questions = DBConnecter.getAllQuestion();
         add3Index(allData,questions);
@@ -91,13 +92,20 @@ public class CatalogTree{
         tree.setRootVisible(false);
 //        tree.setShowsRootHandles(true);
         ecTreeTest(tree);
-        click(firstLeaf.getUserObject());
+        firstLeafObect = firstLeaf.getUserObject();
+        clickFirst();
     }
 
-    private void click(Object object){
+    public static void clickFirst(){
+        click(firstLeafObect);
+    }
+
+    private static void click(Object object){
         TypeNode typeNode = (TypeNode) object;
         System.out.println("ƒ„—°‘Ò¡À£∫" + typeNode.list);
-        ContentPanel.getContentPanel().fullContent(typeNode.type, typeNode.list);
+        TreeMap<Integer, List<TableQuestion>> listMap = new TreeMap<Integer, List<TableQuestion>>();
+        listMap.put(typeNode.type,typeNode.list);
+        ContentPanel.getContentPanel().fullContent(getTypeWord(typeNode.type), listMap);
     }
 
     public void ecTreeTest(JTree tree) {

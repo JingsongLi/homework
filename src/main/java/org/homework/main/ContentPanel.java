@@ -7,10 +7,8 @@ import org.homework.utils.Utils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.TreeSet;
 
 import static org.homework.utils.Utils.*;
 
@@ -20,6 +18,7 @@ public class ContentPanel extends JPanel {
 
     JLabel labelTitle;
     JScrollPane scrollPane;
+    public static boolean isCollectPanel = false;
 
     static ContentPanel contentPanel = new ContentPanel();
     public static ContentPanel getContentPanel(){
@@ -46,18 +45,27 @@ public class ContentPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
 
-    public void fullContent(int type, List<TableQuestion> list){
+    public void fullContent(String title, TreeMap<Integer, List<TableQuestion>> listMap){
         removeAll();
-        labelTitle.setText(getTypeWord(type));
+        labelTitle.setText(title);
 
-        JLabel labelTypeExplain = buildLabel();
-        labelTypeExplain.setText(getTypeExplain(type));
-        labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
-        labelTypeExplain.setFont(new Font("宋体", Font.BOLD, 15));
-        add(labelTypeExplain);
+        for (Map.Entry<Integer, List<TableQuestion>> entry : listMap.entrySet()){
+            List<TableQuestion> list = entry.getValue();
+            int type = entry.getKey();
+            JLabel labelTypeExplain = buildLabel();
+            labelTypeExplain.setText(getTypeExplain(type));
+            labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
+            labelTypeExplain.setFont(new Font("宋体", Font.BOLD, 15));
+            add(labelTypeExplain);
 
-        for(int i=0; i < list.size(); i++){
-            contentPanel.addPanel(i+1,list.get(i));
+            for(int i=0; i < list.size(); i++){
+                TableQuestion t = list.get(i);
+                if(isCollectPanel){
+                    if(t.getCollectStatus() == TableQuestion.COLLECT_NOT)
+                        continue;
+                }
+                contentPanel.addPanel(i+1,t);
+            }
         }
 
         //有空白Panel才能删除最后一个控件（答案）
@@ -68,7 +76,7 @@ public class ContentPanel extends JPanel {
         repaint();
     }
 
-    public void addPanel(int index,final TableQuestion t){
+    private void addPanel(int index,final TableQuestion t){
         //1.题干
         String startSentence = t.getMain_content();
         if(startSentence.startsWith("[")){//图片
@@ -136,12 +144,12 @@ public class ContentPanel extends JPanel {
                     jCheckBox.setBackground(Color.WHITE);
                     jCheckBox.addMouseListener(new MouseAdapter() {
                         @Override
-                            public void mouseClicked(MouseEvent e) {
-                                String answer;
-                                TreeSet<String> set = new TreeSet();
-                                for (JCheckBox box : boxList) {
-                                    if (box.isSelected())
-                                        set.add(box.getText().charAt(0) + "");
+                        public void mouseClicked(MouseEvent e) {
+                            String answer;
+                            TreeSet<String> set = new TreeSet();
+                            for (JCheckBox box : boxList) {
+                                if (box.isSelected())
+                                    set.add(box.getText().charAt(0) + "");
                             }
                             if (set.size() > 0) {
                                 Iterator<String> iter = set.iterator();
@@ -233,14 +241,14 @@ public class ContentPanel extends JPanel {
         });
         buttonPanel.add(buttonCollect);
 
-        JButton buttonNote = new JButton("试题笔记");
+        JButton buttonNote = new JButton("学习笔记");
         buttonNote.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 String note = t.getNote();
 
                 JTextArea text = new JTextArea(note, 5, 40);
-                Object[] message = { "笔记：", new JScrollPane(text)};
+                Object[] message = { "学习笔记：", new JScrollPane(text)};
                 JOptionPane pane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
                 JDialog dialog = pane.createDialog(null, "Input");
                 dialog.setVisible(true);
