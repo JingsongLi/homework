@@ -23,8 +23,8 @@ public class MainFrame extends JFrame {
 	public static final String MENU_SIMULATE = "simulate.JPG";
 	public static final String MENU_FAVORITE = "favorite.JPG";
 	public static final String MENU_IMPORT = "import.JPG";
-
-
+	private static TeacherPanel teacherPane;
+	private static StudentPanel studentPanel;
 
 
 	/**
@@ -44,8 +44,9 @@ public class MainFrame extends JFrame {
 		addMenu(menuBar);
 
 		//2.下面的面板
-		JPanel mainPane = new StudentPanel();
-		setContentPane(mainPane);
+		studentPanel = new StudentPanel();
+		teacherPane = new TeacherPanel();
+		setContentPane(studentPanel);
 	}
 
 	private void addMenu(JMenuBar menuBar){
@@ -54,6 +55,7 @@ public class MainFrame extends JFrame {
 		final MyButton simulate = new MyButton(" 模拟考场 ");
 		final MyButton favorite = new MyButton(" 收 藏 夹 ");
 		final MyButton importL = new MyButton(" 导入成绩 ");
+
 
 		testPaper.setBorder(new EmptyBorder(7, 8, 7, 8));
 		simulate.setBorder(new EmptyBorder(7, 8, 7, 8));
@@ -82,18 +84,20 @@ public class MainFrame extends JFrame {
 				favorite.notClick();
 				importL.notClick();
 				testPaperClick();
+				setContentPane(studentPanel);
 			}
 		});
 		simulate.addMyMouse(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				simulateClick();
-				if(StudentPanel.leftPanel.isVisible())//未切换到模拟考试
+				if (StudentPanel.leftPanel.isVisible())//未切换到模拟考试
 					simulate.notClick();
 				else {
 					testPaper.notClick();
 					favorite.notClick();
 					importL.notClick();
+					setContentPane(studentPanel);
 				}
 			}
 		});
@@ -104,6 +108,7 @@ public class MainFrame extends JFrame {
 				simulate.notClick();
 				importL.notClick();
 				favoriteClick();
+				setContentPane(studentPanel);
 			}
 		});
 		importL.addMyMouse(new MouseAdapter() {
@@ -113,6 +118,17 @@ public class MainFrame extends JFrame {
 				importL.notClick();
 			}
 		});
+
+
+
+		final MyButton techer = new MyButton(" test ");
+		techer.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setContentPane(teacherPane);
+			}
+		});
+		menuBar.add(techer);
 	}
 
 	private void testPaperClick() {
