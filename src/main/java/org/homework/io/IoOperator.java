@@ -86,18 +86,18 @@ public class IoOperator {
                             list.add(new PDFLiner(("  " + num2ABC(j) + ". " +strs[j]),15,Font.PLAIN));
                         }
                     }
-                }
-            }
-            try {
-                PDFOperator.writePdf(list,path);
-                JOptionPane.showMessageDialog(null, "导出成功！");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
+}
+}
+        try {
+        PDFOperator.writePdf(list,path);
+        JOptionPane.showMessageDialog(null, "导出成功！");
+        } catch (IOException e) {
+        e.printStackTrace();
+        } catch (DocumentException e) {
+        e.printStackTrace();
         }
-    }
+        }
+        }
 
     public static void importScore(){
         JFileChooser fileChooser = new JFileChooser("F:\\");

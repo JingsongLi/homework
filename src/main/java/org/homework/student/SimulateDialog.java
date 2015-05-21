@@ -2,6 +2,7 @@ package org.homework.student;
 
 import org.homework.db.model.TableQuestion;
 import org.homework.main.MainFrame;
+import org.homework.main.StudentPanel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -189,7 +190,7 @@ public class SimulateDialog extends MouseAdapter{
         if(!str5.equals(""))
             find2QuestionList(5, Integer.parseInt(str5));
 
-        MainFrame.leftPanel.setVisible(false);
+        StudentPanel.leftPanel.setVisible(false);
         ContentPanel.getContentPanel().fullContent("Ä£Äâ¿¼ÊÔ", resultMap);
         jDialog.dispose();
     }
