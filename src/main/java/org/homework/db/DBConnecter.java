@@ -1,15 +1,15 @@
 package org.homework.db;
 
 import org.homework.db.model.Score;
+import org.homework.db.model.StudentAnswer;
 import org.homework.db.model.TableQuestion;
 
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static org.homework.utils.Utils.*;
+import static org.homework.utils.Utils.getPath;
 
 /**
  * Created by hasee on 2015/5/5.
@@ -31,6 +31,7 @@ public class DBConnecter {
     public static final String QUESTION_OWN_TABLE = "question_own";
     public static final String QUESTION_TABLE = "question";
     public static final String SCORE_OWN_TABLE = "score_own";
+    public static final String STUDENT_ANSWER_TABLE = "student_answer";
 
     //需要手动join两个库中的表
     public static List<TableQuestion> getAllQuestion(){
@@ -83,6 +84,75 @@ public class DBConnecter {
     public static void update(String tablename,int id, String name, Object value){
         Updater.queue.add(new Updater(tablename,id, name, value));
     }
+
+    public static List<StudentAnswer> getAllStudentAnswers() {
+        List<StudentAnswer> studentAnswerList = new ArrayList<StudentAnswer>();
+
+        Map<Integer, List<StudentAnswer>> map = new HashMap<Integer, List<StudentAnswer>>();
+
+        Statement studentAnswerStatement = null;
+        Statement correctAnswerStatement = null;
+
+        try {
+            studentAnswerStatement = c.createStatement();
+            correctAnswerStatement = c.createStatement();
+
+            ResultSet result = studentAnswerStatement.executeQuery("select * from " + STUDENT_ANSWER_TABLE +";");
+
+            while (result.next()) {
+                StudentAnswer studentAnswer = new StudentAnswer();
+                studentAnswer.setId(result.getInt(StudentAnswer.ID));
+                studentAnswer.setCourse(result.getString(StudentAnswer.COURSE));
+                studentAnswer.setChapter(result.getInt(StudentAnswer.CHAPTER));
+                studentAnswer.setStudentClass(result.getString(StudentAnswer.STUDENT_CLASS));
+                studentAnswer.setStudentName(result.getString(StudentAnswer.STUDENT_NAME));
+                studentAnswer.setType(result.getInt(StudentAnswer.TYPE));
+                studentAnswer.setStudentAnswer(result.getString(StudentAnswer.STUDENT_ANSWER));
+
+                List<StudentAnswer> stuAnsList = map.get(studentAnswer.getId());
+                if (stuAnsList == null) {
+                    stuAnsList = new ArrayList<StudentAnswer>();
+                    map.put(studentAnswer.getId(), stuAnsList);
+                }
+                stuAnsList.add(studentAnswer);
+
+                studentAnswerList.add(studentAnswer);
+            }
+
+            for (Iterator<StudentAnswer> iterator = studentAnswerList.iterator(); iterator.hasNext(); ) {
+                StudentAnswer next =  iterator.next();
+                System.out.println(next);
+            }
+
+
+            ResultSet correctAnswer = correctAnswerStatement.executeQuery("select * from " + QUESTION_TABLE + ";");
+            while (correctAnswer.next()) {
+                List<StudentAnswer> stuAnsL = map.get(correctAnswer.getInt(TableQuestion.ID));
+                if(stuAnsL != null) {
+                    for (Iterator<StudentAnswer> iterator = stuAnsL.iterator(); iterator.hasNext(); ) {
+                        StudentAnswer next =  iterator.next();
+                        next.setAnswer(correctAnswer.getString(TableQuestion.ANSWER));
+                    }
+                }
+            }
+
+
+            for (Iterator<StudentAnswer> iterator = studentAnswerList.iterator(); iterator.hasNext(); ) {
+                StudentAnswer next =  iterator.next();
+                System.out.println(next);
+            }
+
+
+            //关闭连接和声明
+            studentAnswerStatement.close();
+            correctAnswerStatement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return studentAnswerList;
+    }
+
     public static class Updater{
         String tablename;
         int id;

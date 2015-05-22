@@ -1,16 +1,15 @@
 package org.homework.utils;
 
 import org.homework.db.model.Score;
+import org.homework.db.model.StudentAnswer;
 import org.homework.db.model.TableQuestion;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicHTML;
 import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
-import javax.swing.text.*;
 
 /**
  * Created by hasee on 2015/5/5.
@@ -53,6 +52,48 @@ public class Utils {
         return Utils.class.getClassLoader().getResource(url);
     }
 
+    public static void add4Index(TreeMap<String,TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>> map,
+                                 List<StudentAnswer> studentAnswers){
+        for(StudentAnswer stuAns : studentAnswers){
+            //1级目录  科目
+            String course = stuAns.getCourse();
+            TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>> sub1Map = map.get(course);
+            if(sub1Map == null){
+                sub1Map = new TreeMap();
+                map.put(course,sub1Map);
+            }
+            //2级目录  章节
+            int  chapter = stuAns.getChapter();
+            TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>> sub2Map = sub1Map.get(chapter);
+            if (sub2Map == null){
+                sub2Map = new TreeMap();
+                sub1Map.put(chapter,sub2Map);
+            }
+            //3级目录  班级
+            String stuClass = stuAns.getStudentClass();
+            TreeMap<String, TreeMap<Integer,List<StudentAnswer>>> sub3Map = sub2Map.get(stuClass);
+            if (sub3Map == null){
+                sub3Map = new TreeMap();
+                sub2Map.put(stuClass,sub3Map);
+            }
+            //4级目录  学生姓名
+            String stuName = stuAns.getStudentName();
+            TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuName);
+            if (sub4Map == null) {
+                sub4Map = new TreeMap();
+                sub3Map.put(stuName,sub4Map);
+            }
+            //5级目录  题目类型   不显示
+            int type = stuAns.getType();
+            List<StudentAnswer> subList = sub4Map.get(type);
+            if (subList == null){
+                subList = new ArrayList();
+                sub4Map.put(type,subList);
+            }
+
+            subList.add(stuAns);
+        }
+    }
 
     public static void add3Index(TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> map,
                                  List<TableQuestion> questions){
