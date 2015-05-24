@@ -14,7 +14,7 @@ import java.awt.*;
 public class TeacherPanel extends JPanel {
 
     public static JPanel leftPanel;
-    TContentPanel TContentPanel;
+    TContentPanel tContentPanel;
 
     public TeacherPanel(){
         setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -28,8 +28,8 @@ public class TeacherPanel extends JPanel {
         add(panel_1, BorderLayout.CENTER);
         panel_1.setLayout(new BorderLayout(0, 0));
 
-        TContentPanel = TContentPanel.getTContentPanel();
-        panel_1.add(TContentPanel.getScrollPane(), BorderLayout.CENTER);
+        tContentPanel = TContentPanel.getTContentPanel();
+        panel_1.add(tContentPanel.getScrollPane(), BorderLayout.CENTER);
 
         //2.2 ×óÄ¿Â¼
         leftPanel = new JPanel();

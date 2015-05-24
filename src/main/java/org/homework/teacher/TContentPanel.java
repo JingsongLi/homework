@@ -3,7 +3,12 @@ package org.homework.teacher;
 import org.homework.db.model.StudentAnswer;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,9 +23,9 @@ public class TContentPanel extends JPanel {
     JScrollPane scrollPane;
     public static boolean isCollectPanel = false;
 
-    static TContentPanel TContentPanel = new TContentPanel();
-    public static TContentPanel getTContentPanel(){
-        return TContentPanel;
+    static TContentPanel tContentPanel = new TContentPanel();
+    public static TContentPanel getTContentPanel() {
+        return tContentPanel;
     }
 
     public JScrollPane getScrollPane(){
@@ -41,11 +46,13 @@ public class TContentPanel extends JPanel {
     public TContentPanel(){
         setBackground(Color.WHITE);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
     }
 
     public void fullContent(TreeMap<Integer, List<StudentAnswer>> map){
+
         removeAll();
-        labelTitle.setText("");
+        labelTitle.setText("批改作业");
 
         for (Map.Entry<Integer, List<StudentAnswer>> entry : map.entrySet()) {
             List<StudentAnswer> list = entry.getValue();
@@ -54,12 +61,17 @@ public class TContentPanel extends JPanel {
             labelTypeExplain.setText(getChineseNum(entry.getKey()) + "、" + getTypeExplain(type));
             labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
             labelTypeExplain.setFont(new Font("宋体", Font.BOLD, 15));
+
             add(labelTypeExplain);
 
+
+            /*
             for(int i=0; i < list.size(); i++) {
                 StudentAnswer t = list.get(i);
-                TContentPanel.addPanel(i+1,t);
+                tContentPanel.addPanel(t);
             }
+            */
+            addPanel(entry.getKey(), entry.getValue());
         }
 
         //有空白Panel才能删除最后一个控件（答案）
@@ -70,12 +82,124 @@ public class TContentPanel extends JPanel {
         repaint();
     }
 
-    private void addPanel(int index,final StudentAnswer t) {
+    class myTableCellRenderer implements TableCellRenderer {
+        //DefaultTableCellRenderer dtcr =new DefaultTableCellRenderer();
+        int row,column;
+        Color c;
+        public myTableCellRenderer(int row,int column,Color c)
+        {
+            this.row=row;this.column=column;this.c=c;
+        }
 
-        JLabel label = new JLabel();
-        label.setVisible(true);
-        label.setText(t.getAnswer());
-        add(label);
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            //Component renderer =dtcr.getTableCellRendererComponent(table, value,
+            //        isSelected, hasFocus, row, column);
+            //dtcr.setHorizontalAlignment(SwingConstants.CENTER);
+            if (row==this.row && column==this.column)
+            {
+                setOpaque(true);
+                setBackground(c);
+            }
+            else {
+                setOpaque(false);
+                setBackground(Color.WHITE);
+            }
+            return super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
+            //return renderer;
+        }
+    }
+
+
+
+
+    private void createTable(List<StudentAnswer> stuAnsList) {
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        final JPanel textFieldPanel = new JPanel();
+        textFieldPanel.setBackground(Color.WHITE);
+        textFieldPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        textFieldPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        textFieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JTextField textField = new JTextField(10);
+        textFieldPanel.add(new JLabel("成绩："));
+        textFieldPanel.add(textField);
+        panel.add(textFieldPanel);
+
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.setBackground(Color.WHITE);
+        tablePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        List<JTable> tableList = new ArrayList<JTable>();
+
+        for (int i = stuAnsList.size(); i < 27; i++) {
+             StudentAnswer stuAns = new StudentAnswer();
+            stuAns.setStudentAnswer("A"+i%4);
+            stuAns.setAnswer("A" + i % 4 + 1);
+            stuAnsList.add(stuAns);
+        }
+
+
+        int tableCount = stuAnsList.size()/10 +1;
+        for (int i = 0; i < tableCount; i++) {
+            JTable table = new JTable(new DefaultTableModel(3, 11));
+            table.setValueAt("题号", 0, 0);
+            table.setValueAt("学生答案", 1, 0);
+            table.setValueAt("参考答案", 2, 0);
+            table.setBorder(new LineBorder(new Color(0, 0, 0)));
+            table.setRowHeight(20);
+
+            //DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+            //tcr.setHorizontalAlignment(SwingConstants.CENTER);
+            //table.setDefaultRenderer(Object.class, tcr);
+
+            for (int j = 1; j <= 10 && (j+(10*i)) <= stuAnsList.size(); j++) {
+                table.setValueAt(j + 10*i, 0, j);
+                table.setValueAt(stuAnsList.get(j + (10 * i) - 1).getStudentAnswer(), 1, j);
+                table.setValueAt(stuAnsList.get(j + (10 * i) - 1).getAnswer(), 2, j);
+                if (!(stuAnsList.get(j+(10*i)-1).getStudentAnswer().equals(stuAnsList.get(j+(10*i)-1).getAnswer()))) {
+                    table.setDefaultRenderer(Object.class, new myTableCellRenderer(1, j, Color.RED));
+                }
+            }
+            tableList.add(table);
+        }
+
+
+        for (int i = 0; i < tableCount; i++) {
+            tablePanel.add(Box.createVerticalStrut(3));
+            tablePanel.add(tableList.get(i));
+        }
+
+        panel.add(tablePanel);
+
+        add(panel);
+    }
+
+    private void addPanel(Integer type, List<StudentAnswer> stuAnsList) {
+
+        switch (type)
+        {
+            //单选  多选  判断
+            case 1:
+            case 2:
+            case 3:
+                //System.out.printf("FUCKFUCK");
+                createTable(stuAnsList);
+                break;
+            //填空
+            case 4:
+                break;
+            //简答
+            case 5:
+                break;
+            default:
+                break;
+        }
 
         /*
         //1.题干
