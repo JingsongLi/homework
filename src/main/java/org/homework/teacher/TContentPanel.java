@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,11 +121,10 @@ public class TContentPanel extends JPanel {
             table.setValueAt("²Î¿¼´ð°¸", 2, 0);
             table.setBorder(new LineBorder(new Color(0, 0, 0)));
             table.setRowHeight(20);
-//            table.setSelectionBackground(Color.white);
-//            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            //DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
-            //tcr.setHorizontalAlignment(SwingConstants.CENTER);
-            //table.setDefaultRenderer(Object.class, tcr);
+
+            DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+            tcr.setHorizontalAlignment(SwingConstants.CENTER);
+            table.setDefaultRenderer(Object.class, tcr);
 
             for (int j = 1; j <= 10 && (j+(10*i)) <= stuAnsList.size(); j++) {
                 table.setValueAt(j + 10*i, 0, j);
@@ -161,7 +159,6 @@ public class TContentPanel extends JPanel {
             case 1:
             case 2:
             case 3:
-                //System.out.printf("FUCKFUCK");
                 createTable(stuAnsList);
                 break;
             //Ìî¿Õ
