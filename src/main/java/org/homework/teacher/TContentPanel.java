@@ -82,37 +82,6 @@ public class TContentPanel extends JPanel {
         repaint();
     }
 
-    class myTableCellRenderer implements TableCellRenderer {
-        //DefaultTableCellRenderer dtcr =new DefaultTableCellRenderer();
-        int row,column;
-        Color c;
-        public myTableCellRenderer(int row,int column,Color c)
-        {
-            this.row=row;this.column=column;this.c=c;
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-            //Component renderer =dtcr.getTableCellRendererComponent(table, value,
-            //        isSelected, hasFocus, row, column);
-            //dtcr.setHorizontalAlignment(SwingConstants.CENTER);
-            if (row==this.row && column==this.column)
-            {
-                setOpaque(true);
-                setBackground(c);
-            }
-            else {
-                setOpaque(false);
-                setBackground(Color.WHITE);
-            }
-            return super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
-            //return renderer;
-        }
-    }
-
-
-
-
     private void createTable(List<StudentAnswer> stuAnsList) {
 
         JPanel panel = new JPanel();
@@ -153,18 +122,22 @@ public class TContentPanel extends JPanel {
             table.setValueAt("²Î¿¼´ð°¸", 2, 0);
             table.setBorder(new LineBorder(new Color(0, 0, 0)));
             table.setRowHeight(20);
-
+//            table.setSelectionBackground(Color.white);
+//            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             //DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
             //tcr.setHorizontalAlignment(SwingConstants.CENTER);
             //table.setDefaultRenderer(Object.class, tcr);
 
             for (int j = 1; j <= 10 && (j+(10*i)) <= stuAnsList.size(); j++) {
                 table.setValueAt(j + 10*i, 0, j);
-                table.setValueAt(stuAnsList.get(j + (10 * i) - 1).getStudentAnswer(), 1, j);
-                table.setValueAt(stuAnsList.get(j + (10 * i) - 1).getAnswer(), 2, j);
-                if (!(stuAnsList.get(j+(10*i)-1).getStudentAnswer().equals(stuAnsList.get(j+(10*i)-1).getAnswer()))) {
-                    table.setDefaultRenderer(Object.class, new myTableCellRenderer(1, j, Color.RED));
-                }
+                String answer = stuAnsList.get(j + (10 * i) - 1).getStudentAnswer();
+                String rightAnswer = stuAnsList.get(j + (10 * i) - 1).getAnswer();
+                table.setValueAt(rightAnswer, 2, j);
+                if (answer.equals(rightAnswer))
+                    table.setValueAt(answer, 1, j);
+                else
+                    table.setValueAt("<html><font color=\"red\">" +
+                            answer + "</font></html>", 1, j);
             }
             tableList.add(table);
         }
