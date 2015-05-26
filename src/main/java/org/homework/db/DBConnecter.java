@@ -94,7 +94,7 @@ public class DBConnecter {
         Statement correctAnswerStatement = null;
 
         try {
-            studentAnswerStatement = c.createStatement();
+            studentAnswerStatement = ownConn.createStatement();
             correctAnswerStatement = c.createStatement();
 
             ResultSet result = studentAnswerStatement.executeQuery("select * from " + STUDENT_ANSWER_TABLE +";");

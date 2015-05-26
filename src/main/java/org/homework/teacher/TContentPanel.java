@@ -81,23 +81,19 @@ public class TContentPanel extends JPanel {
         repaint();
     }
 
-    private void createTable(List<StudentAnswer> stuAnsList) {
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        final JPanel textFieldPanel = new JPanel();
-        textFieldPanel.setBackground(Color.WHITE);
-        textFieldPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        textFieldPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        textFieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    private void showObjectiveAnswer(List<StudentAnswer> stuAnsList) {
+        //成绩panel
+        final JPanel scorePanel = new JPanel();
+        scorePanel.setBackground(Color.WHITE);
+        scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        scorePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        scorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JTextField textField = new JTextField(10);
-        textFieldPanel.add(new JLabel("成绩："));
-        textFieldPanel.add(textField);
-        panel.add(textFieldPanel);
+        scorePanel.add(new JLabel("成绩："));
+        scorePanel.add(textField);
+        add(scorePanel);
 
+        //答案panel
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         tablePanel.setBackground(Color.WHITE);
@@ -105,12 +101,12 @@ public class TContentPanel extends JPanel {
 
         List<JTable> tableList = new ArrayList<JTable>();
 
-        for (int i = stuAnsList.size(); i < 27; i++) {
-             StudentAnswer stuAns = new StudentAnswer();
-            stuAns.setStudentAnswer("A"+i%4);
-            stuAns.setAnswer("A" + i % 4 + 1);
-            stuAnsList.add(stuAns);
-        }
+//        for (int i = stuAnsList.size(); i < 27; i++) {
+//             StudentAnswer stuAns = new StudentAnswer();
+//            stuAns.setStudentAnswer("A"+i%4);
+//            stuAns.setAnswer("A" + i % 4 + 1);
+//            stuAnsList.add(stuAns);
+//        }
 
 
         int tableCount = stuAnsList.size()/10 +1;
@@ -146,9 +142,82 @@ public class TContentPanel extends JPanel {
             tablePanel.add(tableList.get(i));
         }
 
-        panel.add(tablePanel);
+        add(tablePanel);
 
-        add(panel);
+    }
+
+    private void showSubjectiveAnswer(List<StudentAnswer> stuAnsList) {
+
+        //成绩显示
+        final JPanel scorePanel = new JPanel();
+        scorePanel.setBackground(Color.WHITE);
+        scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        scorePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        scorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JTextField textField = new JTextField(10);
+        scorePanel.add(new JLabel("成绩："));
+        scorePanel.add(textField);
+        add(scorePanel);
+
+        JPanel answerPanel = new JPanel();
+        answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
+        answerPanel.setBackground(Color.WHITE);
+        answerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(answerPanel);
+
+        for (Integer i = 1; i <= stuAnsList.size(); i++) {
+            //题号显示
+            final JPanel scoreNumberPanel = new JPanel();
+            scoreNumberPanel.setBackground(Color.WHITE);
+            scoreNumberPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            scoreNumberPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+            scoreNumberPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            scoreNumberPanel.add(new JLabel(i.toString() + "."));
+            answerPanel.add(scoreNumberPanel);
+
+            //学生答案与参考答案panel
+            JPanel textAreaPanel = new JPanel();
+            textAreaPanel.setLayout(new GridLayout(2,1,0,3));
+            textAreaPanel.setBackground(Color.WHITE);
+            textAreaPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            //学生答案
+            final JPanel stuAnsPanel = new JPanel();
+            stuAnsPanel.setBackground(Color.WHITE);
+            stuAnsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            stuAnsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
+            final JTextArea textStuAns = new JTextArea(5,120);
+            textStuAns.setBackground(Color.WHITE);
+            textStuAns.setEditable(false);
+            textStuAns.setLineWrap(true);
+            JScrollPane scrollStuAns = new JScrollPane(textStuAns);
+            stuAnsPanel.add(scrollStuAns);
+            String stuAnswer = stuAnsList.get(i-1).getStudentAnswer();
+            textStuAns.setText("学生答案：\n\r" + stuAnswer);
+
+            //参考答案
+            final JPanel correctAnsPanel = new JPanel();
+            correctAnsPanel.setBackground(Color.WHITE);
+            correctAnsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            correctAnsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
+            final JTextArea textCorrectAns = new JTextArea(5,120);
+            textCorrectAns.setBackground(Color.WHITE);
+            textCorrectAns.setEditable(false);
+            textCorrectAns.setLineWrap(true);
+            JScrollPane scrollCorrectAns = new JScrollPane(textCorrectAns);
+            correctAnsPanel.add(scrollCorrectAns);
+            String correctAnswer = stuAnsList.get(i-1).getAnswer();
+            textCorrectAns.setText("参考答案：\n\r" + correctAnswer);
+
+            textAreaPanel.add(stuAnsPanel);
+            textAreaPanel.add(correctAnsPanel);
+
+            answerPanel.add(Box.createVerticalStrut(3));
+            answerPanel.add(textAreaPanel);
+        }
+
     }
 
     private void addPanel(Integer type, List<StudentAnswer> stuAnsList) {
@@ -159,13 +228,12 @@ public class TContentPanel extends JPanel {
             case 1:
             case 2:
             case 3:
-                createTable(stuAnsList);
+                showObjectiveAnswer(stuAnsList);
                 break;
-            //填空
+            //填空  简答
             case 4:
-                break;
-            //简答
             case 5:
+                showSubjectiveAnswer(stuAnsList);
                 break;
             default:
                 break;
