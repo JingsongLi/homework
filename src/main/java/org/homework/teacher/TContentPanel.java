@@ -81,6 +81,7 @@ public class TContentPanel extends JPanel {
         repaint();
     }
 
+    //显示单选 多选  判断
     private void showObjectiveAnswer(List<StudentAnswer> stuAnsList) {
         //成绩panel
         final JPanel scorePanel = new JPanel();
@@ -98,6 +99,7 @@ public class TContentPanel extends JPanel {
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         tablePanel.setBackground(Color.WHITE);
         tablePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        tablePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
         List<JTable> tableList = new ArrayList<JTable>();
 
@@ -146,7 +148,15 @@ public class TContentPanel extends JPanel {
 
     }
 
-    private void showSubjectiveAnswer(List<StudentAnswer> stuAnsList) {
+    //显示填空  简答
+    private void showSubjectiveAnswer(Integer type, List<StudentAnswer> stuAnsList) {
+        int textLineCount = 0;
+        if (type == 4) {
+            textLineCount = 2;
+        }
+        else {
+            textLineCount = 5;
+        }
 
         //成绩显示
         final JPanel scorePanel = new JPanel();
@@ -163,6 +173,7 @@ public class TContentPanel extends JPanel {
         answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
         answerPanel.setBackground(Color.WHITE);
         answerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        answerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         add(answerPanel);
 
         for (Integer i = 1; i <= stuAnsList.size(); i++) {
@@ -170,7 +181,6 @@ public class TContentPanel extends JPanel {
             final JPanel scoreNumberPanel = new JPanel();
             scoreNumberPanel.setBackground(Color.WHITE);
             scoreNumberPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            scoreNumberPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
             scoreNumberPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             scoreNumberPanel.add(new JLabel(i.toString() + "."));
             answerPanel.add(scoreNumberPanel);
@@ -185,30 +195,48 @@ public class TContentPanel extends JPanel {
             final JPanel stuAnsPanel = new JPanel();
             stuAnsPanel.setBackground(Color.WHITE);
             stuAnsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            stuAnsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+            //stuAnsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
-            final JTextArea textStuAns = new JTextArea(5,120);
+            final JTextArea textStuAns = new JTextArea(textLineCount, 120);
             textStuAns.setBackground(Color.WHITE);
             textStuAns.setEditable(false);
             textStuAns.setLineWrap(true);
+            //textStuAns.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
             JScrollPane scrollStuAns = new JScrollPane(textStuAns);
             stuAnsPanel.add(scrollStuAns);
-            String stuAnswer = stuAnsList.get(i-1).getStudentAnswer();
-            textStuAns.setText("学生答案：\n\r" + stuAnswer);
 
             //参考答案
             final JPanel correctAnsPanel = new JPanel();
             correctAnsPanel.setBackground(Color.WHITE);
             correctAnsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            correctAnsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
-            final JTextArea textCorrectAns = new JTextArea(5,120);
+            final JTextArea textCorrectAns = new JTextArea(textLineCount,120);
             textCorrectAns.setBackground(Color.WHITE);
             textCorrectAns.setEditable(false);
             textCorrectAns.setLineWrap(true);
             JScrollPane scrollCorrectAns = new JScrollPane(textCorrectAns);
             correctAnsPanel.add(scrollCorrectAns);
+
+            String stuAnswer = stuAnsList.get(i-1).getStudentAnswer();
             String correctAnswer = stuAnsList.get(i-1).getAnswer();
+            if (type == 4 && !(stuAnswer.equals(correctAnswer))) {
+//                String[] student = stuAnswer.split(",");
+//                String[] correct = stuAnswer.split(",");
+//                for (int j = 0; j < correct.length; j++) {
+//                    String s = student[j];
+//                    String c = correct[j];
+//                    if (!s.equals(c)) {
+//                        appendToPane(textStuAns, s, Color.RED);
+//                    }
+//                    if (i == correct.length - 1) {
+//                        appendToPane(textStuAns, ",", Color.BLACK);
+//                    }
+//                }
+                textStuAns.setForeground(Color.RED);
+            }
+            //else {
+                textStuAns.setText("学生答案：\n\r" + stuAnswer);
+            //}
             textCorrectAns.setText("参考答案：\n\r" + correctAnswer);
 
             textAreaPanel.add(stuAnsPanel);
@@ -233,7 +261,7 @@ public class TContentPanel extends JPanel {
             //填空  简答
             case 4:
             case 5:
-                showSubjectiveAnswer(stuAnsList);
+                showSubjectiveAnswer(type, stuAnsList);
                 break;
             default:
                 break;
