@@ -22,10 +22,10 @@ public class Utils {
 
     static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "简答题"};
     static final String[] TYPE_EXPLAIN = {
-            "单向选择题：每题只有一个正确答案。",
-            "多向选择题：每题有一个或多个正确答案。",
-            "判断题：对或错，请选择。",
-            "填空题：填空，以逗号分隔答案。",
+            "单向选择题：每题只有一个正确答案。每题2分。",
+            "多向选择题：每题有一个或多个正确答案。每题3分",
+            "判断题：对或错，请选择。每题1.5分",
+            "填空题：填空，以逗号分隔答案。每题2.5分",
             "简答题：请写到下面的框中。"};
     public static final String[] JUDGE_OPTION = {"对", "错"};
     public static final String SPLIT = "#";
@@ -34,7 +34,7 @@ public class Utils {
     public static String getTypeWord(int i){
         return TYPE_INDEX[i-1];
     }
-    public static String getTypeExplain(int i){
+    public static String getTypeExplain(int i) {
         return TYPE_EXPLAIN[i-1];
     }
     public static JLabel buildLabel() {
@@ -80,12 +80,14 @@ public class Utils {
                 sub3Map = new TreeMap();
                 sub2Map.put(stuClass,sub3Map);
             }
-            //4级目录  学生姓名
+            //4级目录  学生学号姓名
+            String stuNumber = stuAns.getStudentNumber();
             String stuName = stuAns.getStudentName();
-            TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuName);
+            String stuNumName = stuNumber + stuName;
+            TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
             if (sub4Map == null) {
                 sub4Map = new TreeMap();
-                sub3Map.put(stuName,sub4Map);
+                sub3Map.put(stuNumName,sub4Map);
             }
             //5级目录  题目类型   不显示
             int type = stuAns.getType();

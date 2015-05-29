@@ -1,5 +1,6 @@
 package org.homework.db;
 
+import org.homework.db.model.AllStudentScore;
 import org.homework.db.model.Score;
 import org.homework.db.model.StudentAnswer;
 import org.homework.db.model.TableQuestion;
@@ -32,6 +33,7 @@ public class DBConnecter {
     public static final String QUESTION_TABLE = "question";
     public static final String SCORE_OWN_TABLE = "score_own";
     public static final String STUDENT_ANSWER_TABLE = "student_answer";
+    public static final String ALL_STUDENT_SCORE_TABLE = "all_student_score";
 
     //需要手动join两个库中的表
     public static List<TableQuestion> getAllQuestion(){
@@ -105,6 +107,7 @@ public class DBConnecter {
                 studentAnswer.setCourse(result.getString(StudentAnswer.COURSE));
                 studentAnswer.setChapter(result.getInt(StudentAnswer.CHAPTER));
                 studentAnswer.setStudentClass(result.getString(StudentAnswer.STUDENT_CLASS));
+                studentAnswer.setStudentNumber(result.getString(StudentAnswer.STUDENT_NUMBER));
                 studentAnswer.setStudentName(result.getString(StudentAnswer.STUDENT_NAME));
                 studentAnswer.setType(result.getInt(StudentAnswer.TYPE));
                 studentAnswer.setStudentAnswer(result.getString(StudentAnswer.STUDENT_ANSWER));
@@ -151,6 +154,61 @@ public class DBConnecter {
             e.printStackTrace();
         }
         return studentAnswerList;
+    }
+
+    public static List<AllStudentScore> getAllStudentScores(String course, String queryAs, String queryAsText) {
+
+        List<AllStudentScore> allStudentScoreList = new ArrayList<AllStudentScore>();
+        Statement allStudentScoreStatement = null;
+
+        course = "'" + course + "'";
+        queryAsText = "'" + queryAsText + "'";
+        String sql = null;
+        if (queryAs.equals("班级")) {
+            sql = "select * from " + ALL_STUDENT_SCORE_TABLE +
+                    " where " + AllStudentScore.COURSE + " = " + course +
+                    " and " + AllStudentScore.STUDENT_CLASS + " = " + queryAsText + ";";
+        }
+        else {
+            sql = "select * from " + ALL_STUDENT_SCORE_TABLE +
+                    " where " + AllStudentScore.COURSE + " = " + course +
+                    " and " + AllStudentScore.STUDENT_NUMBER + " = " + queryAsText + ";";
+        }
+
+        try {
+            allStudentScoreStatement = ownConn.createStatement();
+
+            System.out.println(sql);
+
+            ResultSet result = allStudentScoreStatement.executeQuery(sql);
+
+            while (result.next()) {
+                AllStudentScore allStudentScore = new AllStudentScore();
+                allStudentScore.setId(result.getInt(AllStudentScore.ID));
+                allStudentScore.setCourse(result.getString(AllStudentScore.COURSE));
+                allStudentScore.setChapter(result.getInt(AllStudentScore.CHAPTER));
+                allStudentScore.setStudentClass(result.getString(AllStudentScore.STUDENT_CLASS));
+                allStudentScore.setStudentNumber(result.getString(AllStudentScore.STUDENT_NUMBER));
+                allStudentScore.setStudentName(result.getString(AllStudentScore.STUDENT_NAME));
+                allStudentScore.setScore(result.getFloat(AllStudentScore.SCORE));
+
+                allStudentScoreList.add(allStudentScore);
+
+            }
+
+            for (Iterator<AllStudentScore> iterator = allStudentScoreList.iterator(); iterator.hasNext(); ) {
+                AllStudentScore next =  iterator.next();
+                System.out.println(next);
+            }
+
+
+            //关闭连接和声明
+            allStudentScoreStatement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return allStudentScoreList;
     }
 
     public static class Updater{

@@ -26,7 +26,7 @@ public class TCatalogTree {
 
     @Getter
     static JTree tree;
-    //                            科目           章节            班级          学生姓名       试题类型        学生答案
+    //                            科目           章节            班级          学生学号姓名       试题类型        学生答案
     public final static TreeMap<String,TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>> allStudentAnswer = new TreeMap();
     //public final static TreeMap<String,TreeMap<Integer,Integer>> allScore = new TreeMap();;
     public static Object firstLeafObect;
@@ -60,7 +60,7 @@ public class TCatalogTree {
                     node2.add(node3);
 
                     for (Map.Entry<String,TreeMap<Integer,List<StudentAnswer>>> entry4 : entry3.getValue().entrySet()) {
-                        //4. studentName
+                        //4. studentNumberName
                         DefaultMutableTreeNode node4 = new DefaultMutableTreeNode(new AnswerNode(entry4.getKey(), entry4.getValue()));
                         node3.add(node4);
                         if(firstLeaf == null)
@@ -134,17 +134,17 @@ public class TCatalogTree {
 
 
     public static class AnswerNode {
-        String studentName;
+        String studentNumName;
         TreeMap<Integer,List<StudentAnswer>> map;
 
-        public AnswerNode(String studentName, TreeMap<Integer,List<StudentAnswer>> map) {
-            this.studentName = studentName;
+        public AnswerNode(String studentNumName, TreeMap<Integer,List<StudentAnswer>> map) {
+            this.studentNumName = studentNumName;
             this.map = map;
         }
 
         @Override
         public String toString(){
-            return studentName;
+            return studentNumName;
         }
     }
 

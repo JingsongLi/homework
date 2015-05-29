@@ -4,16 +4,14 @@ import org.homework.io.IoOperator;
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
 import org.homework.student.SimulateDialog;
+import org.homework.teacher.TScoreQuery;
 import org.homework.utils.MyButton;
-import sun.plugin2.util.ColorUtil;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import static org.homework.utils.Utils.*;
 
 
 public class MainFrame extends JFrame {
@@ -121,14 +119,33 @@ public class MainFrame extends JFrame {
 
 
 
-		final MyButton techer = new MyButton(" test ");
-		techer.addMyMouse(new MouseAdapter() {
+		final MyButton correctHomework = new MyButton(" 批改作业 ");
+		correctHomework.addMyMouse(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				setContentPane(teacherPane);
 			}
 		});
-		menuBar.add(techer);
+		menuBar.add(correctHomework);
+
+		final MyButton createTestPaper = new MyButton(" 生成试卷 ");
+        createTestPaper.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setContentPane(teacherPane);
+			}
+		});
+		menuBar.add(createTestPaper);
+
+        final MyButton scoreQuery = new MyButton(" 成绩查询 ");
+        scoreQuery.addMyMouse(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //setContentPane(teacherPane);
+                scoreQueryClick();
+            }
+        });
+        menuBar.add(scoreQuery);
 	}
 
 	private void testPaperClick() {
@@ -151,6 +168,10 @@ public class MainFrame extends JFrame {
 	private void importClick() {
 		IoOperator.importScore();
 	}
+
+    private void scoreQueryClick() {
+        TScoreQuery tScoreQ = new TScoreQuery(this);
+    }
 
 	/**
 	 * Launch the application.
