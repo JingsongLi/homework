@@ -1,10 +1,12 @@
-package org.homework.io;
+package org.homework.manager;
 
+import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.*;
 import javax.crypto.spec.DESKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -145,11 +147,29 @@ public class SecurityEncode {
         return arrOut;
     }
 
+    // 将 s 进行 BASE64 编码
+    public static String getBASE64(String s) {
+        if (s == null) return null;
+        return (new sun.misc.BASE64Encoder()).encode( s.getBytes() );
+    }
+
+    // 将 BASE64 编码的字符串 s 进行解码
+    public static String getFromBASE64(String s) {
+        if (s == null) return null;
+        BASE64Decoder decoder = new BASE64Decoder();
+        try {
+            byte[] b = decoder.decodeBuffer(s);
+            return new String(b);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public static void main(String[] args) throws NoSuchPaddingException, UnsupportedEncodingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
         String key = "呵呵";
-        String str = "我日你妹啊~";
-        byte[] arrs = coderByDES(str.getBytes(),key,Cipher.ENCRYPT_MODE);
-        System.out.println(new String(coderByDES(arrs,key,Cipher.DECRYPT_MODE)));
+        String str = "范帅_-731993970";
+        String str1 = getBASE64(str);
+        System.out.println(str1);
+        System.out.println(getFromBASE64(str1));
     }
 }

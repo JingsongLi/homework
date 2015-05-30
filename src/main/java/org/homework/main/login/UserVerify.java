@@ -1,4 +1,4 @@
-package org.homework.login;
+package org.homework.main.login;
 
 import java.io.BufferedReader;
 import java.io.File;

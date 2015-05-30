@@ -1,8 +1,9 @@
-package org.homework.login;
+package org.homework.main.login;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.User;
 import org.homework.main.MainFrame;
+import org.homework.manager.SecurityEncode;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -68,9 +69,15 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "用户名或密码错误！");
                 return;
             }
-            if(user.getFinger().equals(UserVerify.getCDiskNum())){
+            String text = SecurityEncode.getFromBASE64( user.getPassword());
+            String[] strs = text.split("_");
+            if(strs[strs.length-1] .equals(UserVerify.getCDiskNum())){
                 MainFrame frame = new MainFrame(user);
-                frame.setTitle("作业系统");
+                String title = DBConnecter.getKV("title");
+                if(title == null)
+                    frame.setTitle("作业系统");
+                else
+                    frame.setTitle(title);
                 frame.setVisible(true);
                 this.dispose();
             }else{

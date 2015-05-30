@@ -6,7 +6,7 @@ import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
 import org.homework.student.SimulateDialog;
 import org.homework.teacher.TScoreQuery;
-import org.homework.login.LoginPanel;
+import org.homework.main.login.LoginPanel;
 import org.homework.utils.MyButton;
 
 import javax.swing.*;
@@ -184,11 +184,7 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					try {
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					new LoginPanel();
 				} catch (Exception e) {
 					e.printStackTrace();

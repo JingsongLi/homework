@@ -32,6 +32,7 @@ public class DBConnecter {
     public static final String STUDENT_ANSWER_TABLE = "student_answer";
     public static final String ALL_STUDENT_SCORE_TABLE = "all_student_score";
     public static final String USER_TABLE = "user";
+    public static final String KV_TABLE = "kv";
 
     //需要手动join两个库中的表
     public static List<TableQuestion> getAllQuestion(){
@@ -335,14 +336,37 @@ public class DBConnecter {
         Statement sql_statement = null;
         try {
             sql_statement = c.createStatement();
-            String sql = "select password,type,finger from " + USER_TABLE +
+            String sql = "select password,type from " + USER_TABLE +
             " where name='" + name +"';";
             ResultSet result = sql_statement.executeQuery(sql);
 //            System.out.println(sql);
             if (result.next()) {
                 User user = new User(name,result.getString("password"),
-                        result.getInt("type"),result.getString("finger"));
+                        result.getInt("type"));
                 return user;
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                sql_statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static String getKV(String key){
+        Statement sql_statement = null;
+        try {
+            sql_statement = c.createStatement();
+            String sql = "select value from " + KV_TABLE +
+                    " where key='" + key +"';";
+            ResultSet result = sql_statement.executeQuery(sql);
+//            System.out.println(sql);
+            if (result.next()) {
+                return result.getString("value");
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -367,10 +391,9 @@ public class DBConnecter {
         try {
             sql_statement = c.createStatement();
             boolean bool = sql_statement.execute("" +
-                    "CREATE TABLE user (\n" +
-                    "  [name] VARCHAR(50) PRIMARY KEY, \n" +
-                    "  [password] VARCHAR(50) NOT NULL,  \n" +
-                    "  [type] INT);");
+                    "CREATE TABLE kv (\n" +
+                    "  [key] VARCHAR(50) PRIMARY KEY, \n" +
+                    "  [value] VARCHAR(50) NOT NULL);");
             System.out.println(bool);
             //关闭连接和声明
             sql_statement.close();

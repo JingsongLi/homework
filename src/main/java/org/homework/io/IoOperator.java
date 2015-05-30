@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static org.homework.io.PDFOperator.PDFLiner;
 import static org.homework.utils.Utils.*;
-import static org.homework.io.PDFOperator.*;
 
 /**
  * Created by hasee on 2015/5/7.
@@ -25,12 +26,12 @@ public class IoOperator {
     public static String user = "小明";
     public static String userId = "201522010444";
 
-    public static void submitWork(int chapter,String course, TreeMap<Integer,List<TableQuestion>> map){
+    public static void submitWork(int chapter, String course, TreeMap<Integer, List<TableQuestion>> map) {
         String direct = getFileDirectChoose();
-        if (direct != null){
+        if (direct != null) {
             String message = user + "_" + userId + "_" +
                     course + "_" + getChineseNum(chapter) + "章" + "作业";
-            String path = direct + "\\" +  message;
+            String path = direct + "\\" + message;
             try {
                 FileOutputStream out = new FileOutputStream(path);
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
@@ -56,72 +57,72 @@ public class IoOperator {
         }
     }
 
-    public static void generatePDF(int chapter, TreeMap<Integer, List<TableQuestion>> map){
+    public static void generatePDF(int chapter, TreeMap<Integer, List<TableQuestion>> map) {
         String direct = getFileDirectChoose();
-        if (direct != null){
+        if (direct != null) {
             String path = direct + "\\" + "第" + getChineseNum(chapter) + "章" +
                     "试题.pdf";
             List<PDFLiner> list = new ArrayList<PDFLiner>();
-            list.add(new PDFLiner("第" + getChineseNum(chapter) + "章" + "试题",25, Font.BOLD));
-            for (Map.Entry<Integer,List<TableQuestion>> entry : map.entrySet()){
-                list.add(new PDFLiner(getTypeWord(entry.getKey()),20,Font.BOLD));
-                for (int i=0; i<entry.getValue().size(); i++){
+            list.add(new PDFLiner("第" + getChineseNum(chapter) + "章" + "试题", 25, Font.BOLD));
+            for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
+                list.add(new PDFLiner(getTypeWord(entry.getKey()), 20, Font.BOLD));
+                for (int i = 0; i < entry.getValue().size(); i++) {
                     TableQuestion t = entry.getValue().get(i);
 
                     String startSentence = t.getMain_content();
-                    if(startSentence.startsWith("[")){//图片
-                        list.add(new PDFLiner((i+1) + ". ",15,Font.PLAIN));
+                    if (startSentence.startsWith("[")) {//图片
+                        list.add(new PDFLiner((i + 1) + ". ", 15, Font.PLAIN));
                         try {
                             list.add(new PDFLiner(Image.getInstance(getURL(
                                     ContentPanel.PRE + startSentence.substring(1, startSentence.length() - 1)))
-                                    ,15,Font.PLAIN));
+                                    , 15, Font.PLAIN));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }else
-                        list.add(new PDFLiner((i+1) + ". " + t.getMain_content(),15,Font.PLAIN));
-                    if(t.getEle_content()!=null && !t.getEle_content().equals("")){
+                    } else
+                        list.add(new PDFLiner((i + 1) + ". " + t.getMain_content(), 15, Font.PLAIN));
+                    if (t.getEle_content() != null && !t.getEle_content().equals("")) {
                         String[] strs = t.getEle_content().split(SPLIT);
-                        for (int j=0; j<strs.length; j++){
-                            list.add(new PDFLiner(("  " + num2ABC(j) + ". " +strs[j]),15,Font.PLAIN));
+                        for (int j = 0; j < strs.length; j++) {
+                            list.add(new PDFLiner(("  " + num2ABC(j) + ". " + strs[j]), 15, Font.PLAIN));
                         }
                     }
-}
-}
-        try {
-        PDFOperator.writePdf(list,path);
-        JOptionPane.showMessageDialog(null, "导出成功！");
-        } catch (IOException e) {
-        e.printStackTrace();
-        } catch (DocumentException e) {
-        e.printStackTrace();
+                }
+            }
+            try {
+                PDFOperator.writePdf(list, path);
+                JOptionPane.showMessageDialog(null, "导出成功！");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
         }
-        }
-        }
+    }
 
-    public static void importScore(){
+    public static void importScore() {
         JFileChooser fileChooser = new JFileChooser("F:\\");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int returnVal = fileChooser.showOpenDialog(fileChooser);
-        if(returnVal == JFileChooser.APPROVE_OPTION){
-            String filePath= fileChooser.getSelectedFile().getAbsolutePath();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
             //file解析
-            DBConnecter.updateScore("数学", 1,69);
+            DBConnecter.updateScore("数学", 1, 69);
             CatalogTree.updateAllScore();
         }
     }
 
-    public static String getFileDirectChoose(){
+    public static String getFileDirectChoose() {
         JFileChooser fileChooser = new JFileChooser("F:\\");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnVal = fileChooser.showOpenDialog(fileChooser);
-        if(returnVal == JFileChooser.APPROVE_OPTION){
-            String filePath= fileChooser.getSelectedFile().getAbsolutePath();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
             return filePath;
         }
         return null;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
     }
 }
