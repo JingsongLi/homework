@@ -1,10 +1,12 @@
 package org.homework.main;
 
+import org.homework.db.model.User;
 import org.homework.io.IoOperator;
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
 import org.homework.student.SimulateDialog;
 import org.homework.teacher.TScoreQuery;
+import org.homework.login.LoginPanel;
 import org.homework.utils.MyButton;
 
 import javax.swing.*;
@@ -23,12 +25,14 @@ public class MainFrame extends JFrame {
 	public static final String MENU_IMPORT = "import.JPG";
 	private static TeacherPanel teacherPane;
 	private static StudentPanel studentPanel;
+	private User user;
 
 
 	/**
 	 * Create the frame.
 	 */
-	public MainFrame() {
+	public MainFrame(User user) {
+		this.user = user;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 
@@ -185,9 +189,7 @@ public class MainFrame extends JFrame {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					MainFrame frame = new MainFrame();
-					frame.setTitle("作业系统");
-					frame.setVisible(true);
+					new LoginPanel();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

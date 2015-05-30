@@ -1,9 +1,6 @@
 package org.homework.db;
 
-import org.homework.db.model.AllStudentScore;
-import org.homework.db.model.Score;
-import org.homework.db.model.StudentAnswer;
-import org.homework.db.model.TableQuestion;
+import org.homework.db.model.*;
 
 import java.sql.*;
 import java.util.*;
@@ -34,6 +31,7 @@ public class DBConnecter {
     public static final String SCORE_OWN_TABLE = "score_own";
     public static final String STUDENT_ANSWER_TABLE = "student_answer";
     public static final String ALL_STUDENT_SCORE_TABLE = "all_student_score";
+    public static final String USER_TABLE = "user";
 
     //需要手动join两个库中的表
     public static List<TableQuestion> getAllQuestion(){
@@ -333,31 +331,53 @@ public class DBConnecter {
         }
     }
 
-
+    public static User getUser(String name){
+        Statement sql_statement = null;
+        try {
+            sql_statement = c.createStatement();
+            String sql = "select password,type,finger from " + USER_TABLE +
+            " where name='" + name +"';";
+            ResultSet result = sql_statement.executeQuery(sql);
+//            System.out.println(sql);
+            if (result.next()) {
+                User user = new User(name,result.getString("password"),
+                        result.getInt("type"),result.getString("finger"));
+                return user;
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                sql_statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
     public static void main(String[] args) throws SQLException {
 
-        System.out.println(getAllScore());
+//        System.out.println(getAllScore());
 //        updateQuestion(2,"note","我勒个去啊");
 
 //        System.out.println(getAllQuestion());
 
-//        Statement sql_statement = null;
-//        try {
-//            sql_statement = ownConn.createStatement();
-//            boolean bool = sql_statement.execute("" +
-//                    "CREATE TABLE score_own (\n" +
-//                    "  [id] INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-//                    "  [course] VARCHAR(50) NOT NULL ON CONFLICT ABORT,  \n" +
-//                    "  [chapter] TINYINT NOT NULL ON CONFLICT ABORT,  \n" +
-//                    "  [score] INT);");
-//            System.out.println(bool);
-//            //关闭连接和声明
-//            sql_statement.close();
-//            c.close();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        Statement sql_statement = null;
+        try {
+            sql_statement = c.createStatement();
+            boolean bool = sql_statement.execute("" +
+                    "CREATE TABLE user (\n" +
+                    "  [name] VARCHAR(50) PRIMARY KEY, \n" +
+                    "  [password] VARCHAR(50) NOT NULL,  \n" +
+                    "  [type] INT);");
+            System.out.println(bool);
+            //关闭连接和声明
+            sql_statement.close();
+            c.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
