@@ -25,7 +25,7 @@ public class MainFrame extends JFrame {
 	public static final String MENU_IMPORT = "import.JPG";
 	private static TeacherPanel teacherPane;
 	private static StudentPanel studentPanel;
-	private User user;
+	public static User user;
 
 
 	/**

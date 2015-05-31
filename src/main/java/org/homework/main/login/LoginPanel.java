@@ -21,6 +21,7 @@ public class LoginPanel  extends JFrame implements ActionListener {
     private JPasswordField tfPassword;
     private JButton btnOK;
     private JButton btnExit;
+    String trueCipher = DBConnecter.getKV("cipher");
 
     public LoginPanel(){
         JPanel p1 = new JPanel();
@@ -65,13 +66,21 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 return;
             }
             User user = DBConnecter.getUser(name);
+            //第一重验证
             if(user == null || !user.getPassword().equals(password)){
                 JOptionPane.showMessageDialog(this, "用户名或密码错误！");
                 return;
             }
             String text = SecurityEncode.getFromBASE64( user.getPassword());
+            System.out.println(name + " " + text);
             String[] strs = text.split("_");
-            if(strs[strs.length-1] .equals(UserVerify.getCDiskNum())){
+            //第二重和第三重验证，磁盘码和密钥
+            if(!strs[strs.length-2].equals(UserVerify.getCDiskNum()) ||
+                    !strs[strs.length-1].equals(trueCipher)){
+                JOptionPane.showMessageDialog(this, "机器匹配或密钥错误！");
+                System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
+                return;
+            }else{
                 MainFrame frame = new MainFrame(user);
                 String title = DBConnecter.getKV("title");
                 if(title == null)
@@ -80,9 +89,6 @@ public class LoginPanel  extends JFrame implements ActionListener {
                     frame.setTitle(title);
                 frame.setVisible(true);
                 this.dispose();
-            }else{
-                JOptionPane.showMessageDialog(this, "用户与机器匹配错误！");
-                return;
             }
         } else if (e.getActionCommand().equals("取消")) {
             System.exit(0);

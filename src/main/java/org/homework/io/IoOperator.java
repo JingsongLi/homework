@@ -4,12 +4,24 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
+import org.homework.main.MainFrame;
+import org.homework.manager.ManagerMain;
+import org.homework.manager.SecurityEncode;
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,36 +35,30 @@ import static org.homework.utils.Utils.*;
  */
 public class IoOperator {
 
-    public static String user = "小明";
-    public static String userId = "201522010444";
-
-    public static void submitWork(int chapter, String course, TreeMap<Integer, List<TableQuestion>> map) {
+    public static void submitWork(String course,int chapter, TreeMap<Integer, List<TableQuestion>> map) {
         String direct = getFileDirectChoose();
         if (direct != null) {
-            String message = user + "_" + userId + "_" +
-                    course + "_" + getChineseNum(chapter) + "章" + "作业";
+            String name = MainFrame.user.getName();
+            String message = name + "_" + course + "_" + chapter;
             String path = direct + "\\" + message;
             try {
+                StudentWork studentWork = new StudentWork(name,course,chapter,map);
                 FileOutputStream out = new FileOutputStream(path);
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
-                writer.write(message);
-                writer.newLine();
-                writer.flush();
-
                 ObjectOutputStream oos = null;
                 ByteArrayOutputStream baos = null;
                 // 序列化
                 baos = new ByteArrayOutputStream();
                 oos = new ObjectOutputStream(baos);
-                oos.writeObject(map);
+                oos.writeObject(studentWork);
                 byte[] bytes = baos.toByteArray();
-                out.write(bytes);
-
-                writer.close();
+                //加密
+                byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.ENCRYPT_MODE);
+                out.write(newBytes);
                 out.close();
                 JOptionPane.showMessageDialog(null, "提交成功！");
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "生成失败！");
             }
         }
     }
@@ -106,9 +112,26 @@ public class IoOperator {
         int returnVal = fileChooser.showOpenDialog(fileChooser);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-            //file解析
-            DBConnecter.updateScore("数学", 1, 69);
-            CatalogTree.updateAllScore();
+            try {
+                byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+                //file解析
+                byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
+                ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
+                ObjectInputStream oin = new ObjectInputStream(in);
+                Map<String,List<StudentScore>> map = (Map<String, List<StudentScore>>) oin.readObject();
+                List<StudentScore> list = map.get(MainFrame.user.getName());
+                System.out.println(list);
+                for(StudentScore s : list){
+                    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
+                    //更新树形界面！
+                    CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
+                }
+                CatalogTree.initTop();
+                JOptionPane.showMessageDialog(null, "导入成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "读取失败！");
+            }
         }
     }
 

@@ -38,6 +38,7 @@ public class CatalogTree{
     }
 
     private static DefaultTreeModel defaultTreeModel;
+    private static DefaultMutableTreeNode top;
 
     public static void updateAllScore(){
         List<Score> scores = DBConnecter.getAllScore();
@@ -46,7 +47,47 @@ public class CatalogTree{
 
 
     public CatalogTree() {
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("catalog");
+        top = new DefaultMutableTreeNode("catalog");
+        defaultTreeModel =new DefaultTreeModel(top);
+        tree = new JTree(defaultTreeModel);
+        // 添加选择事件
+        tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+                        .getLastSelectedPathComponent();
+                if (node == null)
+                    return;
+                Object object = node.getUserObject();
+                if (node.isLeaf()) {
+                    click(object, false);
+                } else if (object instanceof ChapterNode && e.getButton() == MouseEvent.BUTTON3) {
+                    final ChapterNode chapterNode = (ChapterNode) object;
+                    JPopupMenu jPopupMenu = new JPopupMenu();
+                    JMenuItem jmenuItem1 = new JMenuItem("提交");
+                    jmenuItem1.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            IoOperator.submitWork(chapterNode.course, chapterNode.chapter, chapterNode.map);
+                        }
+                    });
+                    JMenuItem jmenuItem2 = new JMenuItem("导出");
+                    jmenuItem2.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            IoOperator.generatePDF(chapterNode.chapter, chapterNode.map);
+                        }
+                    });
+                    jPopupMenu.add(jmenuItem1);
+                    jPopupMenu.add(jmenuItem2);
+                    jPopupMenu.show(tree, e.getX(), e.getY());
+                }
+            }
+        });
+        tree.setRootVisible(false);
+        initTop();
+    }
+
+    public static void initTop(){
+        top.removeAllChildren();
         DefaultMutableTreeNode firstLeaf = null;
         for (Map.Entry<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> entry1 : allData.entrySet()){
             DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(entry1.getKey());
@@ -69,44 +110,6 @@ public class CatalogTree{
                 }
             }
         }
-
-        defaultTreeModel =new DefaultTreeModel(top);
-        tree = new JTree(defaultTreeModel);
-        // 添加选择事件
-        tree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-                        .getLastSelectedPathComponent();
-
-                if (node == null)
-                    return;
-
-                Object object = node.getUserObject();
-                if (node.isLeaf()) {
-                    click(object,false);
-                } else if (object instanceof ChapterNode && e.getButton()==MouseEvent.BUTTON3) {
-                    final ChapterNode chapterNode = (ChapterNode) object;
-                    JPopupMenu jPopupMenu = new JPopupMenu();
-                    JMenuItem jmenuItem1 = new JMenuItem("提交");
-                    jmenuItem1.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            IoOperator.submitWork(chapterNode.chapter, chapterNode.course, chapterNode.map);
-                        }
-                    });
-                    JMenuItem jmenuItem2 = new JMenuItem("导出");
-                    jmenuItem2.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            IoOperator.generatePDF(chapterNode.chapter, chapterNode.map);
-                        }
-                    });
-                    jPopupMenu.add(jmenuItem1);
-                    jPopupMenu.add(jmenuItem2);
-                    jPopupMenu.show(tree, e.getX(),e.getY());
-                }
-            }
-        });
-        tree.setRootVisible(false);
 //        tree.setShowsRootHandles(true);
         ecTreeTest(tree);
         firstLeafObect = firstLeaf.getUserObject();
