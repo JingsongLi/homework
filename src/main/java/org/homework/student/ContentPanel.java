@@ -222,8 +222,13 @@ public class ContentPanel extends JPanel {
                 if (t.getMyAnswer() != null && !t.getMyAnswer().equals("")) {
                     myAnswer = t.getMyAnswer();
                 }
+                String rightAnswer = null;
+                if(CatalogTree.allScore.get(t.getCourse()).containsKey(t.getChapter())){
+                    rightAnswer = t.getAnswer();
+                }else
+                    rightAnswer = "此章节未公布答案。";
                 answer.setText("我的答案：" + myAnswer + "   " + "\n\r" +
-                        "正确答案：" + t.getAnswer()+ "   " + "\n\r" +
+                        "正确答案：" + rightAnswer+ "   " + "\n\r" +
                         "解题思路：" + t.getAnswerExplain());
                 answer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
             }

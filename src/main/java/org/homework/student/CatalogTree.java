@@ -30,7 +30,7 @@ public class CatalogTree{
     static JTree tree;
     public final static TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> allData = new TreeMap();
     public final static TreeMap<String,TreeMap<Integer,Integer>> allScore = new TreeMap();;
-    public static Object firstLeafObect;
+    public static DefaultMutableTreeNode firstLeaf;
     static {
         List<TableQuestion> questions = DBConnecter.getAllQuestion();
         add3Index(allData, questions);
@@ -60,7 +60,7 @@ public class CatalogTree{
                     return;
                 Object object = node.getUserObject();
                 if (node.isLeaf()) {
-                    click(object, false);
+                    clickTreeLeaf( node);
                 } else if (object instanceof ChapterNode && e.getButton() == MouseEvent.BUTTON3) {
                     final ChapterNode chapterNode = (ChapterNode) object;
                     JPopupMenu jPopupMenu = new JPopupMenu();
@@ -86,9 +86,9 @@ public class CatalogTree{
         initTop();
     }
 
+
     public static void initTop(){
         top.removeAllChildren();
-        DefaultMutableTreeNode firstLeaf = null;
         for (Map.Entry<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> entry1 : allData.entrySet()){
             DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(entry1.getKey());
             top.add(node1);
@@ -112,24 +112,24 @@ public class CatalogTree{
         }
 //        tree.setShowsRootHandles(true);
         ecTreeTest(tree);
-        firstLeafObect = firstLeaf.getUserObject();
         clickFirst();
     }
 
     public static void clickFirst(){
-        click(firstLeafObect, true);
+        clickTreeLeaf(firstLeaf);
+        defaultTreeModel.reload();
+        ecTreeTest(tree);
     }
 
-    private static void click(Object object,boolean isReload){
-        TypeNode typeNode = (TypeNode) object;
-        System.out.println("你选择了：" + typeNode.list);
+    private static void clickTreeLeaf(DefaultMutableTreeNode node){
+//        ChapterNode father = (ChapterNode) ((DefaultMutableTreeNode) node.getParent()).getUserObject();
+//        boolean mark = father.score==null ? false : true;
+        TypeNode typeNode = (TypeNode) node.getUserObject();
+//        System.out.println("你选择了：" + typeNode.list);
         TreeMap<Integer, List<TableQuestion>> listMap = new TreeMap<Integer, List<TableQuestion>>();
-        listMap.put(typeNode.type,typeNode.list);
+        listMap.put(typeNode.type, typeNode.list);
         ContentPanel.getContentPanel().fullContent(getTypeWord(typeNode.type), listMap);
-        if(isReload){
-            defaultTreeModel.reload();
-            ecTreeTest(tree);
-        }
+
     }
 
     public static void ecTreeTest(JTree tree) {
