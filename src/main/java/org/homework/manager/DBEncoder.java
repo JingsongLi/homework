@@ -12,29 +12,32 @@ import static org.homework.utils.Utils.getPath;
  */
 public class DBEncoder {
     static Path path = Paths.get(getPath("main.db").substring(1,getPath("main.db").length()));
-    static Path newPath = Paths.get("log.sp");
-    public static void initMainDB() throws Exception {
+    public static String initMainDB() throws Exception {
         byte[] newDBBytes = SecurityEncode.coderByDES(Files.readAllBytes(path),ManagerMain.key, Cipher.DECRYPT_MODE);
-        Files.createTempFile("log", ".sp");
-        Files.write(newPath, newDBBytes);
+        final Path tmpPath = Files.createTempFile("log", ".sp");
+        Files.write(tmpPath, newDBBytes);
 
-        new Thread(new Runnable() {
-            public void run() {
-                while (true){
-                    try {
-                        byte[] newDBBytes = SecurityEncode.coderByDES(Files.readAllBytes(newPath),ManagerMain.key, Cipher.ENCRYPT_MODE);
-                        Files.write(path, newDBBytes);
-                        Thread.sleep(5000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.exit(0);
-                    }
-                }
-            }
-        }).start();
+        //main.db是不变的，不用更新，只能通过管理员改变
+//        new Thread(new Runnable() {
+//            public void run() {
+//                while (true){
+//                    try {
+//                        byte[] newDBBytes = SecurityEncode.coderByDES(Files.readAllBytes(tmpPath),ManagerMain.key, Cipher.ENCRYPT_MODE);
+//                        Files.write(path, newDBBytes);
+//                        Thread.sleep(5000);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        System.exit(0);
+//                    }
+//                }
+//            }
+//        }).start();
+
+        return tmpPath.toString();
     }
 
     public static void main(String[] args) throws Exception{
-        initMainDB();
+        Path path = Files.createTempFile("log", ".sp");
+        System.out.println(path);
     }
 }

@@ -1,6 +1,7 @@
 package org.homework.db;
 
 import org.homework.db.model.*;
+import org.homework.manager.DBEncoder;
 
 import java.sql.*;
 import java.util.*;
@@ -14,12 +15,13 @@ import static org.homework.utils.Utils.getPath;
  */
 public class DBConnecter {
 
-    static Connection c;
+    static Connection mainConn;
     static Connection ownConn;
     static {
         try {
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:" + getPath("main.db"));
+            String tmpPath = DBEncoder.initMainDB();
+            mainConn = DriverManager.getConnection("jdbc:sqlite:" + tmpPath);
             ownConn = DriverManager.getConnection("jdbc:sqlite:" + getPath("own.db"));
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -41,7 +43,7 @@ public class DBConnecter {
         Statement sql_statement = null;
         Statement ownStatement = null;
         try {
-            sql_statement = c.createStatement();
+            sql_statement = mainConn.createStatement();
 
             ResultSet result = sql_statement.executeQuery("select * from " + QUESTION_TABLE +";");
 
@@ -96,7 +98,7 @@ public class DBConnecter {
 
         try {
             studentAnswerStatement = ownConn.createStatement();
-            correctAnswerStatement = c.createStatement();
+            correctAnswerStatement = mainConn.createStatement();
 
             ResultSet result = studentAnswerStatement.executeQuery("select * from " + STUDENT_ANSWER_TABLE +";");
 
@@ -335,7 +337,7 @@ public class DBConnecter {
     public static User getUser(String name){
         Statement sql_statement = null;
         try {
-            sql_statement = c.createStatement();
+            sql_statement = mainConn.createStatement();
             String sql = "select password,type from " + USER_TABLE +
             " where name='" + name +"';";
             ResultSet result = sql_statement.executeQuery(sql);
@@ -360,7 +362,7 @@ public class DBConnecter {
     public static String getKV(String key){
         Statement sql_statement = null;
         try {
-            sql_statement = c.createStatement();
+            sql_statement = mainConn.createStatement();
             String sql = "select value from " + KV_TABLE +
                     " where key='" + key +"';";
             ResultSet result = sql_statement.executeQuery(sql);
@@ -389,7 +391,7 @@ public class DBConnecter {
 
         Statement sql_statement = null;
         try {
-            sql_statement = c.createStatement();
+            sql_statement = mainConn.createStatement();
             boolean bool = sql_statement.execute("" +
                     "CREATE TABLE kv (\n" +
                     "  [key] VARCHAR(50) PRIMARY KEY, \n" +
@@ -397,7 +399,7 @@ public class DBConnecter {
             System.out.println(bool);
             //关闭连接和声明
             sql_statement.close();
-            c.close();
+            mainConn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
