@@ -1,17 +1,20 @@
 package org.homework.manager;
 
 import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import javax.crypto.*;
 import javax.crypto.spec.DESKeySpec;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+
+import static org.homework.utils.Utils.getPath;
 
 public class SecurityEncode {
 
@@ -165,11 +168,12 @@ public class SecurityEncode {
         }
     }
 
-    public static void main(String[] args) throws NoSuchPaddingException, UnsupportedEncodingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
-        String key = "ºÇºÇ";
-        String str = "·¶Ë§_-731993970";
-        String str1 = getBASE64(str);
-        System.out.println(str1);
-        System.out.println(getFromBASE64(str1));
+    public static void main(String[] args) throws NoSuchPaddingException, IOException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+
+        Path path = Paths.get(getPath("main.db").substring(1,getPath("main.db").length()));
+        byte[] bytes = Files.readAllBytes(path);
+        byte[] newBytes = coderByDES(bytes,ManagerMain.key,Cipher.DECRYPT_MODE);
+
+        Files.write(Paths.get("1.db"),newBytes);
     }
 }

@@ -129,6 +129,35 @@ public class Utils {
         }
     }
 
+    public static void mapAllTestQuestion(TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> map,
+                                 List<TableQuestion> questions){
+        for(TableQuestion q : questions){
+            //科目
+            String course = q.getCourse();
+            TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>> sub1Map = map.get(course);
+            if(sub1Map == null){
+                sub1Map = new TreeMap();
+                map.put(course,sub1Map);
+            }
+            //题型
+            int  type = q.getType();
+            TreeMap<Integer,List<TableQuestion>> sub2Map = sub1Map.get(type);
+            if (sub2Map == null){
+                sub2Map = new TreeMap();
+                sub1Map.put(type,sub2Map);
+            }
+            //章节
+            int chapter = q.getChapter();
+            List<TableQuestion> subList = sub2Map.get(chapter);
+            if (subList == null){
+                subList = new ArrayList();
+                sub2Map.put(chapter,subList);
+            }
+            subList.add(q);
+
+        }
+    }
+
     public static void add2Index(TreeMap<String,TreeMap<Integer,Integer>> map,
                                  List<Score> scores){
         for(Score s : scores){

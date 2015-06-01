@@ -7,6 +7,7 @@ import org.homework.student.ContentPanel;
 import org.homework.student.SimulateDialog;
 import org.homework.teacher.TScoreQuery;
 import org.homework.main.login.LoginPanel;
+import org.homework.teacher.TTestPaper;
 import org.homework.utils.MyButton;
 
 import javax.swing.*;
@@ -136,7 +137,8 @@ public class MainFrame extends JFrame {
         createTestPaper.addMyMouse(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				setContentPane(teacherPane);
+				createTestPaperClick();
+				//setContentPane(teacherPane);
 			}
 		});
 		menuBar.add(createTestPaper);
@@ -151,6 +153,8 @@ public class MainFrame extends JFrame {
         });
         menuBar.add(scoreQuery);
 	}
+
+
 
 	private void testPaperClick() {
 		StudentPanel.leftPanel.setVisible(true);
@@ -176,6 +180,10 @@ public class MainFrame extends JFrame {
     private void scoreQueryClick() {
         TScoreQuery tScoreQ = new TScoreQuery(this);
     }
+
+	private void createTestPaperClick() {
+		TTestPaper tTestPaper = new TTestPaper(this);
+	}
 
 	/**
 	 * Launch the application.

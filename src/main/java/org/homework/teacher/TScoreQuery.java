@@ -4,11 +4,15 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.AllStudentScore;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by lenovo on 2015/5/29.
@@ -21,7 +25,13 @@ public class TScoreQuery extends MouseAdapter {
     JButton queryButton;
     JTextField courseTextField;
     JTextField queryAsTextField;
+    JPanel tablePanel = null;
+    JTable table = null;
     static String queryAs = "班级";
+
+    boolean flag = true;
+
+
 
     public TScoreQuery(JFrame jFrame) {
                 /* 初始化jDialog1
@@ -76,13 +86,9 @@ public class TScoreQuery extends MouseAdapter {
         });
         queryButton.addMouseListener(this);
 
-
         jDialog.setVisible(true);
     }
 
-    private void showQueryResult() {
-        System.out.println("FUCK  query out");
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -91,9 +97,116 @@ public class TScoreQuery extends MouseAdapter {
            String course = courseTextField.getText();
            String queryAsText = queryAsTextField.getText();
            java.util.List<AllStudentScore> allStuScoreList = DBConnecter.getAllStudentScores(course, queryAs, queryAsText);
-           System.out.println(allStuScoreList);
+           //System.out.println("Befor sort: " + allStuScoreList);
+           Collections.sort(allStuScoreList, new Comparator<AllStudentScore>() {
+               public int compare(AllStudentScore arg0, AllStudentScore arg1) {
+                   if (arg0.getStudentNumber().compareTo(arg1.getStudentNumber()) == 0) {
+                       return Integer.valueOf(arg0.getChapter()).compareTo(Integer.valueOf(arg1.getChapter()));
+                   } else {
+                       return arg0.getStudentNumber().compareTo(arg1.getStudentNumber());
+                   }
+               }
+
+           });
+           //System.out.println("After sort: " + allStuScoreList);
+
+           //System.out.println(allStuScoreList);
+
+           Map<String, java.util.List<Float>> allStuScoreMap = new TreeMap<String, java.util.List<Float>>();
+
+           for (AllStudentScore allStudentScore : allStuScoreList) {
+               String stuNumber = allStudentScore.getStudentNumber();
+               String stuName = allStudentScore.getStudentName();
+               String stuNumName = stuNumber + "_" + stuName;
+               java.util.List<Float> scoreList = allStuScoreMap.get(stuNumName);
+               if (scoreList == null) {
+                   scoreList = new ArrayList<Float>();
+                   allStuScoreMap.put(stuNumName, scoreList);
+               }
+               scoreList.add(allStudentScore.getScore());
+           }
+
+           int row = allStuScoreMap.size() + 1;
+           int column = 0;
+           for (Map.Entry<String, List<Float>> entry : allStuScoreMap.entrySet()) {
+               int elemSize = entry.getValue().size();
+               if (elemSize > column) {
+                   column = elemSize;
+               }
+           }
+           column += 3;
+           if (tablePanel != null && table != null) {
+               tablePanel.remove(table);
+               jDialog.getContentPane().remove(tablePanel);
+               table = null;
+               tablePanel = null;
+               System.gc();
+           }
+           createTable(row, column, allStuScoreMap);
+           //System.out.println(allStuScoreMap);
 
 
         }
+    }
+
+    private void createTable(int row, int column, Map<String, java.util.List<Float>> allStuScoreMap) {
+        tablePanel = new JPanel();
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.setBackground(Color.WHITE);
+        tablePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        tablePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        jDialog.getContentPane().add(tablePanel, BorderLayout.CENTER);
+
+        table = new JTable(new DefaultTableModel(row, column));
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(table);
+        table.setEnabled(false);
+        table.setValueAt("学号", 0, 0);
+        table.setValueAt("姓名", 0, 1);
+        table.setValueAt("平均分", 0, column-1);
+        for (int i = 1; i <= column - 3; i++) {
+            String s = "第" + i + "章";
+            table.setValueAt(s, 0, i+1);
+        }
+        table.setBorder(new LineBorder(new Color(0, 0, 0)));
+        table.setRowHeight(20);
+        tablePanel.add(scrollPane);
+
+        int rowIndex = 0;
+        int columnIndex = 0;
+        float scoreSum = 0;
+        int index = 0;
+        for (Map.Entry<String, List<Float>> entry : allStuScoreMap.entrySet()) {
+
+            rowIndex++;
+            columnIndex = 0;
+            scoreSum = 0;
+            index = 0;
+
+            String[] stuNumName = entry.getKey().split("_");
+            table.setValueAt(stuNumName[0], rowIndex, columnIndex++);
+            table.setValueAt(stuNumName[1], rowIndex, columnIndex++);
+            for (Float score : entry.getValue()) {
+                table.setValueAt(score, rowIndex, columnIndex++);
+                scoreSum += score;
+                index++;
+            }
+            table.setValueAt(scoreSum/index, rowIndex, column-1);
+
+        }
+
+
+        //tablePanel.repaint();
+        //jDialog.repaint();
+        if (flag) {
+            flag = false;
+            jDialog.resize(650, 630);
+        }
+        else {
+            flag = true;
+            jDialog.resize(650, 629);
+        }
+
+
     }
 }

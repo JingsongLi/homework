@@ -1,7 +1,6 @@
 package org.homework.student;
 
 import org.homework.db.model.TableQuestion;
-import org.homework.main.MainFrame;
 import org.homework.main.StudentPanel;
 
 import javax.swing.*;
@@ -177,16 +176,16 @@ public class SimulateDialog extends MouseAdapter{
         String str1 = textField.getText();
         if(!str1.equals(""))
             find2QuestionList(1,Integer.parseInt(str1));
-        String str2 = textField.getText();
+        String str2 = textField_2.getText();
         if(!str2.equals(""))
             find2QuestionList(2,Integer.parseInt(str2));
-        String str3 = textField.getText();
+        String str3 = textField_3.getText();
         if(!str3.equals(""))
             find2QuestionList(3,Integer.parseInt(str3));
-        String str4 = textField.getText();
+        String str4 = textField_4.getText();
         if(!str4.equals(""))
             find2QuestionList(4,Integer.parseInt(str4));
-        String str5 = textField.getText();
+        String str5 = textField_5.getText();
         if(!str5.equals(""))
             find2QuestionList(5, Integer.parseInt(str5));
 

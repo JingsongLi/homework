@@ -28,6 +28,7 @@ public class CatalogTree{
 
     @Getter
     static JTree tree;
+    //                           科目           章节              类型
     public final static TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> allData = new TreeMap();
     public final static TreeMap<String,TreeMap<Integer,Integer>> allScore = new TreeMap();;
     public static DefaultMutableTreeNode firstLeaf;

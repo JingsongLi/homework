@@ -1,10 +1,10 @@
 package org.homework.manager;
 
-import org.homework.manager.SecurityEncode;
 import javax.crypto.Cipher;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import static org.homework.utils.Utils.getPath;
 
 /**

@@ -223,13 +223,17 @@ public class ContentPanel extends JPanel {
                     myAnswer = t.getMyAnswer();
                 }
                 String rightAnswer = null;
+                String rightAnswerExplain = null;
                 if(CatalogTree.allScore.get(t.getCourse()).containsKey(t.getChapter())){
                     rightAnswer = t.getAnswer();
-                }else
+                    rightAnswerExplain = t.getAnswerExplain();
+                }else{
                     rightAnswer = "此章节未公布答案。";
+                    rightAnswerExplain = "此章节未公布答案。";
+                }
                 answer.setText("我的答案：" + myAnswer + "   " + "\n\r" +
                         "正确答案：" + rightAnswer+ "   " + "\n\r" +
-                        "解题思路：" + t.getAnswerExplain());
+                        "解题思路：" + rightAnswerExplain);
                 answer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
             }
         });
