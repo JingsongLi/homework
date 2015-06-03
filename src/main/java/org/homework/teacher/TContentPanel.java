@@ -7,6 +7,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,12 @@ import static org.homework.utils.Utils.*;
 public class TContentPanel extends JPanel {
 
     public static final String PRE = "question\\";
+
+    ArrayList<JTextField> comprehensiveScoreTextFiled = new ArrayList<JTextField>();
+    JTextField compSumScore = new JTextField(10);
+    JTextField sumScoreText = new JTextField(10);
+    float sumScore = 0;
+    float objectiveScore = 0;
 
     JLabel labelTitle;
     JScrollPane scrollPane;
@@ -70,6 +78,14 @@ public class TContentPanel extends JPanel {
         removeAll();
         labelTitle.setText("批改作业");
 
+        sumScore = 0;
+        objectiveScore = 0;
+        sumScoreText.setText(null);
+        compSumScore.setText(null);
+        for (JTextField jTextField : comprehensiveScoreTextFiled) {
+            jTextField.setText(null);
+        }
+
         for (Map.Entry<Integer, List<StudentAnswer>> entry : map.entrySet()) {
             //List<StudentAnswer> list = entry.getValue();
             int type = entry.getKey();
@@ -98,6 +114,40 @@ public class TContentPanel extends JPanel {
             */
             addPanel(unitScore, entry.getKey(), entry.getValue());
         }
+
+        final JPanel sumScorePanel = new JPanel();
+        sumScorePanel.setBackground(Color.WHITE);
+        sumScorePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        sumScorePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        sumScorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sumScorePanel.add(new JLabel("总得分："));
+        sumScorePanel.add(sumScoreText);
+        sumScoreText.setEditable(false);
+        final JButton submitScore = new JButton("提交成绩");
+        sumScorePanel.add(submitScore);
+        submitScore.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getSource() == submitScore) {
+                    float comsumS = 0;
+                    sumScore = 0;
+                    for (JTextField jTextField : comprehensiveScoreTextFiled) {
+                        String s = jTextField.getText();
+                        if (!s.equals("")) {
+                            comsumS += Float.parseFloat(s);
+                        }
+                    }
+                    sumScore = objectiveScore + comsumS;
+                    compSumScore.setText(Float.toString(comsumS));
+                    sumScoreText.setText(Float.toString(sumScore));
+
+                    //更新到数据库
+
+                }
+            }
+        });
+
+        add(sumScorePanel);
 
         //有空白Panel才能删除最后一个控件（答案）
         JPanel plaitPanel = new JPanel();
@@ -180,6 +230,8 @@ public class TContentPanel extends JPanel {
         score = unitScore * count;
         textField.setText(Float.toString(score));
 
+        objectiveScore += score;
+
 
         add(tablePanel);
 
@@ -201,14 +253,17 @@ public class TContentPanel extends JPanel {
         scorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JTextField textField = new JTextField(10);
         scorePanel.add(new JLabel("成绩："));
-        scorePanel.add(textField);
+
 
         if (type == 4) {
             textLineCount = 2;
+            scorePanel.add(textField);
             textField.setEditable(false);
         }
         else {
             textLineCount = 5;
+            scorePanel.add(compSumScore);
+            compSumScore.setEnabled(false);
         }
 
         add(scorePanel);
@@ -227,6 +282,12 @@ public class TContentPanel extends JPanel {
             scoreNumberPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
             scoreNumberPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             scoreNumberPanel.add(new JLabel(i.toString() + "."));
+            if (type == 5) {
+                scoreNumberPanel.add(new JLabel("成绩："));
+                JTextField compScoreTextFiled = new JTextField(10);
+                scoreNumberPanel.add(compScoreTextFiled);
+                comprehensiveScoreTextFiled.add(compScoreTextFiled);
+            }
             answerPanel.add(scoreNumberPanel);
 
             //学生答案与参考答案panel
@@ -298,7 +359,9 @@ public class TContentPanel extends JPanel {
         if (type == 4) {
             score = unitScore * count;
             textField.setText(Float.toString(score));
+            objectiveScore += score;
         }
+
 
     }
 

@@ -29,10 +29,6 @@ public class TScoreQuery extends MouseAdapter {
     JTable table = null;
     static String queryAs = "班级";
 
-    boolean flag = true;
-
-
-
     public TScoreQuery(JFrame jFrame) {
                 /* 初始化jDialog1
         * 指定对话框的拥有者为jFrame,标题为"Dialog",当对话框为可视时,其他构件不能
@@ -195,18 +191,6 @@ public class TScoreQuery extends MouseAdapter {
 
         }
 
-
-        //tablePanel.repaint();
-        //jDialog.repaint();
-        if (flag) {
-            flag = false;
-            jDialog.resize(650, 630);
-        }
-        else {
-            flag = true;
-            jDialog.resize(650, 629);
-        }
-
-
+        jDialog.setVisible(true);
     }
 }

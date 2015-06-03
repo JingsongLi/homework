@@ -10,18 +10,12 @@ import org.homework.manager.SecurityEncode;
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,11 +59,24 @@ public class IoOperator {
 
     public static void generatePDF(int chapter, TreeMap<Integer, List<TableQuestion>> map) {
         String direct = getFileDirectChoose();
+        String path = null;
         if (direct != null) {
-            String path = direct + "\\" + "第" + getChineseNum(chapter) + "章" +
-                    "试题.pdf";
+            if (chapter == -1) {
+                path = direct + "\\" + "考试试题.pdf";
+            }
+            else {
+                path = direct + "\\" + "第" + getChineseNum(chapter) + "章" +
+                        "试题.pdf";
+            }
+
             List<PDFLiner> list = new ArrayList<PDFLiner>();
-            list.add(new PDFLiner("第" + getChineseNum(chapter) + "章" + "试题", 25, Font.BOLD));
+            if (chapter == -1) {
+                list.add(new PDFLiner("考试试题", 25, Font.BOLD));
+            }
+            else {
+                list.add(new PDFLiner("第" + getChineseNum(chapter) + "章" + "试题", 25, Font.BOLD));
+            }
+
             for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
                 list.add(new PDFLiner(getTypeWord(entry.getKey()), 20, Font.BOLD));
                 for (int i = 0; i < entry.getValue().size(); i++) {
