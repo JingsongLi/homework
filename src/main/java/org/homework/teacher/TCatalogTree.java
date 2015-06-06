@@ -61,7 +61,7 @@ public class TCatalogTree {
 
                     for (Map.Entry<String,TreeMap<Integer,List<StudentAnswer>>> entry4 : entry3.getValue().entrySet()) {
                         //4. studentNumberName
-                        DefaultMutableTreeNode node4 = new DefaultMutableTreeNode(new AnswerNode(entry4.getKey(), entry4.getValue()));
+                        DefaultMutableTreeNode node4 = new DefaultMutableTreeNode(new AnswerNode(entry3.getKey(), entry4.getKey(), entry1.getKey(), entry2.getKey(), entry4.getValue()));
                         node3.add(node4);
                         if(firstLeaf == null)
                             firstLeaf = node4;
@@ -107,7 +107,7 @@ public class TCatalogTree {
     private static void click(Object object,boolean isReload) {
         AnswerNode ansNode = (AnswerNode) object;
         System.out.println("ƒ„—°‘Ò¡À£∫" + ansNode.map);
-        TContentPanel.getTContentPanel().fullContent(ansNode.map);
+        TContentPanel.getTContentPanel().fullContent(ansNode.studentClass,ansNode.studentNumName, ansNode.course, ansNode.chapter, ansNode.map);
         if(isReload) {
             defaultTreeModel.reload();
             ecTreeTest(tree);
@@ -134,11 +134,17 @@ public class TCatalogTree {
 
 
     public static class AnswerNode {
+        String studentClass;
         String studentNumName;
+        String course;
+        Integer chapter;
         TreeMap<Integer,List<StudentAnswer>> map;
 
-        public AnswerNode(String studentNumName, TreeMap<Integer,List<StudentAnswer>> map) {
+        public AnswerNode(String studentClass, String studentNumName, String course, Integer chapter, TreeMap<Integer,List<StudentAnswer>> map) {
+            this.studentClass = studentClass;
             this.studentNumName = studentNumName;
+            this.course = course;
+            this.chapter = chapter;
             this.map = map;
         }
 

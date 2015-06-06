@@ -1,5 +1,6 @@
 package org.homework.teacher;
 
+import org.homework.db.DBConnecter;
 import org.homework.db.model.StudentAnswer;
 
 import javax.swing.*;
@@ -73,7 +74,7 @@ public class TContentPanel extends JPanel {
         return Float.parseFloat(tmp);
     }
 
-    public void fullContent(TreeMap<Integer, List<StudentAnswer>> map){
+    public void fullContent(final String stuClass, final String stuNumName, final String course, final Integer chapter, TreeMap<Integer, List<StudentAnswer>> map){
 
         removeAll();
         labelTitle.setText("批改作业");
@@ -141,7 +142,10 @@ public class TContentPanel extends JPanel {
                     compSumScore.setText(Float.toString(comsumS));
                     sumScoreText.setText(Float.toString(sumScore));
 
+                    String[] stu = stuNumName.split("_");
+
                     //更新到数据库
+                    DBConnecter.updateAllStudentScore(stuClass, stu[0], stu[1], course, chapter, sumScore);
 
                 }
             }

@@ -19,5 +19,5 @@ public class Score {
     private int id;
     private String course;
     private int chapter;
-    private int score;
+    private Float score;
 }

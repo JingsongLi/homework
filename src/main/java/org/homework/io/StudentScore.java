@@ -7,9 +7,10 @@ import org.homework.manager.ManagerMain;
 import org.homework.manager.SecurityEncode;
 
 import javax.crypto.Cipher;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class StudentScore implements Serializable{
     String name;
     String course;
     int chapter;
-    int score;
+    float score;
     public static void main(String[] args) throws Exception {
         FileOutputStream out = new FileOutputStream("∫«∫«");
         ObjectOutputStream oos = null;
@@ -35,8 +36,8 @@ public class StudentScore implements Serializable{
         oos = new ObjectOutputStream(baos);
         Map<String,List<StudentScore>> map = new HashMap<String,List<StudentScore>>();
         List<StudentScore> list = new ArrayList<StudentScore>();
-        list.add(new StudentScore("∑∂Àß","”¢”Ô",3,33));
-        map.put("∑∂Àß",list);
+        list.add(new StudentScore("’≈»˝","”¢”Ô",2,63));
+        map.put("’≈»˝",list);
         oos.writeObject(map);
         byte[] bytes = baos.toByteArray();
         //º”√‹

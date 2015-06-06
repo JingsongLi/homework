@@ -185,7 +185,7 @@ public class DBConnecter {
 
             while (result.next()) {
                 AllStudentScore allStudentScore = new AllStudentScore();
-                allStudentScore.setId(result.getInt(AllStudentScore.ID));
+                //allStudentScore.setId(result.getInt(AllStudentScore.ID));
                 allStudentScore.setCourse(result.getString(AllStudentScore.COURSE));
                 allStudentScore.setChapter(result.getInt(AllStudentScore.CHAPTER));
                 allStudentScore.setStudentClass(result.getString(AllStudentScore.STUDENT_CLASS));
@@ -202,6 +202,41 @@ public class DBConnecter {
                 System.out.println(next);
             }
 
+
+            //关闭连接和声明
+            allStudentScoreStatement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return allStudentScoreList;
+    }
+
+    public static List<AllStudentScore> getAllStudentScores() {
+
+        List<AllStudentScore> allStudentScoreList = new ArrayList<AllStudentScore>();
+        Statement allStudentScoreStatement = null;
+
+        String sql = null;
+
+        sql = "select * from " + ALL_STUDENT_SCORE_TABLE;
+
+        try {
+            allStudentScoreStatement = ownConn.createStatement();
+            ResultSet result = allStudentScoreStatement.executeQuery(sql);
+            while (result.next()) {
+                AllStudentScore allStudentScore = new AllStudentScore();
+                //allStudentScore.setId(result.getInt(AllStudentScore.ID));
+                allStudentScore.setCourse(result.getString(AllStudentScore.COURSE));
+                allStudentScore.setChapter(result.getInt(AllStudentScore.CHAPTER));
+                allStudentScore.setStudentClass(result.getString(AllStudentScore.STUDENT_CLASS));
+                allStudentScore.setStudentNumber(result.getString(AllStudentScore.STUDENT_NUMBER));
+                allStudentScore.setStudentName(result.getString(AllStudentScore.STUDENT_NAME));
+                allStudentScore.setScore(result.getFloat(AllStudentScore.SCORE));
+
+                allStudentScoreList.add(allStudentScore);
+
+            }
 
             //关闭连接和声明
             allStudentScoreStatement.close();
@@ -285,14 +320,52 @@ public class DBConnecter {
 
             while (result.next()) {
                 Score score = new Score();
-                score.setId(result.getInt(Score.ID));
+                //score.setId(result.getInt(Score.ID));
                 score.setCourse(result.getString(Score.COURSE));
                 score.setChapter(result.getInt(Score.CHAPTER));
-                score.setScore(result.getInt(Score.SCORE));
+                score.setScore(result.getFloat(Score.SCORE));
                 list.add(score);
             }
         }catch (SQLException e) {
                 e.printStackTrace();
+        }finally {
+            try {
+
+                sql_statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("SCORE SCORE :"  + list);
+        return list;
+    }
+
+    public static void  updateAllStudentScore(String stuClass, String stuNumber, String stuName, String course, int chapter, float score){
+        Statement sql_statement = null;
+        stuClass = "'" + stuClass + "'";
+        stuNumber = "'" + stuNumber + "'";
+        stuName = "'" + stuName + "'";
+        course = "'" + course + "'";
+        try {
+            sql_statement = ownConn.createStatement();
+            String sql =  "update " + ALL_STUDENT_SCORE_TABLE +
+                    " set " + AllStudentScore.SCORE + " = " + score +
+                    " where " + AllStudentScore.STUDENT_NUMBER +" = " + stuNumber +
+                    " and " + AllStudentScore.CHAPTER + " = " + chapter +
+                    " and " + AllStudentScore.COURSE + "=" + course;
+            int upRet = sql_statement.executeUpdate(sql);
+            System.out.println(sql);
+            if (upRet == 0){
+                String insertSql = "insert into " + ALL_STUDENT_SCORE_TABLE +
+                        " (" + AllStudentScore.COURSE + "," + AllStudentScore.CHAPTER + ","
+                             + AllStudentScore.STUDENT_CLASS + "," + AllStudentScore.STUDENT_NUMBER + ","
+                             + AllStudentScore.STUDENT_NAME + "," + AllStudentScore.SCORE + ")" +
+                        " values " + "(" + course + "," + chapter + "," + stuClass + "," + stuNumber + "," + stuName + "," + score + ")";
+                sql_statement.executeUpdate(insertSql);
+                System.out.println(insertSql);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }finally {
             try {
                 sql_statement.close();
@@ -300,15 +373,15 @@ public class DBConnecter {
                 e.printStackTrace();
             }
         }
-
-        return list;
     }
 
 
-    public static void  updateScore(String course, int chapter, int score){
+    public static void  updateScore(String course, int chapter, float score){
         Statement sql_statement = null;
         course = "'" + course + "'";
         try {
+            ownConn.setAutoCommit(false);
+
             sql_statement = ownConn.createStatement();
             String sql =  "update " + SCORE_OWN_TABLE +
                     " set " + Score.SCORE + " = " + score +
@@ -327,6 +400,8 @@ public class DBConnecter {
             e.printStackTrace();
         }finally {
             try {
+                ownConn.commit();
+                ownConn.setAutoCommit(true);
                 sql_statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -338,12 +413,11 @@ public class DBConnecter {
         Statement sql_statement = null;
         try {
             sql_statement = mainConn.createStatement();
-            String sql = "select password,type from " + USER_TABLE +
-            " where name='" + name +"';";
+            String sql = "select * from " + USER_TABLE +
+                            " where name='" + name +"';";
             ResultSet result = sql_statement.executeQuery(sql);
-//            System.out.println(sql);
             if (result.next()) {
-                User user = new User(name,result.getString("password"),
+                User user = new User(result.getString("name"),result.getString("password"),
                         result.getInt("type"));
                 return user;
             }

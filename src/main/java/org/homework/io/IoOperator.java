@@ -3,6 +3,7 @@ package org.homework.io;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import org.homework.db.DBConnecter;
+import org.homework.db.model.AllStudentScore;
 import org.homework.db.model.TableQuestion;
 import org.homework.main.MainFrame;
 import org.homework.manager.ManagerMain;
@@ -16,10 +17,12 @@ import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 import static org.homework.io.PDFOperator.PDFLiner;
 import static org.homework.utils.Utils.*;
@@ -127,13 +130,87 @@ public class IoOperator {
                 ObjectInputStream oin = new ObjectInputStream(in);
                 Map<String,List<StudentScore>> map = (Map<String, List<StudentScore>>) oin.readObject();
                 List<StudentScore> list = map.get(MainFrame.user.getName());
-                System.out.println(list);
+                //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
                 for(StudentScore s : list){
                     DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
                     //更新树形界面！
                     CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
                 }
                 CatalogTree.initTop();
+                JOptionPane.showMessageDialog(null, "导入成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "读取失败！");
+            }
+        }
+    }
+
+    public static void exportScore() throws Exception{
+        List<AllStudentScore> allStudentScoreList = DBConnecter.getAllStudentScores();
+        Map<String, List<StudentScore>> studentScoreMap = new TreeMap<String, List<StudentScore>>();
+
+        for (AllStudentScore allStudentScore : allStudentScoreList) {
+            String stuInfo = null;
+            stuInfo = allStudentScore.getStudentClass() + "_" + allStudentScore.getStudentNumber()
+                                                        + "_" + allStudentScore.getStudentName();
+            List<StudentScore> list = studentScoreMap.get(stuInfo);
+            if (list == null) {
+                list = new ArrayList<StudentScore>();
+                studentScoreMap.put(stuInfo, list);
+            }
+            list.add(new StudentScore(stuInfo, allStudentScore.getCourse(),
+                      allStudentScore.getChapter(), allStudentScore.getScore()));
+        }
+        String direct = getFileDirectChoose();
+        String path = direct + "\\" + "学生成绩";
+        try {
+            FileOutputStream out = new FileOutputStream(path);
+            ObjectOutputStream oos = null;
+            ByteArrayOutputStream baos = null;
+            // 序列化
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(studentScoreMap);
+            byte[] bytes = baos.toByteArray();
+            //加密
+            byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.ENCRYPT_MODE);
+            out.write(newBytes);
+            out.close();
+            JOptionPane.showMessageDialog(null, "导出学生成绩成功！");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "导出学生成绩失败！");
+        }
+
+    }
+
+    public static void importStudentWork() {
+        JFileChooser fileChooser = new JFileChooser("F:\\");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int returnVal = fileChooser.showOpenDialog(fileChooser);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            try {
+                byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+                //file解析
+                byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
+                ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
+                ObjectInputStream oin = new ObjectInputStream(in);
+                StudentWork studentWork  = (StudentWork) oin.readObject();
+
+                System.out.println(studentWork);
+                //name  : 班级_学号_姓名
+                //course
+                //chapter
+                //map<type, answer(TableQuestion)>
+
+                //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
+                //for(StudentScore s : list){
+                //    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
+                    //更新树形界面！
+                    //CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
+                //}
+                //CatalogTree.initTop();
                 JOptionPane.showMessageDialog(null, "导入成功！");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -155,4 +232,6 @@ public class IoOperator {
 
     public static void main(String[] args) {
     }
+
+
 }

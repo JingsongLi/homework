@@ -26,7 +26,7 @@ public class StudentWork implements Serializable{
     Object data;
 
     public static void main(String[] args) throws Exception {
-        byte[] bytes = Files.readAllBytes(Paths.get("范帅_数学_1"));
+        byte[] bytes = Files.readAllBytes(Paths.get("张三_英语_1"));
         //file解析
         byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
         ByteArrayInputStream in = new ByteArrayInputStream(newBytes);

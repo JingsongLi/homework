@@ -30,7 +30,7 @@ public class CatalogTree{
     static JTree tree;
     //                           科目           章节              类型
     public final static TreeMap<String,TreeMap<Integer,TreeMap<Integer,List<TableQuestion>>>> allData = new TreeMap();
-    public final static TreeMap<String,TreeMap<Integer,Integer>> allScore = new TreeMap();;
+    public final static TreeMap<String,TreeMap<Integer,Float>> allScore = new TreeMap();;
     public static DefaultMutableTreeNode firstLeaf;
     static {
         List<TableQuestion> questions = DBConnecter.getAllQuestion();
@@ -95,7 +95,7 @@ public class CatalogTree{
             top.add(node1);
             for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()){
                 //1.get score
-                Integer score = null;
+                Float score = null;
                 if(allScore.containsKey(entry1.getKey()) &&
                         allScore.get(entry1.getKey()).containsKey(entry2.getKey()))
                     score = allScore.get(entry1.getKey()).get(entry2.getKey());
@@ -169,9 +169,9 @@ public class CatalogTree{
         int chapter;
         String course;
         TreeMap<Integer,List<TableQuestion>> map;
-        Integer score;
+        Float score;
 
-        public ChapterNode(int chapter,String course, TreeMap<Integer,List<TableQuestion>> map, Integer score){
+        public ChapterNode(int chapter,String course, TreeMap<Integer,List<TableQuestion>> map, Float score){
             this.chapter = chapter;
             this.course = course;
             this.map = map;

@@ -83,7 +83,7 @@ public class Utils {
             //4级目录  学生学号姓名
             String stuNumber = stuAns.getStudentNumber();
             String stuName = stuAns.getStudentName();
-            String stuNumName = stuNumber + stuName;
+            String stuNumName = stuNumber + "_" + stuName;
             TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
             if (sub4Map == null) {
                 sub4Map = new TreeMap();
@@ -158,12 +158,12 @@ public class Utils {
         }
     }
 
-    public static void add2Index(TreeMap<String,TreeMap<Integer,Integer>> map,
+    public static void add2Index(TreeMap<String,TreeMap<Integer,Float>> map,
                                  List<Score> scores){
         for(Score s : scores){
             //1级目录
             String course = s.getCourse();
-            TreeMap<Integer,Integer> sub1Map = map.get(course);
+            TreeMap<Integer,Float> sub1Map = map.get(course);
             if(sub1Map == null){
                 sub1Map = new TreeMap();
                 map.put(course,sub1Map);

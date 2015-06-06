@@ -72,8 +72,9 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 return;
             }
             String text = SecurityEncode.getFromBASE64( user.getPassword());
-            System.out.println(name + " " + text);
+            System.out.println("HEHE" + name + " " + text);
             String[] strs = text.split("_");
+            System.out.println(strs);
             //第二重和第三重验证，磁盘码和密钥
             if(!strs[strs.length-2].equals(UserVerify.getCDiskNum()) ||
                     !strs[strs.length-1].equals(trueCipher)){

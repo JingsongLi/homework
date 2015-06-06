@@ -152,6 +152,36 @@ public class MainFrame extends JFrame {
             }
         });
         menuBar.add(scoreQuery);
+
+		final MyButton exportScore = new MyButton(" 导出成绩 ");
+		exportScore.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//setContentPane(teacherPane);
+				try {
+					IoOperator.exportScore();
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menuBar.add(exportScore);
+
+		final MyButton importStuWork = new MyButton(" 导入学生作业 ");
+		importStuWork.addMyMouse(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//setContentPane(teacherPane);
+				try {
+					IoOperator.importStudentWork();
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menuBar.add(importStuWork);
 	}
 
 

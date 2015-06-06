@@ -1,25 +1,17 @@
 package org.homework.manager;
 
 import org.homework.db.DBConnecter;
-import org.homework.student.CatalogTree;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 /**
  * Created by hasee on 2015/5/30.
@@ -80,6 +72,7 @@ public class ManagerMain extends JFrame{
                 String cipher = new String(passwordField.getPassword());
                 String text = textField.getText();
                 if (cipher.equals(trueCipher)) {
+                    System.out.println("HEHE:" + cipher + text);
                     password.setText(SecurityEncode.getBASE64(text + "_" + cipher));
                 } else {
                     JOptionPane.showMessageDialog(null, "√‹‘ø¥ÌŒÛ£°");
