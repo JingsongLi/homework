@@ -3,7 +3,6 @@ package org.homework.db.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j;
 
 import java.io.Serializable;
 
@@ -35,7 +34,7 @@ public class TableQuestion implements Serializable{
     int type;
     transient String main_content;
     transient String ele_content;
-    transient String answer;
+    String answer;
     transient String answerExplain;
     String myAnswer;
     transient String note;

@@ -39,37 +39,11 @@ public class TCatalogTree {
     }
 
     private static DefaultTreeModel defaultTreeModel;
+    private static DefaultMutableTreeNode top;
+    private static DefaultMutableTreeNode firstLeaf;
 
     public TCatalogTree() {
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("catalog");
-        DefaultMutableTreeNode firstLeaf = null;
-        for (Map.Entry<String,TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>>
-                                                         entry1 : allStudentAnswer.entrySet()) {
-            //1. course name
-            DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(entry1.getKey());
-            top.add(node1);
-            for (Map.Entry<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>
-                                                       entry2 : entry1.getValue().entrySet()) {
-                //2.chapter name
-                DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new ChapterNode(entry2.getKey()));
-                node1.add(node2);
-                for (Map.Entry<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>
-                                                        entry3 : entry2.getValue().entrySet()) {
-                    //3. studentClass name
-                    DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(entry3.getKey());
-                    node2.add(node3);
-
-                    for (Map.Entry<String,TreeMap<Integer,List<StudentAnswer>>> entry4 : entry3.getValue().entrySet()) {
-                        //4. studentNumberName
-                        DefaultMutableTreeNode node4 = new DefaultMutableTreeNode(new AnswerNode(entry3.getKey(), entry4.getKey(), entry1.getKey(), entry2.getKey(), entry4.getValue()));
-                        node3.add(node4);
-                        if(firstLeaf == null)
-                            firstLeaf = node4;
-                    }
-
-                }
-            }
-        }
+        top = new DefaultMutableTreeNode("catalog");
 
         defaultTreeModel =new DefaultTreeModel(top);
         tree = new JTree(defaultTreeModel);
@@ -92,17 +66,53 @@ public class TCatalogTree {
         });
 
         tree.setRootVisible(false);
+        initTop();
 //        tree.setShowsRootHandles(true);
-        ecTreeTest(tree);
+
         //firstLeafObect = firstLeaf.getUserObject();
         //clickFirst();
     }
 
-    /*
-    public static void clickFirst(){
-        click(firstLeafObect, true);
+    public static void initTop() {
+        top.removeAllChildren();
+        for (Map.Entry<String,TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>>
+                entry1 : allStudentAnswer.entrySet()) {
+            //1. course name
+            DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(entry1.getKey());
+            top.add(node1);
+            for (Map.Entry<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>
+                    entry2 : entry1.getValue().entrySet()) {
+                //2.chapter name
+                DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new ChapterNode(entry2.getKey()));
+                node1.add(node2);
+                for (Map.Entry<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>
+                        entry3 : entry2.getValue().entrySet()) {
+                    //3. studentClass name
+                    DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(entry3.getKey());
+                    node2.add(node3);
+
+                    for (Map.Entry<String,TreeMap<Integer,List<StudentAnswer>>> entry4 : entry3.getValue().entrySet()) {
+                        //4. studentNumberName
+                        DefaultMutableTreeNode node4 = new DefaultMutableTreeNode(new AnswerNode(entry3.getKey(), entry4.getKey(), entry1.getKey(), entry2.getKey(), entry4.getValue()));
+                        node3.add(node4);
+                        if(firstLeaf == null)
+                            firstLeaf = node4;
+                    }
+
+                }
+            }
+        }
+
+        ecTreeTest(tree);
+        clickFirst();
     }
-    */
+
+
+    public static void clickFirst(){
+        defaultTreeModel.reload();
+        ecTreeTest(tree);
+    }
+
 
     private static void click(Object object,boolean isReload) {
         AnswerNode ansNode = (AnswerNode) object;

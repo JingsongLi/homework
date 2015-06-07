@@ -4,12 +4,14 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.AllStudentScore;
+import org.homework.db.model.StudentAnswer;
 import org.homework.db.model.TableQuestion;
 import org.homework.main.MainFrame;
 import org.homework.manager.ManagerMain;
 import org.homework.manager.SecurityEncode;
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
+import org.homework.teacher.TCatalogTree;
 
 import javax.crypto.Cipher;
 import javax.swing.*;
@@ -17,12 +19,10 @@ import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.homework.io.PDFOperator.PDFLiner;
 import static org.homework.utils.Utils.*;
@@ -134,7 +134,14 @@ public class IoOperator {
                 for(StudentScore s : list){
                     DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
                     //更新树形界面！
-                    CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
+                    if (CatalogTree.allScore.get(s.getCourse()) != null) {
+                        CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(), s.getScore());
+                    }
+                    else {
+                        TreeMap<Integer, Float> map1 = new TreeMap<Integer, Float>();
+                        map1.put(s.getChapter(), s.getScore());
+                        CatalogTree.allScore.put(s.getCourse(), map1);
+                    }
                 }
                 CatalogTree.initTop();
                 JOptionPane.showMessageDialog(null, "导入成功！");
@@ -202,7 +209,85 @@ public class IoOperator {
                 //name  : 班级_学号_姓名
                 //course
                 //chapter
-                //map<type, answer(TableQuestion)>
+                //map<type, answer(TableQuestion)>     id
+
+                DBConnecter.updateStudentAnswer(studentWork);
+                //TCatalogTree.allStudentAnswer
+
+                String[] stuInfo = studentWork.getName().split("_");
+                String stuClass = stuInfo[0];
+                String stuNumber = stuInfo[1];
+                String stuName = stuInfo[2];
+                String course = studentWork.getCourse();
+                Integer chapter = studentWork.getChapter();
+                TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
+
+                ArrayList<StudentAnswer> studentAnswers = new ArrayList<StudentAnswer>();
+                for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
+                    Integer type = entry.getKey();
+                    for (TableQuestion tableQuestion : entry.getValue()) {
+                        Integer id = tableQuestion.getId();
+                        String stuAnswer = tableQuestion.getMyAnswer().replaceAll("#","");
+                        String correctAnswer = tableQuestion.getAnswer();
+                        StudentAnswer stuAns = new StudentAnswer();
+                        stuAns.setId(id);
+                        stuAns.setCourse(course);
+                        stuAns.setChapter(chapter);
+                        stuAns.setStudentClass(stuClass);
+                        stuAns.setStudentNumber(stuNumber);
+                        stuAns.setStudentName(stuName);
+                        stuAns.setType(type);
+                        stuAns.setStudentAnswer(stuAnswer);
+                        stuAns.setAnswer(correctAnswer);
+                        studentAnswers.add(stuAns);
+                    }
+                }
+
+
+                //TCatalogTree.allStudentAnswer.clear();
+                for(StudentAnswer stuAns : studentAnswers){
+                    //1级目录  科目
+                    course = stuAns.getCourse();
+                    TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>> sub1Map = TCatalogTree.allStudentAnswer.get(course);
+                    if(sub1Map == null){
+                        sub1Map = new TreeMap();
+                        TCatalogTree.allStudentAnswer.put(course,sub1Map);
+                    }
+                    //2级目录  章节
+                    chapter = stuAns.getChapter();
+                    TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>> sub2Map = sub1Map.get(chapter);
+                    if (sub2Map == null){
+                        sub2Map = new TreeMap();
+                        sub1Map.put(chapter,sub2Map);
+                    }
+                    //3级目录  班级
+                    stuClass = stuAns.getStudentClass();
+                    TreeMap<String, TreeMap<Integer,List<StudentAnswer>>> sub3Map = sub2Map.get(stuClass);
+                    if (sub3Map == null){
+                        sub3Map = new TreeMap();
+                        sub2Map.put(stuClass,sub3Map);
+                    }
+                    //4级目录  学生学号姓名
+                    stuNumber = stuAns.getStudentNumber();
+                    stuName = stuAns.getStudentName();
+                    String stuNumName = stuNumber + "_" + stuName;
+                    TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
+                    if (sub4Map == null) {
+                        sub4Map = new TreeMap();
+                        sub3Map.put(stuNumName,sub4Map);
+                    }
+                    //5级目录  题目类型   不显示
+                    int type = stuAns.getType();
+                    List<StudentAnswer> subList = sub4Map.get(type);
+                    if (subList == null){
+                        subList = new ArrayList();
+                        sub4Map.put(type,subList);
+                    }
+
+                    subList.add(stuAns);
+                }
+                TCatalogTree.initTop();
+
 
                 //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
                 //for(StudentScore s : list){

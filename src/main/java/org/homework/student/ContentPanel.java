@@ -224,10 +224,10 @@ public class ContentPanel extends JPanel {
                 }
                 String rightAnswer = null;
                 String rightAnswerExplain = null;
-                if(CatalogTree.allScore.get(t.getCourse()).containsKey(t.getChapter())){
+                if(CatalogTree.allScore.get(t.getCourse()) != null && CatalogTree.allScore.get(t.getCourse()).containsKey(t.getChapter())){
                     rightAnswer = t.getAnswer();
                     rightAnswerExplain = t.getAnswerExplain();
-                }else{
+                }else {
                     rightAnswer = "此章节未公布答案。";
                     rightAnswerExplain = "此章节未公布答案。";
                 }

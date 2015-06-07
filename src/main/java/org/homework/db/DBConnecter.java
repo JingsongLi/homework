@@ -1,6 +1,7 @@
 package org.homework.db;
 
 import org.homework.db.model.*;
+import org.homework.io.StudentWork;
 import org.homework.manager.DBEncoder;
 
 import java.sql.*;
@@ -245,6 +246,68 @@ public class DBConnecter {
             e.printStackTrace();
         }
         return allStudentScoreList;
+    }
+
+    public static void updateStudentAnswer(StudentWork studentWork) {
+        //name  : °à¼¶_Ñ§ºÅ_ÐÕÃû
+        //course
+        //chapter
+        //map<type, answer(TableQuestion)>     id
+        String[] stuInfo = studentWork.getName().split("_");
+        String stuClass = stuInfo[0];
+        String stuNumber = stuInfo[1];
+        String stuName = stuInfo[2];
+        String course = studentWork.getCourse();
+        stuClass = "'" + stuClass + "'";
+        stuNumber = "'" + stuNumber + "'";
+        stuName = "'" + stuName + "'";
+        course = "'" + course + "'";
+        Integer chapter = studentWork.getChapter();
+        TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
+        Integer id = null;
+        Integer type = null;
+        String stuAnswer = null;
+
+        Statement sql_statement = null;
+
+        for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
+            type = entry.getKey();
+            for (TableQuestion tableQuestion : entry.getValue()) {
+                id = tableQuestion.getId();
+                stuAnswer = tableQuestion.getMyAnswer().replaceAll("#", "");
+                stuAnswer = "'" + stuAnswer + "'";
+
+                try {
+                    sql_statement = ownConn.createStatement();
+                    String sql =  "update " + STUDENT_ANSWER_TABLE +
+                            " set " + StudentAnswer.STUDENT_ANSWER + " = " + stuAnswer +
+                            " where " + StudentAnswer.STUDENT_NUMBER +" = " + stuNumber +
+                            " and " + StudentAnswer.ID + " = " + id ;
+                    int upRet = sql_statement.executeUpdate(sql);
+                    System.out.println(sql);
+                    if (upRet == 0) {
+                        String insertSql = "insert into " + STUDENT_ANSWER_TABLE +
+                                " (" + StudentAnswer.ID + "," + StudentAnswer.COURSE + ","
+                                + StudentAnswer.CHAPTER + "," + StudentAnswer.STUDENT_CLASS + ","
+                                + StudentAnswer.STUDENT_NUMBER + "," + StudentAnswer.STUDENT_NAME + ","
+                                + StudentAnswer.TYPE + "," + StudentAnswer.STUDENT_ANSWER +")" +
+                                " values " + "(" + id + "," + course + "," + chapter + "," + stuClass + ","
+                                  + stuNumber + "," + stuName + "," + type + "," + stuAnswer + ")";
+                        sql_statement.executeUpdate(insertSql);
+                        System.out.println(insertSql);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        sql_statement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
     }
 
     public static class Updater{
