@@ -108,10 +108,9 @@ public class IoOperator {
             try {
                 PDFOperator.writePdf(list, path);
                 JOptionPane.showMessageDialog(null, "导出成功！");
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (DocumentException e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "文件已存在或者文件读取有错！");
             }
         }
     }
@@ -286,17 +285,32 @@ public class IoOperator {
 
                     subList.add(stuAns);
                 }
-                TCatalogTree.initTop();
+
+                //和文件名进行校验
+                String name = fileChooser.getSelectedFile().getName();
+                String[] strs = name.split("_");
+                String studentFileName = "";
+                for (int i = 0; i < strs.length - 2; i++) {
+                    studentFileName += "_";
+                    studentFileName += strs[i];
+                }
+                studentFileName = studentFileName.substring(1,studentFileName.length());
+                if(!studentFileName.equals(studentWork.getName())){
+                    JOptionPane.showMessageDialog(null,"此学生作弊！！");
+                    //
+                }else{
+                    TCatalogTree.initTop();
 
 
-                //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
-                //for(StudentScore s : list){
-                //    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
+                    //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
+                    //for(StudentScore s : list){
+                    //    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
                     //更新树形界面！
                     //CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
-                //}
-                //CatalogTree.initTop();
-                JOptionPane.showMessageDialog(null, "导入成功！");
+                    //}
+                    //CatalogTree.initTop();
+                    JOptionPane.showMessageDialog(null, "导入成功！");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "读取失败！");

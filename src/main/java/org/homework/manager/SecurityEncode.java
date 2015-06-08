@@ -174,6 +174,6 @@ public class SecurityEncode {
         byte[] bytes = Files.readAllBytes(path);
         byte[] newBytes = coderByDES(bytes,ManagerMain.key,Cipher.DECRYPT_MODE);
 
-        Files.write(Paths.get("1.db"),newBytes);
+        Files.write(Paths.get("premain.db"),newBytes);
     }
 }

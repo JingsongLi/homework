@@ -33,8 +33,9 @@ public class TTestPaper extends MouseAdapter {
     //每种题型，各章的题量
     ArrayList<ArrayList<JTextField>> textFieldArray = new ArrayList<ArrayList<JTextField>>();
     //ArrayList<ArrayList<Integer>> questionCount = new ArrayList<ArrayList<Integer>>();
+    final Map<JCheckBox, TableQuestion> checkboxList = new HashMap();
 
-    TreeMap<Integer, List<TableQuestion>> resultTestMap = new TreeMap<Integer, List<TableQuestion>>();
+
     TreeMap<Integer, TreeMap<Integer, java.util.List<TableQuestion>>> tempTestMap = new TreeMap<Integer, TreeMap<Integer, java.util.List<TableQuestion>>>();
 
     static {
@@ -123,7 +124,6 @@ public class TTestPaper extends MouseAdapter {
                 switch (e.getStateChange()) {
                     case ItemEvent.SELECTED:
                         TTestPaper.course = (String)e.getItem();
-                        resultTestMap.clear();
                         //tempTestMap.clear();
                         //textFieldArray.clear();
                         for (ArrayList<JTextField> list : textFieldArray) {
@@ -148,7 +148,7 @@ public class TTestPaper extends MouseAdapter {
 //            JLabel lab = new JLabel("i");
 //            centerPanel.add(lab);
 //        }
-        final Map<JCheckBox, TableQuestion> checkboxList = new HashMap();
+
 
         jDialog.getContentPane().remove(centerScrollPane);
         centerPanel.removeAll();
@@ -254,20 +254,7 @@ public class TTestPaper extends MouseAdapter {
                                 checkBox.addMouseListener(new MouseAdapter() {
                                     @Override
                                     public void mouseClicked(MouseEvent e) {
-                                        //super.mouseClicked(e);
-                                        for (Map.Entry<JCheckBox, TableQuestion> entry4 : checkboxList.entrySet()) {
-                                            if (entry4.getKey().isSelected()) {
-                                                //resultTestMap.put(5, entry.getValue());
-                                                java.util.List<TableQuestion> list = resultTestMap.get(5);
-                                                if (list == null) {
-                                                    list = new ArrayList<TableQuestion>();
-                                                    resultTestMap.put(5, list);
-                                                }
-                                                list.add(entry4.getValue());
-                                            }
-                                        }
 
-                                        //System.out.println("FUCK FUCK  FUCK :::::" + resultTestMap);
                                     }
                                 });
                             }
@@ -287,6 +274,7 @@ public class TTestPaper extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        TreeMap<Integer, List<TableQuestion>> resultTestMap = new TreeMap<Integer, List<TableQuestion>>();
         if (e.getSource() == createPaperBtn) {
             for (int i = 0; i < textFieldArray.size(); i++) {
                 ArrayList<Integer> list = new ArrayList<Integer>();
@@ -324,8 +312,31 @@ public class TTestPaper extends MouseAdapter {
             //System.out.println(tempTestMap);
             //System.out.println("FUCK：" + resultTestMap);
 
-            IoOperator.generatePDF(-1, resultTestMap);
+            //fuxuankuang
+            //super.mouseClicked(e);
+            for (Map.Entry<JCheckBox, TableQuestion> entry4 : checkboxList.entrySet()) {
+                if (entry4.getKey().isSelected()) {
+                    //resultTestMap.put(5, entry.getValue());
+                    java.util.List<TableQuestion> list = resultTestMap.get(5);
+//                    boolean have = false;
+                    if (list == null) {
+                        list = new ArrayList<TableQuestion>();
+                        resultTestMap.put(5, list);
+                    }
+//                    for (TableQuestion t : list){
+//                        if(t.equals(entry4.getValue())) {
+//                            have = true;
+//                            break;
+//                        }
+//                    }
+//                    if(!have)
+                        list.add(entry4.getValue());
+                }
+            }
 
+            //System.out.println("FUCK FUCK  FUCK :::::" + resultTestMap);
+
+            IoOperator.generatePDF(-1, resultTestMap);
         }
     }
 }
