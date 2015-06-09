@@ -1,0 +1,1 @@
+java org.homework.manager.ManagerMain
