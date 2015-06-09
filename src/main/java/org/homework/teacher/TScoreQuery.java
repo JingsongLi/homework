@@ -183,11 +183,16 @@ public class TScoreQuery extends MouseAdapter {
             table.setValueAt(stuNumName[0], rowIndex, columnIndex++);
             table.setValueAt(stuNumName[1], rowIndex, columnIndex++);
             for (Float score : entry.getValue()) {
-                table.setValueAt(score, rowIndex, columnIndex++);
-                scoreSum += score;
+                if(score == -1f) {
+                    table.setValueAt("×÷±×", rowIndex, columnIndex++);
+                    scoreSum += 0;
+                } else{
+                    table.setValueAt(score, rowIndex, columnIndex++);
+                    scoreSum += score;
+                }
                 index++;
             }
-            table.setValueAt(scoreSum/index, rowIndex, column-1);
+            table.setValueAt(scoreSum / index, rowIndex, column - 1);
 
         }
 

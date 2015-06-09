@@ -32,7 +32,7 @@ public class ManagerMain extends JFrame{
         getContentPane().setLayout(null);
 
         JLabel lblNewLabel = new JLabel("\u5BC6    \u94A5\uFF1A");
-        lblNewLabel.setBounds(24, 28, 66, 15);
+        lblNewLabel.setBounds(24, 28, 70, 15);
         getContentPane().add(lblNewLabel);
 
         passwordField = new JPasswordField();
@@ -40,7 +40,7 @@ public class ManagerMain extends JFrame{
         getContentPane().add(passwordField);
 
         JLabel label = new JLabel("信息输入：");
-        label.setBounds(24, 70, 66, 15);
+        label.setBounds(24, 70, 70, 15);
         getContentPane().add(label);
 
         textField = new JTextField();
@@ -61,11 +61,11 @@ public class ManagerMain extends JFrame{
                 }
             }
         });
-        button.setBounds(242, 156, 93, 23);
+        button.setBounds(242, 146, 93, 23);
         getContentPane().add(button);
 
         JButton btnNewButton = new JButton("生成密钥");
-        btnNewButton.setBounds(345, 156, 93, 23);
+        btnNewButton.setBounds(345, 146, 93, 23);
         btnNewButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -82,7 +82,7 @@ public class ManagerMain extends JFrame{
         getContentPane().add(btnNewButton);
 
         JLabel label_1 = new JLabel("\u6CE8 \u518C \u7801\uFF1A");
-        label_1.setBounds(24, 112, 66, 15);
+        label_1.setBounds(24, 112, 70, 15);
         getContentPane().add(label_1);
 
         password = new JTextField("");

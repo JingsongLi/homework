@@ -203,88 +203,12 @@ public class IoOperator {
                 ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
                 ObjectInputStream oin = new ObjectInputStream(in);
                 StudentWork studentWork  = (StudentWork) oin.readObject();
-
-                System.out.println(studentWork);
-                //name  : 班级_学号_姓名
-                //course
-                //chapter
-                //map<type, answer(TableQuestion)>     id
-
-                DBConnecter.updateStudentAnswer(studentWork);
-                //TCatalogTree.allStudentAnswer
-
                 String[] stuInfo = studentWork.getName().split("_");
                 String stuClass = stuInfo[0];
                 String stuNumber = stuInfo[1];
                 String stuName = stuInfo[2];
                 String course = studentWork.getCourse();
                 Integer chapter = studentWork.getChapter();
-                TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
-
-                ArrayList<StudentAnswer> studentAnswers = new ArrayList<StudentAnswer>();
-                for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
-                    Integer type = entry.getKey();
-                    for (TableQuestion tableQuestion : entry.getValue()) {
-                        Integer id = tableQuestion.getId();
-                        String stuAnswer = tableQuestion.getMyAnswer().replaceAll("#","");
-                        String correctAnswer = tableQuestion.getAnswer();
-                        StudentAnswer stuAns = new StudentAnswer();
-                        stuAns.setId(id);
-                        stuAns.setCourse(course);
-                        stuAns.setChapter(chapter);
-                        stuAns.setStudentClass(stuClass);
-                        stuAns.setStudentNumber(stuNumber);
-                        stuAns.setStudentName(stuName);
-                        stuAns.setType(type);
-                        stuAns.setStudentAnswer(stuAnswer);
-                        stuAns.setAnswer(correctAnswer);
-                        studentAnswers.add(stuAns);
-                    }
-                }
-
-
-                //TCatalogTree.allStudentAnswer.clear();
-                for(StudentAnswer stuAns : studentAnswers){
-                    //1级目录  科目
-                    course = stuAns.getCourse();
-                    TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>> sub1Map = TCatalogTree.allStudentAnswer.get(course);
-                    if(sub1Map == null){
-                        sub1Map = new TreeMap();
-                        TCatalogTree.allStudentAnswer.put(course,sub1Map);
-                    }
-                    //2级目录  章节
-                    chapter = stuAns.getChapter();
-                    TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>> sub2Map = sub1Map.get(chapter);
-                    if (sub2Map == null){
-                        sub2Map = new TreeMap();
-                        sub1Map.put(chapter,sub2Map);
-                    }
-                    //3级目录  班级
-                    stuClass = stuAns.getStudentClass();
-                    TreeMap<String, TreeMap<Integer,List<StudentAnswer>>> sub3Map = sub2Map.get(stuClass);
-                    if (sub3Map == null){
-                        sub3Map = new TreeMap();
-                        sub2Map.put(stuClass,sub3Map);
-                    }
-                    //4级目录  学生学号姓名
-                    stuNumber = stuAns.getStudentNumber();
-                    stuName = stuAns.getStudentName();
-                    String stuNumName = stuNumber + "_" + stuName;
-                    TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
-                    if (sub4Map == null) {
-                        sub4Map = new TreeMap();
-                        sub3Map.put(stuNumName,sub4Map);
-                    }
-                    //5级目录  题目类型   不显示
-                    int type = stuAns.getType();
-                    List<StudentAnswer> subList = sub4Map.get(type);
-                    if (subList == null){
-                        subList = new ArrayList();
-                        sub4Map.put(type,subList);
-                    }
-
-                    subList.add(stuAns);
-                }
 
                 //和文件名进行校验
                 String name = fileChooser.getSelectedFile().getName();
@@ -296,9 +220,75 @@ public class IoOperator {
                 }
                 studentFileName = studentFileName.substring(1,studentFileName.length());
                 if(!studentFileName.equals(studentWork.getName())){
-                    JOptionPane.showMessageDialog(null,"此学生作弊！！");
+                    JOptionPane.showMessageDialog(null,"学生" + studentFileName + "作弊！！");
+                    //更新到数据库
+                    DBConnecter.updateAllStudentScore(stuClass, stuNumber, stuName, course, chapter, -1f);
                     //
                 }else{
+                    DBConnecter.updateStudentAnswer(studentWork);
+                    TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
+                    ArrayList<StudentAnswer> studentAnswers = new ArrayList<StudentAnswer>();
+                    for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
+                        Integer type = entry.getKey();
+                        for (TableQuestion tableQuestion : entry.getValue()) {
+                            Integer id = tableQuestion.getId();
+                            String stuAnswer = tableQuestion.getMyAnswer().replaceAll("#","");
+                            String correctAnswer = tableQuestion.getAnswer();
+                            StudentAnswer stuAns = new StudentAnswer();
+                            stuAns.setId(id);
+                            stuAns.setCourse(course);
+                            stuAns.setChapter(chapter);
+                            stuAns.setStudentClass(stuClass);
+                            stuAns.setStudentNumber(stuNumber);
+                            stuAns.setStudentName(stuName);
+                            stuAns.setType(type);
+                            stuAns.setStudentAnswer(stuAnswer);
+                            stuAns.setAnswer(correctAnswer);
+                            studentAnswers.add(stuAns);
+                        }
+                    }
+                    //TCatalogTree.allStudentAnswer.clear();
+                    for(StudentAnswer stuAns : studentAnswers){
+                        //1级目录  科目
+                        course = stuAns.getCourse();
+                        TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>> sub1Map = TCatalogTree.allStudentAnswer.get(course);
+                        if(sub1Map == null){
+                            sub1Map = new TreeMap();
+                            TCatalogTree.allStudentAnswer.put(course,sub1Map);
+                        }
+                        //2级目录  章节
+                        chapter = stuAns.getChapter();
+                        TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>> sub2Map = sub1Map.get(chapter);
+                        if (sub2Map == null){
+                            sub2Map = new TreeMap();
+                            sub1Map.put(chapter,sub2Map);
+                        }
+                        //3级目录  班级
+                        stuClass = stuAns.getStudentClass();
+                        TreeMap<String, TreeMap<Integer,List<StudentAnswer>>> sub3Map = sub2Map.get(stuClass);
+                        if (sub3Map == null){
+                            sub3Map = new TreeMap();
+                            sub2Map.put(stuClass,sub3Map);
+                        }
+                        //4级目录  学生学号姓名
+                        stuNumber = stuAns.getStudentNumber();
+                        stuName = stuAns.getStudentName();
+                        String stuNumName = stuNumber + "_" + stuName;
+                        TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
+                        if (sub4Map == null) {
+                            sub4Map = new TreeMap();
+                            sub3Map.put(stuNumName,sub4Map);
+                        }
+                        //5级目录  题目类型   不显示
+                        int type = stuAns.getType();
+                        List<StudentAnswer> subList = sub4Map.get(type);
+                        if (subList == null){
+                            subList = new ArrayList();
+                            sub4Map.put(type,subList);
+                        }
+
+                        subList.add(stuAns);
+                    }
                     TCatalogTree.initTop();
 
 
