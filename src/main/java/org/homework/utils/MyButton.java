@@ -1,6 +1,7 @@
 package org.homework.utils;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -60,6 +61,9 @@ public class MyButton extends JButton {
             COLOR2 = sky2;
         }
         paintcolor(COLOR1, COLOR2);
+        setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 15));
+        setPreferredSize(new Dimension(80, 40));
+        setBorder(new EmptyBorder(7, 8, 7, 8));
     }
 
     public static void main(String args[]) {

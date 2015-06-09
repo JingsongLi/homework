@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 
 public class MainFrame extends JFrame {
@@ -27,6 +28,7 @@ public class MainFrame extends JFrame {
 	private static TeacherPanel teacherPane;
 	private static StudentPanel studentPanel;
 	public static User user;
+	private ArrayList<MyButton> clickButtonList = new ArrayList();
 
 
 	/**
@@ -58,6 +60,10 @@ public class MainFrame extends JFrame {
 		final MyButton simulate = new MyButton(" 模拟考场 ");
 		final MyButton favorite = new MyButton(" 收 藏 夹 ");
 		final MyButton importL = new MyButton(" 导入成绩 ");
+		clickButtonList.add(testPaper);
+		clickButtonList.add(simulate);
+		clickButtonList.add(favorite);
+		clickButtonList.add(importL);
 
 
 		testPaper.setBorder(new EmptyBorder(7, 8, 7, 8));
@@ -83,9 +89,7 @@ public class MainFrame extends JFrame {
 		testPaper.addMyMouse(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				simulate.notClick();
-				favorite.notClick();
-				importL.notClick();
+				otherNotClick(testPaper);
 				testPaperClick();
 				setContentPane(studentPanel);
 			}
@@ -97,9 +101,7 @@ public class MainFrame extends JFrame {
 				if (StudentPanel.leftPanel.isVisible())//未切换到模拟考试
 					simulate.notClick();
 				else {
-					testPaper.notClick();
-					favorite.notClick();
-					importL.notClick();
+					otherNotClick(simulate);
 					setContentPane(studentPanel);
 				}
 			}
@@ -107,9 +109,7 @@ public class MainFrame extends JFrame {
 		favorite.addMyMouse(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				testPaper.notClick();
-				simulate.notClick();
-				importL.notClick();
+				otherNotClick(favorite);
 				favoriteClick();
 				setContentPane(studentPanel);
 			}
@@ -122,66 +122,83 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-
-
-		final MyButton correctHomework = new MyButton(" 批改作业 ");
-		correctHomework.addMyMouse(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				setContentPane(teacherPane);
-			}
-		});
-		menuBar.add(correctHomework);
-
-		final MyButton createTestPaper = new MyButton(" 生成试卷 ");
-        createTestPaper.addMyMouse(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				createTestPaperClick();
-				//setContentPane(teacherPane);
-			}
-		});
-		menuBar.add(createTestPaper);
-
-        final MyButton scoreQuery = new MyButton(" 成绩查询 ");
-        scoreQuery.addMyMouse(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //setContentPane(teacherPane);
-                scoreQueryClick();
-            }
-        });
-        menuBar.add(scoreQuery);
-
-		final MyButton exportScore = new MyButton(" 导出成绩 ");
-		exportScore.addMyMouse(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				//setContentPane(teacherPane);
-				try {
-					IoOperator.exportScore();
+		if(user.getType() == User.TEACHER){
+			final MyButton correctHomework = new MyButton(" 批改作业 ");
+			clickButtonList.add(correctHomework);
+			correctHomework.addMyMouse(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					setContentPane(teacherPane);
+					otherNotClick(correctHomework);
 				}
-				catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-		menuBar.add(exportScore);
+			});
+			menuBar.add(correctHomework);
 
-		final MyButton importStuWork = new MyButton(" 导入学生作业 ");
-		importStuWork.addMyMouse(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				//setContentPane(teacherPane);
-				try {
-					IoOperator.importStudentWork();
+			final MyButton createTestPaper = new MyButton(" 生成试卷 ");
+			clickButtonList.add(createTestPaper);
+			createTestPaper.addMyMouse(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					createTestPaperClick();
+					createTestPaper.notClick();
+					//setContentPane(teacherPane);
 				}
-				catch (Exception e1) {
-					e1.printStackTrace();
+			});
+			menuBar.add(createTestPaper);
+
+			final MyButton scoreQuery = new MyButton(" 成绩查询 ");
+			clickButtonList.add(scoreQuery);
+			scoreQuery.addMyMouse(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					//setContentPane(teacherPane);
+					scoreQueryClick();
+					scoreQuery.notClick();
 				}
-			}
-		});
-		menuBar.add(importStuWork);
+			});
+			menuBar.add(scoreQuery);
+
+			final MyButton exportScore = new MyButton(" 导出成绩 ");
+			clickButtonList.add(exportScore);
+			exportScore.addMyMouse(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					//setContentPane(teacherPane);
+					try {
+						IoOperator.exportScore();
+					}
+					catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					exportScore.notClick();
+				}
+			});
+			menuBar.add(exportScore);
+
+			final MyButton importStuWork = new MyButton(" 导入学生作业 ");
+			clickButtonList.add(importStuWork);
+			importStuWork.addMyMouse(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					//setContentPane(teacherPane);
+					try {
+						IoOperator.importStudentWork();
+					}
+					catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					importStuWork.notClick();
+				}
+			});
+			menuBar.add(importStuWork);
+		}
+	}
+
+	private void otherNotClick(MyButton me){
+		for (MyButton b : clickButtonList){
+			if(!b.equals(me))
+				b.notClick();
+		}
 	}
 
 
