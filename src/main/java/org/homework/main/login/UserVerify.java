@@ -1,5 +1,11 @@
 package org.homework.main.login;
 
+import org.homework.manager.SecurityEncode;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -74,6 +80,39 @@ public class UserVerify {
     }
 
     public static void main(String[] args){
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    JFrame frame = new JFrame();
+                    frame.setLocation(400, 300);
+                    frame.setSize(464, 140);
+                    frame.setTitle("获取磁盘码");
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    frame.getContentPane().setLayout(null);
+
+                    JLabel label_1 = new JLabel("磁盘码：");
+                    label_1.setBounds(24, 32, 70, 15);
+                    frame.getContentPane().add(label_1);
+                    final JTextField password = new JTextField("");
+                    password.setEditable(false);
+                    password.setBounds(88, 26, 322, 27);
+                    frame.getContentPane().add(password);
+                    JButton btnNewButton = new JButton("获取");
+                    btnNewButton.setBounds(345, 66, 93, 23);
+                    btnNewButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            password.setText(getSerialNumber("C"));
+                        }
+                    });
+                    frame.getContentPane().add(btnNewButton);
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         System.out.println(getSerialNumber("C"));
     }
 }
