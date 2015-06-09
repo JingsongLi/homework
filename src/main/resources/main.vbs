@@ -1,2 +1,2 @@
 set ws=WScript.CreateObject("WScript.Shell") 
-ws.Run "bat\main.bat",0
+ws.Run "main.bat",0
