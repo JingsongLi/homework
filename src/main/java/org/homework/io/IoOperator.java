@@ -152,6 +152,9 @@ public class IoOperator {
     }
 
     public static void exportScore() throws Exception{
+        String direct = getFileDirectChoose();
+        if(direct == null)
+            return;
         List<AllStudentScore> allStudentScoreList = DBConnecter.getAllStudentScores();
         Map<String, List<StudentScore>> studentScoreMap = new TreeMap<String, List<StudentScore>>();
 
@@ -167,7 +170,6 @@ public class IoOperator {
             list.add(new StudentScore(stuInfo, allStudentScore.getCourse(),
                       allStudentScore.getChapter(), allStudentScore.getScore()));
         }
-        String direct = getFileDirectChoose();
         String path = direct + "\\" + "Ñ§Éú³É¼¨";
         try {
             FileOutputStream out = new FileOutputStream(path);
