@@ -12,11 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
-
-import static org.homework.utils.Utils.getPath;
 
 /**
  * Created by hasee on 2015/5/30.
@@ -62,17 +61,17 @@ public class LoginPanel  extends JFrame implements ActionListener {
         getContentPane().add(p2, BorderLayout.CENTER);
         getContentPane().add(p3, BorderLayout.SOUTH);
 
-        path = Paths.get(getPath("loginFile").substring(1, getPath("loginFile").length()));
-        file = new File(path.toString());
+        file = new File("loginFile");
         fileExisted = file.exists();
 
         if (fileExisted) {
             Scanner scanner = new Scanner(file);
             int i = 0;
-            String[] logInfo = {""};
+            String[] logInfo = new String[2];
             while (scanner.hasNext()) {
                 logInfo[i++] = scanner.next();
             }
+            scanner.close();
             tfUsername.setText(logInfo[0]);
             tfPassword.setText(logInfo[1]);
         }
@@ -83,10 +82,32 @@ public class LoginPanel  extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("登录")) {
+
             String name = tfUsername.getText();
             String password = new String(tfPassword.getPassword());
+
+            if (!fileExisted) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                try {
+                    PrintWriter pw = new PrintWriter(file);
+                    pw.println(name);
+                    pw.println(password);
+                    pw.close();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+
             System.out.println(name + " " + password);
             if(name.equals("") || password.equals("")){
                 JOptionPane.showMessageDialog(this, "用户名和密码不能为空！");
