@@ -190,7 +190,7 @@ public class SimulateDialog extends MouseAdapter{
             find2QuestionList(5, Integer.parseInt(str5));
 
         StudentPanel.leftPanel.setVisible(false);
-        ContentPanel.getContentPanel().fullContent("Ä£Äâ¿¼ÊÔ", resultMap);
+        ContentPanel.reloadContentPanel().fullContent("Ä£Äâ¿¼ÊÔ", resultMap);
         jDialog.dispose();
     }
 

@@ -129,7 +129,7 @@ public class CatalogTree{
 //        System.out.println("ƒ„—°‘Ò¡À£∫" + typeNode.list);
         TreeMap<Integer, List<TableQuestion>> listMap = new TreeMap<Integer, List<TableQuestion>>();
         listMap.put(typeNode.type, typeNode.list);
-        ContentPanel.getContentPanel().fullContent(getTypeWord(typeNode.type), listMap);
+        ContentPanel.reloadContentPanel().fullContent(getTypeWord(typeNode.type), listMap);
 
     }
 

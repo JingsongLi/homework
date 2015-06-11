@@ -2,6 +2,7 @@ package org.homework.student;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
+import org.homework.main.StudentPanel;
 import org.homework.utils.Utils;
 
 import javax.swing.*;
@@ -21,7 +22,13 @@ public class ContentPanel extends JPanel {
     public static boolean isCollectPanel = false;
 
     static ContentPanel contentPanel = new ContentPanel();
-    public static ContentPanel getContentPanel(){
+    public static ContentPanel loadContentPanel(){
+        return contentPanel;
+    }
+
+    public static ContentPanel reloadContentPanel(){
+        contentPanel = new ContentPanel();
+        StudentPanel.rightPanel.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
         return contentPanel;
     }
 

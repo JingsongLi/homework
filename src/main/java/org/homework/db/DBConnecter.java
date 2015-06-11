@@ -25,6 +25,7 @@ public class DBConnecter {
             mainConn = DriverManager.getConnection("jdbc:sqlite:" + tmpPath);
             ownConn = DriverManager.getConnection("jdbc:sqlite:" + getPath("own.db"));
         } catch ( Exception e ) {
+            e.printStackTrace();
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }

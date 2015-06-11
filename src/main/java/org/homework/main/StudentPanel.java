@@ -14,20 +14,21 @@ import java.awt.*;
 public class StudentPanel extends JPanel {
 
     public static JPanel leftPanel;
+    public static JPanel rightPanel;
     ContentPanel contentPanel;
 
     public StudentPanel(){
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(new BorderLayout(0, 0));
         //2.1 ÓÒÏÔÊ¾
-        JPanel panel_1 = new JPanel();
-        panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panel_1.setBackground(Color.WHITE);
-        add(panel_1, BorderLayout.CENTER);
-        panel_1.setLayout(new BorderLayout(0, 0));
+        rightPanel = new JPanel();
+        rightPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+        rightPanel.setBackground(Color.WHITE);
+        add(rightPanel, BorderLayout.CENTER);
+        rightPanel.setLayout(new BorderLayout(0, 0));
 
-        contentPanel = ContentPanel.getContentPanel();
-        panel_1.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
+        contentPanel = ContentPanel.loadContentPanel();
+        rightPanel.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
 
         //2.2 ×óÄ¿Â¼
         leftPanel = new JPanel();
