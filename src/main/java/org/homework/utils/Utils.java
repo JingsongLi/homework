@@ -20,13 +20,13 @@ import java.util.TreeMap;
  */
 public class Utils {
 
-    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "简答题"};
+    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "主观题"};
     static final String[] TYPE_EXPLAIN = {
-            "单向选择题：每题只有一个正确答案。每题2分。",
-            "多向选择题：每题有一个或多个正确答案。每题3分",
-            "判断题：对或错，请选择。每题1.5分",
-            "填空题：填空，以逗号分隔答案。每题2.5分",
-            "简答题：请写到下面的框中。"};
+            "单向选择题：每题只有一个正确答案。每题1分。",
+            "多向选择题：每题有一个或多个正确答案。每题2分。",
+            "判断题：对或错，请选择。每题1分。",
+            "填空题：填空，以逗号分隔答案。每题1分。",
+            "主观题：请写到下面的框中。"};
     public static final String[] JUDGE_OPTION = {"对", "错"};
     public static final String SPLIT = "#";
     static final int LABEL_MAX_LENGTH = 500;

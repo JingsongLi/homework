@@ -27,7 +27,7 @@ public class SimulateDialog extends MouseAdapter{
     TreeMap<Integer, java.util.List<TableQuestion>> questionMap = new TreeMap();
     TreeMap<Integer, java.util.List<TableQuestion>> resultMap = new TreeMap();
 
-    public SimulateDialog(JFrame jFrame){
+    public SimulateDialog(JFrame jFrame) {
         /* 初始化jDialog1
         * 指定对话框的拥有者为jFrame,标题为"Dialog",当对话框为可视时,其他构件不能
         * 接受用户的输入(静态对话框) */
