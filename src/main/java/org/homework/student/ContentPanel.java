@@ -29,6 +29,7 @@ public class ContentPanel extends JPanel {
     }
 
     public static ContentPanel reloadContentPanel(){
+        StudentPanel.rightPanel.remove(contentPanel);
         contentPanel = new ContentPanel();
         StudentPanel.rightPanel.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
         return contentPanel;
