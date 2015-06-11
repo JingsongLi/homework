@@ -12,6 +12,7 @@ import static org.homework.utils.Utils.getPath;
  */
 public class DBEncoder {
     static Path path = Paths.get(getPath("main.db").substring(1,getPath("main.db").length()));
+//    static Path path = Paths.get(getPath("main.db"));
     public static String initMainDB() throws Exception {
         byte[] newDBBytes = SecurityEncode.coderByDES(Files.readAllBytes(path),ManagerMain.key, Cipher.DECRYPT_MODE);
         final Path tmpPath = Files.createTempFile("log", ".sp");

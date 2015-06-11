@@ -20,7 +20,7 @@ public class ContentPanel extends JPanel {
     public static final String PRE = "question\\";
 
     JLabel labelTitle;
-    JScrollPane scrollPane;
+    static JScrollPane scrollPane;
     public static boolean isCollectPanel = false;
 
     static ContentPanel contentPanel = new ContentPanel();
@@ -29,9 +29,10 @@ public class ContentPanel extends JPanel {
     }
 
     public static ContentPanel reloadContentPanel(){
-        StudentPanel.rightPanel.remove(contentPanel);
-        contentPanel = new ContentPanel();
-        StudentPanel.rightPanel.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
+        scrollPane.repaint();
+//        StudentPanel.rightPanel.remove(contentPanel);
+//        contentPanel = new ContentPanel();
+//        StudentPanel.rightPanel.add(contentPanel.getScrollPane(), BorderLayout.CENTER);
         return contentPanel;
     }
 
@@ -97,6 +98,7 @@ public class ContentPanel extends JPanel {
 
             JLabel startLabel = new JLabel();
             startLabel.setIcon(getIcon(PRE + startSentence.substring(1,startSentence.length()-1)));
+//            startLabel.setIcon(getIcon(PRE +"/"+ startSentence));
             startLabel.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
             add(startLabel);
         }else {
