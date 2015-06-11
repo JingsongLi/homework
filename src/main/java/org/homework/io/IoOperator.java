@@ -1,6 +1,5 @@
 package org.homework.io;
 
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.AllStudentScore;
@@ -216,6 +215,11 @@ public class IoOperator {
                 String name = fileChooser.getSelectedFile().getName();
                 String[] strs = name.split("_");
                 String studentFileName = "";
+                String studentFileNameClass = strs[0];
+                String studentFileNameNumber = strs[1];
+                String studentFileNameName = strs[2];
+                String studentFileNameCourse = strs[3];
+                String studentFileNameChapter = strs[4];
                 for (int i = 0; i < strs.length - 2; i++) {
                     studentFileName += "_";
                     studentFileName += strs[i];
@@ -224,7 +228,8 @@ public class IoOperator {
                 if(!studentFileName.equals(studentWork.getName())){
                     JOptionPane.showMessageDialog(null,"学生" + studentFileName + "作弊！！");
                     //更新到数据库
-                    DBConnecter.updateAllStudentScore(stuClass, stuNumber, stuName, course, chapter, -1f);
+                    DBConnecter.updateAllStudentScore(studentFileNameClass, studentFileNameNumber,
+                                studentFileNameName, studentFileNameCourse, Integer.parseInt(studentFileNameChapter), -1f);
                     //
                 }else{
                     DBConnecter.updateStudentAnswer(studentWork);

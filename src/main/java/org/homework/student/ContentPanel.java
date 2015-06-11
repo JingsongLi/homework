@@ -2,6 +2,8 @@ package org.homework.student;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
+import org.homework.db.model.User;
+import org.homework.main.MainFrame;
 import org.homework.main.StudentPanel;
 import org.homework.utils.Utils;
 
@@ -231,7 +233,8 @@ public class ContentPanel extends JPanel {
                 }
                 String rightAnswer = null;
                 String rightAnswerExplain = null;
-                if(CatalogTree.allScore.get(t.getCourse()) != null && CatalogTree.allScore.get(t.getCourse()).containsKey(t.getChapter())){
+                if((CatalogTree.allScore.get(t.getCourse()) != null && CatalogTree.allScore.get(t.getCourse()).containsKey(t.getChapter()))
+                        || (MainFrame.user.getType() == User.TEACHER)){
                     rightAnswer = t.getAnswer();
                     rightAnswerExplain = t.getAnswerExplain();
                 }else {
