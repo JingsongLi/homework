@@ -4,12 +4,14 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
 import org.homework.db.model.User;
 import org.homework.main.MainFrame;
-import org.homework.main.StudentPanel;
 import org.homework.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
@@ -252,13 +254,25 @@ public class ContentPanel extends JPanel {
         });
         buttonPanel.add(buttonAnswer);
 
-        JButton buttonCollect = new JButton("收藏本题");
+        final JButton buttonCollect = new JButton("收藏本题");
+        if (t.getCollectStatus() == TableQuestion.COLLECT_YES) {
+            buttonCollect.setText("去除收藏");
+        }
         buttonCollect.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                t.setCollectStatus(1);
-                DBConnecter.updateQuestion(t.getId(), TableQuestion.COLLECT_STATUS, TableQuestion.COLLECT_YES);
-                JOptionPane.showMessageDialog(null,"收藏成功！");
+                if (buttonCollect.getText().equals("收藏本题")) {
+                    t.setCollectStatus(1);
+                    DBConnecter.updateQuestion(t.getId(), TableQuestion.COLLECT_STATUS, TableQuestion.COLLECT_YES);
+                    buttonCollect.setText("去除收藏");
+                    JOptionPane.showMessageDialog(null,"收藏成功！");
+                }
+                else {
+                    t.setCollectStatus(0);
+                    DBConnecter.updateQuestion(t.getId(), TableQuestion.COLLECT_STATUS, TableQuestion.COLLECT_NOT);
+                    buttonCollect.setText("收藏本题");
+                    JOptionPane.showMessageDialog(null, "去除收藏成功");
+                }
             }
         });
         buttonPanel.add(buttonCollect);

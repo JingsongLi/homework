@@ -20,10 +20,10 @@ import java.util.TreeMap;
  */
 public class Utils {
 
-    static final String[] TYPE_INDEX = {"单项选择题", "多项选择题","判断题", "填空题", "主观题"};
+    static final String[] TYPE_INDEX = {"单选题", "多选题","判断题", "填空题", "主观题"};
     static final String[] TYPE_EXPLAIN = {
-            "单向选择题：每题只有一个正确答案。每题1分。",
-            "多向选择题：每题有一个或多个正确答案。每题2分。",
+            "单选题：每题只有一个正确答案。每题1分。",
+            "多选题：每题有一个或多个正确答案。每题2分。",
             "判断题：对或错，请选择。每题1分。",
             "填空题：填空，以逗号分隔答案。每题1分。",
             "主观题：请写到下面的框中。"};

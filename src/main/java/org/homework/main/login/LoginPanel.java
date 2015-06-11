@@ -10,6 +10,13 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
+
+import static org.homework.utils.Utils.getPath;
 
 /**
  * Created by hasee on 2015/5/30.
@@ -23,7 +30,11 @@ public class LoginPanel  extends JFrame implements ActionListener {
     private JButton btnExit;
     String trueCipher = DBConnecter.getKV("cipher");
 
-    public LoginPanel(){
+    private Path path;
+    private File file;
+    private boolean fileExisted;
+
+    public LoginPanel() throws FileNotFoundException {
         JPanel p1 = new JPanel();
         p1.setBorder(new EmptyBorder(20, 30, 10, 30));
         p1.setLayout(new BorderLayout());
@@ -50,6 +61,22 @@ public class LoginPanel  extends JFrame implements ActionListener {
         getContentPane().add(p1, BorderLayout.NORTH);
         getContentPane().add(p2, BorderLayout.CENTER);
         getContentPane().add(p3, BorderLayout.SOUTH);
+
+        path = Paths.get(getPath("loginFile").substring(1, getPath("loginFile").length()));
+        file = new File(path.toString());
+        fileExisted = file.exists();
+
+        if (fileExisted) {
+            Scanner scanner = new Scanner(file);
+            int i = 0;
+            String[] logInfo = {""};
+            while (scanner.hasNext()) {
+                logInfo[i++] = scanner.next();
+            }
+            tfUsername.setText(logInfo[0]);
+            tfPassword.setText(logInfo[1]);
+        }
+
         this.setLocation(400, 300);
         this.setSize(294, 175);
         this.setTitle("登录");
@@ -66,22 +93,22 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 return;
             }
             User user = DBConnecter.getUser(name);
-//            //第一重验证
-//            if(user == null || !user.getPassword().equals(password)){
-//                JOptionPane.showMessageDialog(this, "用户名或密码错误！");
-//                return;
-//            }
-//            String text = SecurityEncode.getFromBASE64( user.getPassword());
-//            System.out.println("HEHE" + name + " " + text);
-//            String[] strs = text.split("_");
-//            System.out.println(strs);
-//            //第二重和第三重验证，磁盘码和密钥
-//            if(!strs[strs.length-2].equals(UserVerify.getCDiskNum()) ||
-//                    !strs[strs.length-1].equals(trueCipher)){
-//                JOptionPane.showMessageDialog(this, "机器匹配或密钥错误！");
-//                System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
-//                return;
-//            }else{
+            //第一重验证
+            if(user == null || !user.getPassword().equals(password)){
+                JOptionPane.showMessageDialog(this, "用户名或密码错误！");
+                return;
+            }
+            String text = SecurityEncode.getFromBASE64(user.getPassword());
+            System.out.println("HEHE" + name + " " + text);
+            String[] strs = text.split("_");
+            System.out.println(strs);
+            //第二重和第三重验证，磁盘码和密钥
+            if(!strs[strs.length-2].equals(UserVerify.getCDiskNum()) ||
+                    !strs[strs.length-1].equals(trueCipher)){
+                JOptionPane.showMessageDialog(this, "机器匹配或密钥错误！");
+                System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
+                return;
+            }else {
                 MainFrame frame = new MainFrame(user);
                 String title = DBConnecter.getKV("title");
                 if(title == null)
@@ -90,7 +117,7 @@ public class LoginPanel  extends JFrame implements ActionListener {
                     frame.setTitle(title);
                 frame.setVisible(true);
                 this.dispose();
-//            }
+            }
         } else if (e.getActionCommand().equals("取消")) {
             System.exit(0);
         }
