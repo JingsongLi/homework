@@ -42,7 +42,8 @@ public class LoginPanel  extends JFrame implements ActionListener {
         p1.add(lblUsername, BorderLayout.WEST);
         p1.add(tfUsername, BorderLayout.CENTER);
         JPanel p2 = new JPanel();
-        p2.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+        //p2.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+        p2.setBorder(BorderFactory.createEmptyBorder(10,30, 10, 30));
         p2.setLayout(new BorderLayout());
         lblPassword = new JLabel("\u5BC6  \u7801:");
         tfPassword = new JPasswordField(12);
@@ -77,7 +78,7 @@ public class LoginPanel  extends JFrame implements ActionListener {
         }
 
         this.setLocation(400, 300);
-        this.setSize(294, 175);
+        this.setSize(300, 200);
         this.setTitle("µÇÂ¼");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
@@ -89,24 +90,6 @@ public class LoginPanel  extends JFrame implements ActionListener {
             String name = tfUsername.getText();
             String password = new String(tfPassword.getPassword());
 
-            if (!fileExisted) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-                try {
-                    PrintWriter pw = new PrintWriter(file);
-                    pw.println(name);
-                    pw.println(password);
-                    pw.close();
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
-                }
-
-
-            }
 
             System.out.println(name + " " + password);
             if(name.equals("") || password.equals("")){
@@ -130,6 +113,23 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
                 return;
             }else {
+                if (!fileExisted) {
+                    try {
+                        file.createNewFile();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                    try {
+                        PrintWriter pw = new PrintWriter(file);
+                        pw.println(name);
+                        pw.println(password);
+                        pw.close();
+                    } catch (FileNotFoundException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
                 MainFrame frame = new MainFrame(user);
                 String title = DBConnecter.getKV("title");
                 if(title == null)
