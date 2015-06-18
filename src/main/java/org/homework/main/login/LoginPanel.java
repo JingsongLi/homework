@@ -28,10 +28,7 @@ public class LoginPanel  extends JFrame implements ActionListener {
     private JButton btnOK;
     private JButton btnExit;
     String trueCipher = DBConnecter.getKV("cipher");
-
-    private Path path;
     private File file;
-    private boolean fileExisted;
 
     public LoginPanel() throws FileNotFoundException {
 
@@ -69,9 +66,8 @@ public class LoginPanel  extends JFrame implements ActionListener {
 
 
         file = new File("loginFile");
-        fileExisted = file.exists();
 
-        if (fileExisted) {
+        if (file.exists()) {
             Scanner scanner = new Scanner(file);
             int i = 0;
             String[] logInfo = new String[2];
@@ -116,21 +112,19 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
                 return;
             }else {
-                if (!fileExisted) {
-                    try {
-                        file.createNewFile();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+                try {
+                    file.createNewFile();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
 
-                    try {
-                        PrintWriter pw = new PrintWriter(file);
-                        pw.println(name);
-                        pw.println(password);
-                        pw.close();
-                    } catch (FileNotFoundException e1) {
-                        e1.printStackTrace();
-                    }
+                try {
+                    PrintWriter pw = new PrintWriter(file);
+                    pw.println(name);
+                    pw.println(password);
+                    pw.close();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
                 }
 
                 MainFrame frame = new MainFrame(user);
