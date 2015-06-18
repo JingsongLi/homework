@@ -332,8 +332,8 @@ public class DBConnecter {
                                 sqlValue += "'" + u.value + "'";
                             sql += sqlValue + " where id = " + u.id;
                             if(update(sql) == 0){//–Ë“™≤Â»Î
-                                String insertSql = "insert into " + u.tablename + " (" + u.name + ")" +
-                                        " values " + "(" + sqlValue + ")";
+                                String insertSql = "insert into " + u.tablename + " (id," + u.name + ")" +
+                                        " values " + "(" + u.id + "," + sqlValue + ")";
                                 update(insertSql);
                             }
                         } catch (InterruptedException e) {

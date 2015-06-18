@@ -80,11 +80,13 @@ public class IoOperator {
             }
 
             for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
+                //1.题型
                 list.add(new PDFLiner(getTypeWord(entry.getKey()), 20, Font.BOLD));
                 for (int i = 0; i < entry.getValue().size(); i++) {
                     TableQuestion t = entry.getValue().get(i);
 
                     String startSentence = t.getMain_content();
+                    //2.题主干
                     if (startSentence.startsWith("[")) {//图片
                         list.add(new PDFLiner((i + 1) + ". ", 15, Font.PLAIN));
                         try {
@@ -96,11 +98,17 @@ public class IoOperator {
                         }
                     } else
                         list.add(new PDFLiner((i + 1) + ". " + t.getMain_content(), 15, Font.PLAIN));
+                    //3.选项等
                     if (t.getEle_content() != null && !t.getEle_content().equals("")) {
                         String[] strs = t.getEle_content().split(SPLIT);
                         for (int j = 0; j < strs.length; j++) {
                             list.add(new PDFLiner(("  " + num2ABC(j) + ". " + strs[j]), 15, Font.PLAIN));
                         }
+                    }
+                    //4.答案
+                    if(chapter == -1){//老师出题才有答案
+                        list.add(new PDFLiner(("正确答案：" + t.getAnswer()), 15, Font.PLAIN));
+                        list.add(new PDFLiner(("解题思路：" + t.getAnswerExplain()), 15, Font.PLAIN));
                     }
                 }
             }
