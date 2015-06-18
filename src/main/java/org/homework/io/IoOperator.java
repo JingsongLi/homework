@@ -247,7 +247,12 @@ public class IoOperator {
                         Integer type = entry.getKey();
                         for (TableQuestion tableQuestion : entry.getValue()) {
                             Integer id = tableQuestion.getId();
-                            String stuAnswer = tableQuestion.getMyAnswer().replaceAll("#","");
+                            String stuAnswer = tableQuestion.getMyAnswer();
+                            if (stuAnswer != null) {
+                                stuAnswer = stuAnswer.replaceAll("#", "");
+                            } else{
+                                stuAnswer = "";
+                            }
                             String correctAnswer = tableQuestion.getAnswer();
                             StudentAnswer stuAns = new StudentAnswer();
                             stuAns.setId(id);

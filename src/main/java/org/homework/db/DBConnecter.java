@@ -275,9 +275,13 @@ public class DBConnecter {
             type = entry.getKey();
             for (TableQuestion tableQuestion : entry.getValue()) {
                 id = tableQuestion.getId();
-                stuAnswer = tableQuestion.getMyAnswer().replaceAll("#", "");
+                stuAnswer = tableQuestion.getMyAnswer();
+                if (stuAnswer != null) {
+                    stuAnswer = stuAnswer.replaceAll("#", "");
+                } else{
+                    stuAnswer = "";
+                }
                 stuAnswer = "'" + stuAnswer + "'";
-
                 try {
                     sql_statement = ownConn.createStatement();
                     String sql =  "update " + STUDENT_ANSWER_TABLE +
