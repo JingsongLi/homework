@@ -34,33 +34,39 @@ public class LoginPanel  extends JFrame implements ActionListener {
     private boolean fileExisted;
 
     public LoginPanel() throws FileNotFoundException {
-        JPanel p1 = new JPanel();
-        p1.setBorder(new EmptyBorder(20, 30, 10, 30));
-        p1.setLayout(new BorderLayout());
+
+        this.setLocation(400, 300);
+        this.setSize(333, 185);
+        this.setTitle("登录");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setLayout(null);
+
         lblUsername = new JLabel("用户名:");
+        lblUsername.setBounds(24, 28, 70, 15);
+        getContentPane().add(lblUsername);
+
         tfUsername = new JTextField(12);
-        p1.add(lblUsername, BorderLayout.WEST);
-        p1.add(tfUsername, BorderLayout.CENTER);
-        JPanel p2 = new JPanel();
-        //p2.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
-        p2.setBorder(BorderFactory.createEmptyBorder(10,30, 10, 30));
-        p2.setLayout(new BorderLayout());
+        tfUsername.setBounds(88, 22, 200, 27);
+        getContentPane().add(tfUsername);
+
         lblPassword = new JLabel("\u5BC6  \u7801:");
-        tfPassword = new JPasswordField(12);
-        p2.add(lblPassword, BorderLayout.WEST);
-        p2.add(tfPassword, BorderLayout.CENTER);
-        JPanel p3 = new JPanel();
-        p3.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 5));
-        p3.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        lblPassword.setBounds(24, 70, 70, 15);
+        getContentPane().add(lblPassword);
+
+        tfPassword = new JPasswordField();
+        tfPassword.setBounds(88, 64, 200, 27);
+        getContentPane().add(tfPassword);
+
         btnOK = new JButton("登录");
         btnOK.addActionListener(this);
+        btnOK.setBounds(110, 110, 80, 25);
+        getContentPane().add(btnOK);
+
         btnExit = new JButton("取消");
+        btnExit.setBounds(210, 110, 80, 25);
         btnExit.addActionListener(this);
-        p3.add(btnOK);
-        p3.add(btnExit);
-        getContentPane().add(p1, BorderLayout.NORTH);
-        getContentPane().add(p2, BorderLayout.CENTER);
-        getContentPane().add(p3, BorderLayout.SOUTH);
+        getContentPane().add(btnExit);
+
 
         file = new File("loginFile");
         fileExisted = file.exists();
@@ -77,10 +83,7 @@ public class LoginPanel  extends JFrame implements ActionListener {
             tfPassword.setText(logInfo[1]);
         }
 
-        this.setLocation(400, 300);
-        this.setSize(300, 200);
-        this.setTitle("登录");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         this.setVisible(true);
     }
 
