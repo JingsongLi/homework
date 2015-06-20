@@ -14,9 +14,11 @@ import org.homework.teacher.TCatalogTree;
 
 import javax.crypto.Cipher;
 import javax.swing.*;
+import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -201,125 +203,144 @@ public class IoOperator {
 
     public static void importStudentWork() {
         JFileChooser fileChooser = new JFileChooser("F:\\");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int returnVal = fileChooser.showOpenDialog(fileChooser);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             String filePath = fileChooser.getSelectedFile().getAbsolutePath();
             try {
-                byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-                //file解析
-                byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
-                ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
-                ObjectInputStream oin = new ObjectInputStream(in);
-                StudentWork studentWork  = (StudentWork) oin.readObject();
-                String[] stuInfo = studentWork.getName().split("_");
-                String stuClass = stuInfo[0];
-                String stuNumber = stuInfo[1];
-                String stuName = stuInfo[2];
-                String course = studentWork.getCourse();
-                Integer chapter = studentWork.getChapter();
-
-                //和文件名进行校验
-                String name = fileChooser.getSelectedFile().getName();
-                String[] strs = name.split("_");
-                String studentFileName = "";
-                String studentFileNameClass = strs[0];
-                String studentFileNameNumber = strs[1];
-                String studentFileNameName = strs[2];
-                String studentFileNameCourse = strs[3];
-                String studentFileNameChapter = strs[4];
-                for (int i = 0; i < strs.length - 2; i++) {
-                    studentFileName += "_";
-                    studentFileName += strs[i];
-                }
-                studentFileName = studentFileName.substring(1,studentFileName.length());
-                if(!studentFileName.equals(studentWork.getName())){
-                    JOptionPane.showMessageDialog(null,"学生" + studentFileName + "作弊！！");
-                    //更新到数据库
-                    DBConnecter.updateAllStudentScore(studentFileNameClass, studentFileNameNumber,
-                                studentFileNameName, studentFileNameCourse, Integer.parseInt(studentFileNameChapter), -1f);
-                    //
+                List<Path> pathList = new ArrayList<Path>();
+                Path path = Paths.get(filePath);
+                if(path.toFile().isDirectory()){
+                    for (File f : path.toFile().listFiles()){
+                        if(!f.isDirectory()){
+                            pathList.add(Paths.get(f.toURI()));
+                        }
+                    }
                 }else{
-                    DBConnecter.updateStudentAnswer(studentWork);
-                    TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
-                    ArrayList<StudentAnswer> studentAnswers = new ArrayList<StudentAnswer>();
-                    for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
-                        Integer type = entry.getKey();
-                        for (TableQuestion tableQuestion : entry.getValue()) {
-                            Integer id = tableQuestion.getId();
-                            String stuAnswer = tableQuestion.getMyAnswer();
-                            if (stuAnswer != null) {
-                                stuAnswer = stuAnswer.replaceAll("#", "");
-                            } else{
-                                stuAnswer = "";
+                    pathList.add(path);
+                }
+                for (Path p : pathList){
+                    try {
+                        byte[] bytes = Files.readAllBytes(p);
+                        //file解析
+                        byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
+                        ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
+                        ObjectInputStream oin = new ObjectInputStream(in);
+                        StudentWork studentWork  = (StudentWork) oin.readObject();
+                        String[] stuInfo = studentWork.getName().split("_");
+                        String stuClass = stuInfo[0];
+                        String stuNumber = stuInfo[1];
+                        String stuName = stuInfo[2];
+                        String course = studentWork.getCourse();
+                        Integer chapter = studentWork.getChapter();
+
+                        //和文件名进行校验
+                        String name = p.toFile().getName();
+                        String[] strs = name.split("_");
+                        String studentFileName = "";
+                        String studentFileNameClass = strs[0];
+                        String studentFileNameNumber = strs[1];
+                        String studentFileNameName = strs[2];
+                        String studentFileNameCourse = strs[3];
+                        String studentFileNameChapter = strs[4];
+                        for (int i = 0; i < strs.length - 2; i++) {
+                            studentFileName += "_";
+                            studentFileName += strs[i];
+                        }
+                        studentFileName = studentFileName.substring(1,studentFileName.length());
+                        if(!studentFileName.equals(studentWork.getName())){
+                            JOptionPane.showMessageDialog(null,"学生" + studentFileName + "作弊！！");
+                            //更新到数据库
+                            DBConnecter.updateAllStudentScore(studentFileNameClass, studentFileNameNumber,
+                                    studentFileNameName, studentFileNameCourse, Integer.parseInt(studentFileNameChapter), -1f);
+                            //
+                        }else{
+                            DBConnecter.updateStudentAnswer(studentWork);
+                            TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
+                            ArrayList<StudentAnswer> studentAnswers = new ArrayList<StudentAnswer>();
+                            for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
+                                Integer type = entry.getKey();
+                                for (TableQuestion tableQuestion : entry.getValue()) {
+                                    Integer id = tableQuestion.getId();
+                                    String stuAnswer = tableQuestion.getMyAnswer();
+                                    if (stuAnswer != null) {
+                                        stuAnswer = stuAnswer.replaceAll("#", "");
+                                    } else{
+                                        stuAnswer = "";
+                                    }
+                                    String correctAnswer = tableQuestion.getAnswer();
+                                    StudentAnswer stuAns = new StudentAnswer();
+                                    stuAns.setId(id);
+                                    stuAns.setCourse(course);
+                                    stuAns.setChapter(chapter);
+                                    stuAns.setStudentClass(stuClass);
+                                    stuAns.setStudentNumber(stuNumber);
+                                    stuAns.setStudentName(stuName);
+                                    stuAns.setType(type);
+                                    stuAns.setStudentAnswer(stuAnswer);
+                                    stuAns.setAnswer(correctAnswer);
+                                    studentAnswers.add(stuAns);
+                                }
                             }
-                            String correctAnswer = tableQuestion.getAnswer();
-                            StudentAnswer stuAns = new StudentAnswer();
-                            stuAns.setId(id);
-                            stuAns.setCourse(course);
-                            stuAns.setChapter(chapter);
-                            stuAns.setStudentClass(stuClass);
-                            stuAns.setStudentNumber(stuNumber);
-                            stuAns.setStudentName(stuName);
-                            stuAns.setType(type);
-                            stuAns.setStudentAnswer(stuAnswer);
-                            stuAns.setAnswer(correctAnswer);
-                            studentAnswers.add(stuAns);
+                            //TCatalogTree.allStudentAnswer.clear();
+                            for(StudentAnswer stuAns : studentAnswers){
+                                //1级目录  科目
+                                course = stuAns.getCourse();
+                                TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>> sub1Map = TCatalogTree.allStudentAnswer.get(course);
+                                if(sub1Map == null){
+                                    sub1Map = new TreeMap();
+                                    TCatalogTree.allStudentAnswer.put(course,sub1Map);
+                                }
+                                //2级目录  章节
+                                chapter = stuAns.getChapter();
+                                TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>> sub2Map = sub1Map.get(chapter);
+                                if (sub2Map == null){
+                                    sub2Map = new TreeMap();
+                                    sub1Map.put(chapter,sub2Map);
+                                }
+                                //3级目录  班级
+                                stuClass = stuAns.getStudentClass();
+                                TreeMap<String, TreeMap<Integer,List<StudentAnswer>>> sub3Map = sub2Map.get(stuClass);
+                                if (sub3Map == null){
+                                    sub3Map = new TreeMap();
+                                    sub2Map.put(stuClass,sub3Map);
+                                }
+                                //4级目录  学生学号姓名
+                                stuNumber = stuAns.getStudentNumber();
+                                stuName = stuAns.getStudentName();
+                                String stuNumName = stuNumber + "_" + stuName;
+                                TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
+                                if (sub4Map == null) {
+                                    sub4Map = new TreeMap();
+                                    sub3Map.put(stuNumName,sub4Map);
+                                }
+                                //5级目录  题目类型   不显示
+                                int type = stuAns.getType();
+                                List<StudentAnswer> subList = sub4Map.get(type);
+                                if (subList == null){
+                                    subList = new ArrayList();
+                                    sub4Map.put(type,subList);
+                                }
+
+                                subList.add(stuAns);
+                            }
+                            TCatalogTree.initTop();
+
+
+                            //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
+                            //for(StudentScore s : list){
+                            //    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
+                            //更新树形界面！
+                            //CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
+                            //}
+                            //CatalogTree.initTop();
+                            JOptionPane.showMessageDialog(null, "导入成功！文件：" + p);
                         }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "读取失败！文件：" + p);
                     }
-                    //TCatalogTree.allStudentAnswer.clear();
-                    for(StudentAnswer stuAns : studentAnswers){
-                        //1级目录  科目
-                        course = stuAns.getCourse();
-                        TreeMap<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>> sub1Map = TCatalogTree.allStudentAnswer.get(course);
-                        if(sub1Map == null){
-                            sub1Map = new TreeMap();
-                            TCatalogTree.allStudentAnswer.put(course,sub1Map);
-                        }
-                        //2级目录  章节
-                        chapter = stuAns.getChapter();
-                        TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>> sub2Map = sub1Map.get(chapter);
-                        if (sub2Map == null){
-                            sub2Map = new TreeMap();
-                            sub1Map.put(chapter,sub2Map);
-                        }
-                        //3级目录  班级
-                        stuClass = stuAns.getStudentClass();
-                        TreeMap<String, TreeMap<Integer,List<StudentAnswer>>> sub3Map = sub2Map.get(stuClass);
-                        if (sub3Map == null){
-                            sub3Map = new TreeMap();
-                            sub2Map.put(stuClass,sub3Map);
-                        }
-                        //4级目录  学生学号姓名
-                        stuNumber = stuAns.getStudentNumber();
-                        stuName = stuAns.getStudentName();
-                        String stuNumName = stuNumber + "_" + stuName;
-                        TreeMap<Integer,List<StudentAnswer>> sub4Map = sub3Map.get(stuNumName);
-                        if (sub4Map == null) {
-                            sub4Map = new TreeMap();
-                            sub3Map.put(stuNumName,sub4Map);
-                        }
-                        //5级目录  题目类型   不显示
-                        int type = stuAns.getType();
-                        List<StudentAnswer> subList = sub4Map.get(type);
-                        if (subList == null){
-                            subList = new ArrayList();
-                            sub4Map.put(type,subList);
-                        }
-
-                        subList.add(stuAns);
-                    }
-                    TCatalogTree.initTop();
-
-
-                    //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
-                    //for(StudentScore s : list){
-                    //    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
-                    //更新树形界面！
-                    //CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
-                    //}
-                    //CatalogTree.initTop();
-                    JOptionPane.showMessageDialog(null, "导入成功！");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
