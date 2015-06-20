@@ -31,14 +31,19 @@ public class ExportExcel {
 
         jfc.showSaveDialog(null);
         File file = jfc.getSelectedFile();
-        try {
-            this.fos = new FileOutputStream(file + ".xls");
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+        if(file != null){
+            try {
+                this.fos = new FileOutputStream(file + ".xls");
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     public void export() {
+
+        if(fos == null)
+            return;
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet hs = wb.createSheet();
         TableModel tm = table.getModel();

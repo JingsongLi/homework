@@ -159,6 +159,23 @@ public class DBConnecter {
         return studentAnswerList;
     }
 
+    public static List<String> getDistinctOwnDB(String table,String field) {
+        List<String> list = new ArrayList<String>();
+        String sql = "select distinct " + field + " from " + table + ";";
+        try {
+            Statement statement = ownConn.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                list.add(result.getString(field));
+            }
+            //关闭连接和声明
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static List<AllStudentScore> getAllStudentScores(String course, String queryAs, String queryAsText) {
 
         List<AllStudentScore> allStudentScoreList = new ArrayList<AllStudentScore>();
@@ -526,25 +543,29 @@ public class DBConnecter {
 
     public static void main(String[] args) throws SQLException {
 
+        List<String> distinctCourse = DBConnecter.getDistinctOwnDB(DBConnecter.ALL_STUDENT_SCORE_TABLE,AllStudentScore.COURSE);
+        List<String> distinctClass = DBConnecter.getDistinctOwnDB(DBConnecter.ALL_STUDENT_SCORE_TABLE,AllStudentScore.STUDENT_CLASS);
+        System.out.println(distinctClass);
+        System.out.println(distinctCourse);
 //        System.out.println(getAllScore());
 //        updateQuestion(2,"note","我勒个去啊");
 
 //        System.out.println(getAllQuestion());
 
-        Statement sql_statement = null;
-        try {
-            sql_statement = mainConn.createStatement();
-            boolean bool = sql_statement.execute("" +
-                    "CREATE TABLE kv (\n" +
-                    "  [key] VARCHAR(50) PRIMARY KEY, \n" +
-                    "  [value] VARCHAR(50) NOT NULL);");
-            System.out.println(bool);
-            //关闭连接和声明
-            sql_statement.close();
-            mainConn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        Statement sql_statement = null;
+//        try {
+//            sql_statement = mainConn.createStatement();
+//            boolean bool = sql_statement.execute("" +
+//                    "CREATE TABLE kv (\n" +
+//                    "  [key] VARCHAR(50) PRIMARY KEY, \n" +
+//                    "  [value] VARCHAR(50) NOT NULL);");
+//            System.out.println(bool);
+//            //关闭连接和声明
+//            sql_statement.close();
+//            mainConn.close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

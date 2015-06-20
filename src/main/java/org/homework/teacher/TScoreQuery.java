@@ -23,15 +23,17 @@ import java.util.List;
 public class TScoreQuery extends MouseAdapter {
 
 
+    private JComboBox classBox;
+    private JComboBox courseBox;
     private JButton outputButton;
     JDialog jDialog=null; //创建一个空的对话框对象
     JComboBox queryAsComboBox;
     JButton queryButton;
-    JTextField courseTextField;
-    JTextField queryAsTextField;
     JPanel tablePanel = null;
     JTable table = null;
     static String queryAs = "班级";
+    static String courseAs = "";
+    static String classAs = "";
 
     public TScoreQuery(JFrame jFrame) {
                 /* 初始化jDialog1
@@ -54,14 +56,10 @@ public class TScoreQuery extends MouseAdapter {
 
         JLabel courseLabel = new JLabel("科目");
         courseLabel.setBackground(Color.WHITE);
-        courseTextField = new JTextField(20);
-        courseTextField.setBackground(Color.WHITE);
 
         final String[] queryAs = {"班级", "学号"};
         queryAsComboBox = new JComboBox(queryAs);
         queryAsComboBox.setBackground(Color.WHITE);
-        queryAsTextField = new JTextField(30);
-        queryAsTextField.setBackground(Color.WHITE);
 
         queryButton = new JButton("查询");
         queryButton.setBackground(Color.WHITE);
@@ -70,13 +68,6 @@ public class TScoreQuery extends MouseAdapter {
         outputButton = new JButton("导出");
         outputButton.setBackground(Color.WHITE);
         outputButton.addMouseListener(this);
-
-        topPanel.add(courseLabel);
-        topPanel.add(courseTextField);
-        topPanel.add(queryAsComboBox);
-        topPanel.add(queryAsTextField);
-        topPanel.add(queryButton);
-        topPanel.add(outputButton);
 
         queryAsComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -91,6 +82,48 @@ public class TScoreQuery extends MouseAdapter {
             }
         });
 
+        //
+        List<String> distinctCourse = DBConnecter.getDistinctOwnDB(DBConnecter.ALL_STUDENT_SCORE_TABLE,AllStudentScore.COURSE);
+        List<String> distinctClass = DBConnecter.getDistinctOwnDB(DBConnecter.ALL_STUDENT_SCORE_TABLE,AllStudentScore.STUDENT_CLASS);
+        if(distinctCourse.size() != 0)
+            TScoreQuery.courseAs = distinctCourse.get(0);
+        if(distinctClass.size() != 0)
+            TScoreQuery.classAs = distinctClass.get(0);
+
+        courseBox = new JComboBox(distinctCourse.toArray(new String[0]));
+        courseBox.setBackground(Color.WHITE);
+        courseBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                switch (e.getStateChange()) {
+                    case ItemEvent.SELECTED:
+                        TScoreQuery.courseAs = (String)e.getItem();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        classBox = new JComboBox(distinctClass.toArray(new String[0]));
+        classBox.setBackground(Color.WHITE);
+        classBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                switch (e.getStateChange()) {
+                    case ItemEvent.SELECTED:
+                        TScoreQuery.classAs = (String)e.getItem();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        topPanel.add(courseLabel);
+        topPanel.add(courseBox);
+        topPanel.add(queryAsComboBox);
+        topPanel.add(classBox);
+        topPanel.add(queryButton);
+        topPanel.add(outputButton);
 
         jDialog.setVisible(true);
     }
@@ -100,8 +133,8 @@ public class TScoreQuery extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
        if (e.getSource() == queryButton) {
 
-           String course = courseTextField.getText();
-           String queryAsText = queryAsTextField.getText();
+           String course = courseAs;
+           String queryAsText = classAs;
            java.util.List<AllStudentScore> allStuScoreList = DBConnecter.getAllStudentScores(course, queryAs, queryAsText);
            //System.out.println("Befor sort: " + allStuScoreList);
            Collections.sort(allStuScoreList, new Comparator<AllStudentScore>() {
