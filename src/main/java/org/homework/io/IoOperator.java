@@ -14,6 +14,7 @@ import org.homework.teacher.TCatalogTree;
 
 import javax.crypto.Cipher;
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 import java.io.*;
@@ -380,6 +381,12 @@ public class IoOperator {
             return filePath;
         }
         return null;
+    }
+
+    /**µ¼³öJTableµ½excel */
+    public static void exportTable(JTable table){
+        ExportExcel exportExcel = new ExportExcel(table);
+        exportExcel.export();
     }
 
     public static void main(String[] args) {

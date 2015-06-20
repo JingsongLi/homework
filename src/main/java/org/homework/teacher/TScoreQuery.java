@@ -2,6 +2,8 @@ package org.homework.teacher;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.AllStudentScore;
+import org.homework.io.IoOperator;
+import org.homework.io.PDFOperator;
 import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
@@ -21,6 +23,7 @@ import java.util.List;
 public class TScoreQuery extends MouseAdapter {
 
 
+    private JButton outputButton;
     JDialog jDialog=null; //创建一个空的对话框对象
     JComboBox queryAsComboBox;
     JButton queryButton;
@@ -62,12 +65,18 @@ public class TScoreQuery extends MouseAdapter {
 
         queryButton = new JButton("查询");
         queryButton.setBackground(Color.WHITE);
+        queryButton.addMouseListener(this);
+
+        outputButton = new JButton("导出");
+        outputButton.setBackground(Color.WHITE);
+        outputButton.addMouseListener(this);
 
         topPanel.add(courseLabel);
         topPanel.add(courseTextField);
         topPanel.add(queryAsComboBox);
         topPanel.add(queryAsTextField);
         topPanel.add(queryButton);
+        topPanel.add(outputButton);
 
         queryAsComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -81,7 +90,7 @@ public class TScoreQuery extends MouseAdapter {
 
             }
         });
-        queryButton.addMouseListener(this);
+
 
         jDialog.setVisible(true);
     }
@@ -143,7 +152,9 @@ public class TScoreQuery extends MouseAdapter {
            //System.out.println(allStuScoreMap);
 
 
-        }
+        }else if(e.getSource() == outputButton){
+           IoOperator.exportTable(table);
+       }
     }
 
     private void createTable(int row, int column, Map<String, java.util.List<Float>> allStuScoreMap) {
