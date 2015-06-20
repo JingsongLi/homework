@@ -20,10 +20,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static org.homework.io.PDFOperator.PDFLiner;
 import static org.homework.utils.Utils.*;
@@ -220,7 +218,7 @@ public class IoOperator {
                 }else{
                     pathList.add(path);
                 }
-                for (Path p : pathList){
+                studentLoop: for (Path p : pathList){
                     try {
                         byte[] bytes = Files.readAllBytes(p);
                         //file解析
@@ -256,7 +254,6 @@ public class IoOperator {
                                     studentFileNameName, studentFileNameCourse, Integer.parseInt(studentFileNameChapter), -1f);
                             //
                         }else{
-                            DBConnecter.updateStudentAnswer(studentWork);
                             TreeMap<Integer, List<TableQuestion>> map = (TreeMap<Integer, List<TableQuestion>>)studentWork.getData();
                             ArrayList<StudentAnswer> studentAnswers = new ArrayList<StudentAnswer>();
                             for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
@@ -284,6 +281,8 @@ public class IoOperator {
                                 }
                             }
                             //TCatalogTree.allStudentAnswer.clear();
+                            boolean first = true;
+                            boolean overWrite = false;
                             for(StudentAnswer stuAns : studentAnswers){
                                 //1级目录  科目
                                 course = stuAns.getCourse();
@@ -323,18 +322,41 @@ public class IoOperator {
                                     sub4Map.put(type,subList);
                                 }
 
+                                if(first){//判断是否输入过
+                                    boolean haveImport = false;
+                                    for(StudentAnswer sa : subList){
+                                        if(sa.getId() == stuAns.getId()){
+                                            haveImport = true;
+                                            break;
+                                        }
+                                    }
+                                    if(haveImport){
+                                        int overrideRet = JOptionPane.showConfirmDialog(null,"已经导入过，是否覆盖？文件：" + p
+                                                ,"抉择",JOptionPane.YES_NO_OPTION);
+                                        if(overrideRet != 0){
+                                            //跳过此学生
+                                            continue studentLoop;
+                                        }else{
+                                            overWrite = true;
+                                        }
+
+                                    }
+                                    first = false;
+                                }
+                                if(overWrite){//删除以前的数据
+                                    Iterator<StudentAnswer> iter = subList.iterator();
+                                    while (iter.hasNext()){
+                                        StudentAnswer s  = iter.next();
+                                        if(s.getId() == stuAns.getId()){
+                                            iter.remove();
+                                        }
+                                    }
+                                }
                                 subList.add(stuAns);
                             }
                             TCatalogTree.initTop();
 
-
-                            //List<StudentScore> list = map.get("金融管理一班_2008100134_张三");
-                            //for(StudentScore s : list){
-                            //    DBConnecter.updateScore(s.getCourse(), s.getChapter(), s.getScore());
-                            //更新树形界面！
-                            //CatalogTree.allScore.get(s.getCourse()).put(s.getChapter(),s.getScore());
-                            //}
-                            //CatalogTree.initTop();
+                            DBConnecter.updateStudentAnswer(studentWork);
                             JOptionPane.showMessageDialog(null, "导入成功！文件：" + p);
                         }
                     }catch (Exception e){
