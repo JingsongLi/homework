@@ -4,6 +4,7 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
 import org.homework.db.model.User;
 import org.homework.main.MainFrame;
+import org.homework.utils.MyScrollPane;
 import org.homework.utils.Utils;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public class ContentPanel extends JPanel {
 
     public JScrollPane getScrollPane(){
 
-        scrollPane = new JScrollPane();
+        scrollPane = new MyScrollPane();
         scrollPane.setViewportView(this);
 
         labelTitle = new JLabel("无标题");
@@ -184,7 +185,7 @@ public class ContentPanel extends JPanel {
 
             final JTextArea text = new JTextArea(5, 90);
             text.setLineWrap(true);
-            JScrollPane scroll = new JScrollPane(text);
+            JScrollPane scroll = new MyScrollPane(text);
             textPanel.add(scroll);
             text.addKeyListener(new KeyAdapter() {
                 @Override
@@ -279,7 +280,7 @@ public class ContentPanel extends JPanel {
                 String note = t.getNote();
 
                 JTextArea text = new JTextArea(note, 5, 40);
-                Object[] message = { "学习笔记：", new JScrollPane(text)};
+                Object[] message = { "学习笔记：", new MyScrollPane(text)};
                 JOptionPane pane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
                 JDialog dialog = pane.createDialog(null, "Input");
                 dialog.setVisible(true);

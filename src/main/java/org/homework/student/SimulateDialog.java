@@ -2,6 +2,7 @@ package org.homework.student;
 
 import org.homework.db.model.TableQuestion;
 import org.homework.main.StudentPanel;
+import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -126,7 +127,7 @@ public class SimulateDialog extends MouseAdapter{
 		label_11.setBounds(152, 134, 28, 15);
 		panel.add(label_11);
 
-		JScrollPane scrollPane = new JScrollPane();
+		JScrollPane scrollPane = new MyScrollPane();
 		scrollPane.setBounds(277, 41, 233, 166);
         jDialog.getContentPane().add(scrollPane);
 

@@ -2,6 +2,7 @@ package org.homework.teacher;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.AllStudentScore;
+import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -154,7 +155,7 @@ public class TScoreQuery extends MouseAdapter {
         jDialog.getContentPane().add(tablePanel, BorderLayout.CENTER);
 
         table = new JTable(new DefaultTableModel(row, column));
-        JScrollPane scrollPane = new JScrollPane();
+        JScrollPane scrollPane = new MyScrollPane();
         scrollPane.setViewportView(table);
         table.setEnabled(false);
         table.setValueAt("Ñ§ºÅ", 0, 0);

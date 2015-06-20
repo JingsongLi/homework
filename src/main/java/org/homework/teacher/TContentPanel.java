@@ -2,6 +2,7 @@ package org.homework.teacher;
 
 import org.homework.db.DBConnecter;
 import org.homework.db.model.StudentAnswer;
+import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -38,7 +39,7 @@ public class TContentPanel extends JPanel {
 
     public JScrollPane getScrollPane(){
 
-        scrollPane = new JScrollPane();
+        scrollPane = new MyScrollPane();
         scrollPane.setViewportView(this);
 
         labelTitle = new JLabel("无标题");
@@ -311,7 +312,7 @@ public class TContentPanel extends JPanel {
             textStuAns.setEditable(false);
             textStuAns.setLineWrap(true);
             //textStuAns.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-            JScrollPane scrollStuAns = new JScrollPane(textStuAns);
+            JScrollPane scrollStuAns = new MyScrollPane(textStuAns);
             stuAnsPanel.add(scrollStuAns);
 
             //参考答案
@@ -323,7 +324,7 @@ public class TContentPanel extends JPanel {
             textCorrectAns.setBackground(Color.WHITE);
             textCorrectAns.setEditable(false);
             textCorrectAns.setLineWrap(true);
-            JScrollPane scrollCorrectAns = new JScrollPane(textCorrectAns);
+            JScrollPane scrollCorrectAns = new MyScrollPane(textCorrectAns);
             correctAnsPanel.add(scrollCorrectAns);
 
             String stuAnswer = stuAnsList.get(i-1).getStudentAnswer();

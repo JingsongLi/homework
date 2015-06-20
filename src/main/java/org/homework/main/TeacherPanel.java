@@ -2,6 +2,7 @@ package org.homework.main;
 
 import org.homework.teacher.TCatalogTree;
 import org.homework.teacher.TContentPanel;
+import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -50,7 +51,7 @@ public class TeacherPanel extends JPanel {
         panel_2.add(lblNewLabel_1);
 
         TCatalogTree cata = new TCatalogTree();
-        JScrollPane scrollPane = new JScrollPane(cata.getTree());
+        JScrollPane scrollPane = new MyScrollPane(cata.getTree());
         leftPanel.add(scrollPane, BorderLayout.CENTER);
     }
 }

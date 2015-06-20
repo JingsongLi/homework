@@ -4,6 +4,7 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
 import org.homework.student.ContentPanel;
+import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -106,7 +107,7 @@ public class TTestPaper extends MouseAdapter {
         centerPanel.setBackground(Color.WHITE);
         centerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         centerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        centerScrollPane = new JScrollPane(centerPanel);
+        centerScrollPane = new MyScrollPane(centerPanel);
         jDialog.getContentPane().add(centerScrollPane, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
@@ -170,7 +171,7 @@ public class TTestPaper extends MouseAdapter {
                     panel.setBackground(Color.WHITE);
                     panel.setAlignmentX(Component.LEFT_ALIGNMENT);
                     panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-                    JScrollPane scrollPane = new JScrollPane(panel);
+                    JScrollPane scrollPane = new MyScrollPane(panel);
                     centerPanel.add(scrollPane);
 
                     if (entry2.getKey() != 5) {

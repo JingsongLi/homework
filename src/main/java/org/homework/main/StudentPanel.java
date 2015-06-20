@@ -2,6 +2,7 @@ package org.homework.main;
 
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
+import org.homework.utils.MyScrollPane;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -49,7 +50,7 @@ public class StudentPanel extends JPanel {
         panel_2.add(lblNewLabel_1);
 
         CatalogTree cata = new CatalogTree();
-        JScrollPane scrollPane = new JScrollPane(cata.getTree());
+        JScrollPane scrollPane = new MyScrollPane(cata.getTree());
         leftPanel.add(scrollPane, BorderLayout.CENTER);
     }
 }
