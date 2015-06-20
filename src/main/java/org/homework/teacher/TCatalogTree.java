@@ -34,7 +34,7 @@ public class TCatalogTree {
         List<StudentAnswer> studentAnswers = DBConnecter.getAllStudentAnswers();
         add4Index(allStudentAnswer, studentAnswers);
 
-        System.out.println(allStudentAnswer);
+//        System.out.println(allStudentAnswer);
 
     }
 
@@ -116,7 +116,7 @@ public class TCatalogTree {
 
     private static void click(Object object,boolean isReload) {
         AnswerNode ansNode = (AnswerNode) object;
-        System.out.println("你选择了：" + ansNode.map);
+//        System.out.println("你选择了：" + ansNode.map);
         TContentPanel.getTContentPanel().fullContent(ansNode.studentClass,ansNode.studentNumName, ansNode.course, ansNode.chapter, ansNode.map);
         if(isReload) {
             defaultTreeModel.reload();

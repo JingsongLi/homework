@@ -127,7 +127,7 @@ public class DBConnecter {
 
             for (Iterator<StudentAnswer> iterator = studentAnswerList.iterator(); iterator.hasNext(); ) {
                 StudentAnswer next =  iterator.next();
-                System.out.println(next);
+//                System.out.println(next);
             }
 
 
@@ -145,7 +145,7 @@ public class DBConnecter {
 
             for (Iterator<StudentAnswer> iterator = studentAnswerList.iterator(); iterator.hasNext(); ) {
                 StudentAnswer next =  iterator.next();
-                System.out.println(next);
+//                System.out.println(next);
             }
 
 
@@ -181,7 +181,7 @@ public class DBConnecter {
         try {
             allStudentScoreStatement = ownConn.createStatement();
 
-            System.out.println(sql);
+//            System.out.println(sql);
 
             ResultSet result = allStudentScoreStatement.executeQuery(sql);
 
@@ -201,7 +201,7 @@ public class DBConnecter {
 
             for (Iterator<AllStudentScore> iterator = allStudentScoreList.iterator(); iterator.hasNext(); ) {
                 AllStudentScore next =  iterator.next();
-                System.out.println(next);
+//                System.out.println(next);
             }
 
 
@@ -289,7 +289,7 @@ public class DBConnecter {
                             " where " + StudentAnswer.STUDENT_NUMBER +" = " + stuNumber +
                             " and " + StudentAnswer.ID + " = " + id ;
                     int upRet = sql_statement.executeUpdate(sql);
-                    System.out.println(sql);
+//                    System.out.println(sql);
                     if (upRet == 0) {
                         String insertSql = "insert into " + STUDENT_ANSWER_TABLE +
                                 " (" + StudentAnswer.ID + "," + StudentAnswer.COURSE + ","
@@ -299,7 +299,7 @@ public class DBConnecter {
                                 " values " + "(" + id + "," + course + "," + chapter + "," + stuClass + ","
                                   + stuNumber + "," + stuName + "," + type + "," + stuAnswer + ")";
                         sql_statement.executeUpdate(insertSql);
-                        System.out.println(insertSql);
+//                        System.out.println(insertSql);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -352,7 +352,7 @@ public class DBConnecter {
 
         public static int  update(String sql){
             Statement sql_statement = null;
-            System.out.println(sql);
+//            System.out.println(sql);
             try {
                 sql_statement = ownConn.createStatement();
                 int upRet = sql_statement.executeUpdate(sql);
@@ -404,7 +404,7 @@ public class DBConnecter {
                 e.printStackTrace();
             }
         }
-        System.out.println("SCORE SCORE :"  + list);
+//        System.out.println("SCORE SCORE :"  + list);
         return list;
     }
 
@@ -422,7 +422,7 @@ public class DBConnecter {
                     " and " + AllStudentScore.CHAPTER + " = " + chapter +
                     " and " + AllStudentScore.COURSE + "=" + course;
             int upRet = sql_statement.executeUpdate(sql);
-            System.out.println(sql);
+//            System.out.println(sql);
             if (upRet == 0){
                 String insertSql = "insert into " + ALL_STUDENT_SCORE_TABLE +
                         " (" + AllStudentScore.COURSE + "," + AllStudentScore.CHAPTER + ","
@@ -430,7 +430,7 @@ public class DBConnecter {
                              + AllStudentScore.STUDENT_NAME + "," + AllStudentScore.SCORE + ")" +
                         " values " + "(" + course + "," + chapter + "," + stuClass + "," + stuNumber + "," + stuName + "," + score + ")";
                 sql_statement.executeUpdate(insertSql);
-                System.out.println(insertSql);
+//                System.out.println(insertSql);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -456,13 +456,13 @@ public class DBConnecter {
                     " where " + Score.COURSE +" = " + course +
                     " and " + Score.CHAPTER + " = " + chapter;
             int upRet = sql_statement.executeUpdate(sql);
-            System.out.println(sql);
+//            System.out.println(sql);
             if (upRet == 0){
                 String insertSql = "insert into " + SCORE_OWN_TABLE +
                         " (" + Score.COURSE + "," + Score.CHAPTER + "," + Score.SCORE + ")" +
                         " values " + "(" + course + "," + chapter + "," + score + ")";
                 sql_statement.executeUpdate(insertSql);
-                System.out.println(insertSql);
+//                System.out.println(insertSql);
             }
         } catch (SQLException e) {
             e.printStackTrace();

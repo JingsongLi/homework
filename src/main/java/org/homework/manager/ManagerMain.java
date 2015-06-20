@@ -72,7 +72,7 @@ public class ManagerMain extends JFrame{
                 String cipher = new String(passwordField.getPassword());
                 String text = textField.getText();
                 if (cipher.equals(trueCipher)) {
-                    System.out.println("HEHE:" + cipher + text);
+//                    System.out.println("HEHE:" + cipher + text);
                     password.setText(SecurityEncode.getBASE64(text + "_" + cipher));
                 } else {
                     JOptionPane.showMessageDialog(null, "√‹‘ø¥ÌŒÛ£°");

@@ -90,7 +90,7 @@ public class LoginPanel  extends JFrame implements ActionListener {
             String password = new String(tfPassword.getPassword());
 
 
-            System.out.println(name + " " + password);
+//            System.out.println(name + " " + password);
             if(name.equals("") || password.equals("")){
                 JOptionPane.showMessageDialog(this, "用户名和密码不能为空！");
                 return;
@@ -102,14 +102,14 @@ public class LoginPanel  extends JFrame implements ActionListener {
                 return;
             }
             String text = SecurityEncode.getFromBASE64(user.getPassword());
-            System.out.println("HEHE" + name + " " + text);
+//            System.out.println("HEHE" + name + " " + text);
             String[] strs = text.split("_");
-            System.out.println(strs);
+//            System.out.println(strs);
             //第二重和第三重验证，磁盘码和密钥
             if(!strs[strs.length-2].equals(UserVerify.getCDiskNum()) ||
                     !strs[strs.length-1].equals(trueCipher)){
                 JOptionPane.showMessageDialog(this, "机器匹配或密钥错误！");
-                System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
+//                System.out.println(strs[strs.length-2] + " " + strs[strs.length-1]);
                 return;
             }else {
                 try {
