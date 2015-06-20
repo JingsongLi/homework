@@ -7,6 +7,7 @@ import org.homework.manager.ManagerMain;
 import org.homework.manager.SecurityEncode;
 
 import javax.crypto.Cipher;
+import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -26,12 +27,19 @@ public class StudentWork implements Serializable{
     Object data;
 
     public static void main(String[] args) throws Exception {
-        byte[] bytes = Files.readAllBytes(Paths.get("张三_英语_1"));
-        //file解析
-        byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
-        ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
-        ObjectInputStream oin = new ObjectInputStream(in);
-        StudentWork studentWork = (StudentWork) oin.readObject();
-        System.out.println(studentWork);
+        JFileChooser fileChooser = new JFileChooser("F:\\");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int returnVal = fileChooser.showOpenDialog(fileChooser);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+            //file解析
+            byte[] newBytes = SecurityEncode.coderByDES(bytes, ManagerMain.key, Cipher.DECRYPT_MODE);
+            ByteArrayInputStream in = new ByteArrayInputStream(newBytes);
+            ObjectInputStream oin = new ObjectInputStream(in);
+            StudentWork studentWork = (StudentWork) oin.readObject();
+            System.out.println(studentWork);
+        }
+
     }
 }

@@ -8,10 +8,7 @@ import org.homework.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -131,11 +128,10 @@ public class ContentPanel extends JPanel {
                     }
                     radioButton.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
                     radioButton.setBackground(Color.WHITE);
-                    radioButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
+                    radioButton.addItemListener(new ItemListener() {
+                        public void itemStateChanged(ItemEvent e) {
                             String answer = value;
-                            DBConnecter.updateQuestion(t.getId(),TableQuestion.MY_ANSWER,answer);
+                            DBConnecter.updateQuestion(t.getId(), TableQuestion.MY_ANSWER, answer);
                             t.setMyAnswer(answer);
                         }
                     });
@@ -156,9 +152,8 @@ public class ContentPanel extends JPanel {
                     boxList.add(jCheckBox);
                     jCheckBox.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
                     jCheckBox.setBackground(Color.WHITE);
-                    jCheckBox.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
+                    jCheckBox.addItemListener(new ItemListener() {
+                        public void itemStateChanged(ItemEvent e){
                             String answer;
                             TreeSet<String> set = new TreeSet();
                             for (JCheckBox box : boxList) {
