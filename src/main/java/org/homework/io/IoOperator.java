@@ -125,7 +125,7 @@ public class IoOperator {
     }
 
     public static void importScore() {
-        JFileChooser fileChooser = new JFileChooser("F:\\");
+        JFileChooser fileChooser = new JFileChooser("C:\\");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int returnVal = fileChooser.showOpenDialog(fileChooser);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -202,7 +202,7 @@ public class IoOperator {
     }
 
     public static void importStudentWork() {
-        JFileChooser fileChooser = new JFileChooser("F:\\");
+        JFileChooser fileChooser = new JFileChooser("C:\\");
 //        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int returnVal = fileChooser.showOpenDialog(fileChooser);
@@ -350,7 +350,7 @@ public class IoOperator {
     }
 
     public static String getFileDirectChoose() {
-        JFileChooser fileChooser = new JFileChooser("F:\\");
+        JFileChooser fileChooser = new JFileChooser("C:\\");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnVal = fileChooser.showOpenDialog(fileChooser);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
