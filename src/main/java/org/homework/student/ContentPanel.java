@@ -4,6 +4,7 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
 import org.homework.db.model.User;
 import org.homework.main.MainFrame;
+import org.homework.main.login.LoginPanel;
 import org.homework.utils.MyPanel;
 import org.homework.utils.MyScrollPane;
 import org.homework.utils.MyTextArea;
@@ -87,6 +88,19 @@ public class ContentPanel extends JPanel {
         add(plaitPanel);
         validate();
         repaint();
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    JScrollBar vBar = scrollPane.getVerticalScrollBar(); //得到了该JScrollBar
+                    vBar.setValue(vBar.getMinimum()); //设置一个具体位置，value为具体的位置
+
+                    JScrollBar hBar = scrollPane.getHorizontalScrollBar(); //得到了该JScrollBar
+                    hBar.setValue(hBar.getMinimum()); //设置一个具体位置，value为具体的位置
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void addPanel(int index,final TableQuestion t){

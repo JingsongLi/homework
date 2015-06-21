@@ -8,6 +8,7 @@ import java.awt.*;
  */
 public class MyTextArea extends JTextArea{
     public MyTextArea(){
+//        setFocusable(false);
         setAlignmentX(Component.LEFT_ALIGNMENT);
         setWrapStyleWord(true);
         setBackground(null);//±³¾°Í¸Ã÷
