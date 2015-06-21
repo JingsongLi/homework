@@ -144,6 +144,11 @@ public class TTestPaper extends MouseAdapter {
         jDialog.setVisible(true);
     }
 
+    /**
+     * 一个JScrollPane，可直接add JLable
+     * 但是所有JPanel都必须设置setAlignmentX(Component.LEFT_ALIGNMENT);
+     * 不然没设置的，会将所有部件顶到中间
+     */
     private void showCenterPanel() {
 //        for (int i = 0; i < 50; i++) {
 //            JLabel lab = new JLabel("i");
@@ -153,6 +158,15 @@ public class TTestPaper extends MouseAdapter {
 
         jDialog.getContentPane().remove(centerScrollPane);
         centerPanel.removeAll();
+
+        JPanel totalPanel = new JPanel();
+        totalPanel.setLayout(new BoxLayout(totalPanel, BoxLayout.Y_AXIS));
+        totalPanel.setBackground(Color.WHITE);
+//        totalPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        totalPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
+        JScrollPane scrollPane = new MyScrollPane(totalPanel);
+        centerPanel.add(scrollPane);
 
         //用于访问textFieldArray
         int i = 0;
@@ -165,33 +179,21 @@ public class TTestPaper extends MouseAdapter {
                     tempTestMap.put(entry2.getKey(), entry2.getValue());
 
                     int type = entry2.getKey();
-
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                    panel.setBackground(Color.WHITE);
-                    panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-                    panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-                    JScrollPane scrollPane = new MyScrollPane(panel);
-                    centerPanel.add(scrollPane);
-
                     if (entry2.getKey() != 5) {
-                        JPanel panel_2 = new JPanel();
-                        panel_2.setLayout(new GridLayout(entry2.getValue().size()+1, 1));
-                        panel_2.setBackground(Color.WHITE);
-                        panel.add(panel_2);
 
                         JLabel labelTypeExplain = buildLabel();
                         labelTypeExplain.setText(getTypeWord(type));
                         labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
                         labelTypeExplain.setFont(new Font("宋体", Font.BOLD, 15));
-                        panel_2.add(labelTypeExplain);
+                        totalPanel.add(labelTypeExplain);
 
                         //章节
                         for (Map.Entry<Integer,java.util.List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
                             JPanel panel_3 = new JPanel();
                             panel_3.setLayout(new FlowLayout(FlowLayout.LEFT));
                             panel_3.setBackground(Color.WHITE);
-                            panel_2.add(panel_3);
+                            panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
+                            totalPanel.add(panel_3);
 
                             String s1 = "第" + entry3.getKey() + "章(共" + entry3.getValue().size() + "个小题)";
                             JLabel label_1 = new JLabel(s1);
@@ -213,16 +215,11 @@ public class TTestPaper extends MouseAdapter {
                         i++;
                     }
                     else {
-                        JPanel panel_2_1 = new JPanel();
-                        panel_2_1.setLayout(new BoxLayout(panel_2_1, BoxLayout.Y_AXIS));
-                        panel_2_1.setBackground(Color.WHITE);
-                        panel.add(panel_2_1);
-
                         JLabel labelTypeExplain = buildLabel();
                         labelTypeExplain.setText(getTypeWord(type));
                         labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
                         labelTypeExplain.setFont(new Font("宋体", Font.BOLD, 15));
-                        panel_2_1.add(labelTypeExplain);
+                        totalPanel.add(labelTypeExplain);
 
                         //章节
                         for (final Map.Entry<Integer,java.util.List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
@@ -231,7 +228,7 @@ public class TTestPaper extends MouseAdapter {
                                 String s1 = "第" + entry3.getKey() + "章.第" + k + "题";
                                 JCheckBox checkBox = new JCheckBox(s1);
                                 checkBox.setBackground(Color.WHITE);
-                                panel_2_1.add(checkBox);
+                                totalPanel.add(checkBox);
                                 checkboxList.put(checkBox, entry3.getValue().get(k-1));
 
                                 String startSentence = entry3.getValue().get(k-1).getMain_content();
@@ -239,17 +236,17 @@ public class TTestPaper extends MouseAdapter {
                                     JLabel startLabel = new JLabel();
                                     startLabel.setIcon(getIcon(ContentPanel.PRE + startSentence.substring(1,startSentence.length()-1)));
                                     startLabel.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
-                                    panel_2_1.add(startLabel);
+                                    totalPanel.add(startLabel);
                                 }else {
                                     JTextArea jTextArea = new JTextArea();
                                     jTextArea.setAlignmentX(Component.LEFT_ALIGNMENT);
                                     jTextArea.setBackground(null);
                                     jTextArea.setEditable(false);
                                     jTextArea.setLineWrap(true);
-                                    jTextArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+                                    jTextArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
                                     jTextArea.setText(startSentence);
                                     jTextArea.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
-                                    panel_2_1.add(jTextArea);
+                                    totalPanel.add(jTextArea);
                                 }
 
                                 checkBox.addMouseListener(new MouseAdapter() {
@@ -265,6 +262,13 @@ public class TTestPaper extends MouseAdapter {
                     }
 
                 }
+
+                //有空白Panel才能删除最后一个控件（答案）
+                JPanel plaitPanel = new JPanel();
+                plaitPanel.setBackground(Color.white);
+                jDialog.getContentPane().add(plaitPanel);
+                jDialog.getContentPane().validate();
+                jDialog.getContentPane().repaint();
             }
         }
         jDialog.getContentPane().add(centerScrollPane, BorderLayout.CENTER);
