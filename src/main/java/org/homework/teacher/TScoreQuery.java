@@ -27,7 +27,7 @@ public class TScoreQuery extends MouseAdapter {
     private JComboBox courseBox;
     private JButton outputButton;
     JDialog jDialog=null; //创建一个空的对话框对象
-    JComboBox queryAsComboBox;
+//    JComboBox queryAsComboBox;
     JButton queryButton;
     JPanel tablePanel = null;
     JTable table = null;
@@ -57,9 +57,9 @@ public class TScoreQuery extends MouseAdapter {
         JLabel courseLabel = new JLabel("科目");
         courseLabel.setBackground(Color.WHITE);
 
-        final String[] queryAs = {"班级", "学号"};
-        queryAsComboBox = new JComboBox(queryAs);
-        queryAsComboBox.setBackground(Color.WHITE);
+//        final String[] queryAs = {"班级", "学号"};
+//        queryAsComboBox = new JComboBox(queryAs);
+//        queryAsComboBox.setBackground(Color.WHITE);
 
         queryButton = new JButton("查询");
         queryButton.setBackground(Color.WHITE);
@@ -69,18 +69,18 @@ public class TScoreQuery extends MouseAdapter {
         outputButton.setBackground(Color.WHITE);
         outputButton.addMouseListener(this);
 
-        queryAsComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                switch (e.getStateChange()) {
-                    case ItemEvent.SELECTED:
-                        TScoreQuery.queryAs = (String)e.getItem();
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-        });
+//        queryAsComboBox.addItemListener(new ItemListener() {
+//            public void itemStateChanged(ItemEvent e) {
+//                switch (e.getStateChange()) {
+//                    case ItemEvent.SELECTED:
+//                        TScoreQuery.queryAs = (String)e.getItem();
+//                        break;
+//                    default:
+//                        break;
+//                }
+//
+//            }
+//        });
 
         //
         List<String> distinctCourse = DBConnecter.getDistinctOwnDB(DBConnecter.ALL_STUDENT_SCORE_TABLE,AllStudentScore.COURSE);
@@ -120,7 +120,7 @@ public class TScoreQuery extends MouseAdapter {
 
         topPanel.add(courseLabel);
         topPanel.add(courseBox);
-        topPanel.add(queryAsComboBox);
+//        topPanel.add(queryAsComboBox);
         topPanel.add(classBox);
         topPanel.add(queryButton);
         topPanel.add(outputButton);
