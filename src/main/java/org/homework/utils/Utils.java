@@ -25,7 +25,7 @@ public class Utils {
             "单选题：每题只有一个正确答案。每题1分。",
             "多选题：每题有一个或多个正确答案。每题2分。",
             "判断题：对或错，请选择。每题1分。",
-            "填空题：填空，以逗号分隔答案。每题1分。",
+            "填空题：填空，以逗号分隔答案。每题2分。",
             "主观题：请写到下面的框中。"};
     public static final String[] JUDGE_OPTION = {"对", "错"};
     public static final String SPLIT = "#";

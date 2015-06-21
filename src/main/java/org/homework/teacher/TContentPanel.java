@@ -23,6 +23,8 @@ public class TContentPanel extends JPanel {
     public static final String PRE = "question\\";
 
     ArrayList<JTextField> comprehensiveScoreTextFiled = new ArrayList<JTextField>();
+    ArrayList<JTextField> tiankongFileds = new ArrayList<JTextField>();
+    JTextField tiankongSumScore = new JTextField(10);
     JTextField compSumScore = new JTextField(10);
     JTextField sumScoreText = new JTextField(10);
     float sumScore = 0;
@@ -84,9 +86,9 @@ public class TContentPanel extends JPanel {
         objectiveScore = 0;
         sumScoreText.setText(null);
         compSumScore.setText(null);
-        for (JTextField jTextField : comprehensiveScoreTextFiled) {
-            jTextField.setText(null);
-        }
+
+        comprehensiveScoreTextFiled.clear();
+        tiankongFileds.clear();
 
         for (Map.Entry<Integer, List<StudentAnswer>> entry : map.entrySet()) {
             //List<StudentAnswer> list = entry.getValue();
@@ -137,6 +139,7 @@ public class TContentPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getSource() == submitScore) {
                     float comsumS = 0;
+                    float tiankongsumS = 0;
                     sumScore = 0;
                     for (JTextField jTextField : comprehensiveScoreTextFiled) {
                         String s = jTextField.getText();
@@ -144,8 +147,16 @@ public class TContentPanel extends JPanel {
                             comsumS += Float.parseFloat(s);
                         }
                     }
-                    sumScore = objectiveScore + comsumS;
+
+                    for (JTextField jTextField : tiankongFileds) {
+                        String s = jTextField.getText();
+                        if (!s.equals("")) {
+                            tiankongsumS += Float.parseFloat(s);
+                        }
+                    }
+                    sumScore = objectiveScore + comsumS +tiankongsumS;
                     compSumScore.setText(Float.toString(comsumS));
+                    tiankongSumScore.setText(Float.toString(tiankongsumS));
                     sumScoreText.setText(Float.toString(sumScore));
 
                     String[] stu = stuNumName.split("_");
@@ -251,27 +262,19 @@ public class TContentPanel extends JPanel {
     private void showSubjectiveAnswer(float unitScore, Integer type, List<StudentAnswer> stuAnsList) {
         int textLineCount = 0;
 
-
-        float score = 0;
-        int count = 0;
-
         //成绩显示
         final JPanel scorePanel = new JPanel();
         scorePanel.setBackground(Color.WHITE);
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         scorePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         scorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JTextField textField = new JTextField(10);
         scorePanel.add(new JLabel("成绩："));
 
-
-        if (type == 4) {
-            textLineCount = 2;
-            scorePanel.add(textField);
-            textField.setEditable(false);
-        }
-        else {
-            textLineCount = 5;
+        textLineCount = 5;
+        if(type == 4){
+            scorePanel.add(tiankongSumScore);
+            tiankongSumScore.setEnabled(false);
+        }else if(type == 5){
             scorePanel.add(compSumScore);
             compSumScore.setEnabled(false);
         }
@@ -292,12 +295,16 @@ public class TContentPanel extends JPanel {
             scoreNumberPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
             scoreNumberPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             scoreNumberPanel.add(new JLabel(i.toString() + "."));
-            if (type == 5) {
-                scoreNumberPanel.add(new JLabel("成绩："));
-                JTextField compScoreTextFiled = new JTextField(10);
-                scoreNumberPanel.add(compScoreTextFiled);
-                comprehensiveScoreTextFiled.add(compScoreTextFiled);
+
+            scoreNumberPanel.add(new JLabel("成绩："));
+            JTextField scoreTextFiled = new JTextField(10);
+            scoreNumberPanel.add(scoreTextFiled);
+            if(type == 4){
+                tiankongFileds.add(scoreTextFiled);
+            }else if(type == 5){
+                comprehensiveScoreTextFiled.add(scoreTextFiled);
             }
+
             answerPanel.add(scoreNumberPanel);
 
             //学生答案与参考答案panel
@@ -334,29 +341,17 @@ public class TContentPanel extends JPanel {
 
             String stuAnswer = stuAnsList.get(i-1).getStudentAnswer();
             String correctAnswer = stuAnsList.get(i-1).getAnswer();
-            if (type == 4 && !(stuAnswer.equals(correctAnswer))) {
-//                String[] student = stuAnswer.split(",");
-//                String[] correct = stuAnswer.split(",");
-//                for (int j = 0; j < correct.length; j++) {
-//                    String s = student[j];
-//                    String c = correct[j];
-//                    if (!s.equals(c)) {
-//                        appendToPane(textStuAns, s, Color.RED);
-//                    }
-//                    if (i == correct.length - 1) {
-//                        appendToPane(textStuAns, ",", Color.BLACK);
-//                    }
-//                }
-                textStuAns.setForeground(Color.RED);
+
+            if (type == 4) {
+                if(!(stuAnswer.equals(correctAnswer))){
+                    scoreTextFiled.setText("0");
+                    textStuAns.setForeground(Color.RED);
+                }else{
+                    scoreTextFiled.setText("2");
+                }
             }
 
-            if (type == 4 && stuAnswer.equals(correctAnswer)) {
-                count++;
-            }
-
-            //else {
-                textStuAns.setText("学生答案：\n\r" + stuAnswer);
-            //}
+            textStuAns.setText("学生答案：\n\r" + stuAnswer);
             textCorrectAns.setText("参考答案：\n\r" + correctAnswer);
 
             textAreaPanel.add(stuAnsPanel);
@@ -365,13 +360,6 @@ public class TContentPanel extends JPanel {
             answerPanel.add(Box.createVerticalStrut(3));
             answerPanel.add(textAreaPanel);
         }
-
-        if (type == 4) {
-            score = unitScore * count;
-            textField.setText(Float.toString(score));
-            objectiveScore += score;
-        }
-
 
     }
 
