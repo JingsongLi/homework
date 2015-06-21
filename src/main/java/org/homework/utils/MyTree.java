@@ -17,8 +17,8 @@ public class MyTree extends JTree {
 
         DefaultTreeCellRenderer render= (DefaultTreeCellRenderer)(getCellRenderer());
         render.setLeafIcon(getIcon(PRE + "文件.png"));
-        render.setClosedIcon(getIcon(PRE + "关闭文件夹.png"));
-        render.setOpenIcon(getIcon(PRE + "打开文件夹.png"));
+        render.setClosedIcon(getIcon(PRE + "文件夹.png"));
+        render.setOpenIcon(getIcon(PRE + "文件夹.png"));
 
 //        BasicTreeUI ui=(BasicTreeUI)(getUI());
 //        ui.setCollapsedIcon(CollapsedIcon);
