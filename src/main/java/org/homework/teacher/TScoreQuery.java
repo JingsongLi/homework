@@ -1,10 +1,12 @@
 package org.homework.teacher;
 
+import lombok.Data;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.AllStudentScore;
 import org.homework.io.IoOperator;
 import org.homework.io.PDFOperator;
 import org.homework.utils.MyScrollPane;
+import org.homework.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -151,29 +153,30 @@ public class TScoreQuery extends MouseAdapter {
 
            //System.out.println(allStuScoreList);
 
-           Map<String, java.util.List<Float>> allStuScoreMap = new TreeMap<String, java.util.List<Float>>();
+           Map<String, List<AllStudentScore>> allStuScoreMap = new TreeMap();
 
            for (AllStudentScore allStudentScore : allStuScoreList) {
                String stuNumber = allStudentScore.getStudentNumber();
                String stuName = allStudentScore.getStudentName();
                String stuNumName = stuNumber + "_" + stuName;
-               java.util.List<Float> scoreList = allStuScoreMap.get(stuNumName);
+               List<AllStudentScore> scoreList = allStuScoreMap.get(stuNumName);
                if (scoreList == null) {
-                   scoreList = new ArrayList<Float>();
+                   scoreList = new ArrayList<AllStudentScore>();
                    allStuScoreMap.put(stuNumName, scoreList);
                }
-               scoreList.add(allStudentScore.getScore());
+               scoreList.add(allStudentScore);
            }
 
            int row = allStuScoreMap.size() + 1;
-           int column = 0;
-           for (Map.Entry<String, List<Float>> entry : allStuScoreMap.entrySet()) {
-               int elemSize = entry.getValue().size();
-               if (elemSize > column) {
-                   column = elemSize;
+
+           Set<TableChapterNode> tableChapterNodes = new HashSet<TableChapterNode>();
+           for (Map.Entry<String, List<AllStudentScore>> entry : allStuScoreMap.entrySet()) {
+               for (AllStudentScore ass : entry.getValue()){
+                   tableChapterNodes.add(new TableChapterNode(ass.getChapter(),ass.getCourse()));
                }
            }
-           column += 3;
+           int column = tableChapterNodes.size();
+           column += 4;
            if (tablePanel != null && table != null) {
                tablePanel.remove(table);
                jDialog.getContentPane().remove(tablePanel);
@@ -181,7 +184,7 @@ public class TScoreQuery extends MouseAdapter {
                tablePanel = null;
                System.gc();
            }
-           createTable(row, column, allStuScoreMap);
+           createTable(row, column, allStuScoreMap,tableChapterNodes);
            //System.out.println(allStuScoreMap);
 
 
@@ -190,7 +193,8 @@ public class TScoreQuery extends MouseAdapter {
        }
     }
 
-    private void createTable(int row, int column, Map<String, java.util.List<Float>> allStuScoreMap) {
+    private void createTable(int row, int column, Map<String, List<AllStudentScore>> allStuScoreMap,
+                             Set<TableChapterNode> tableChapterNodes) {
         tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         tablePanel.setBackground(Color.WHITE);
@@ -204,10 +208,13 @@ public class TScoreQuery extends MouseAdapter {
         table.setEnabled(false);
         table.setValueAt("学号", 0, 0);
         table.setValueAt("姓名", 0, 1);
-        table.setValueAt("平均分", 0, column-1);
-        for (int i = 1; i <= column - 3; i++) {
-            String s = "第" + i + "章";
-            table.setValueAt(s, 0, i+1);
+        table.setValueAt("平均分", 0, column-2);
+        table.setValueAt("平均率", 0, column-1);
+        List<TableChapterNode> tableChapterNodeList = new ArrayList<TableChapterNode>();
+        tableChapterNodeList.addAll(tableChapterNodes);
+        for (int i = 1; i <= column - 4; i++) {
+            TableChapterNode node = tableChapterNodeList.get(i-1);
+            table.setValueAt(node, 0, i+1);
         }
         table.setBorder(new LineBorder(new Color(0, 0, 0)));
         table.setRowHeight(20);
@@ -216,31 +223,71 @@ public class TScoreQuery extends MouseAdapter {
         int rowIndex = 0;
         int columnIndex = 0;
         float scoreSum = 0;
-        int index = 0;
-        for (Map.Entry<String, List<Float>> entry : allStuScoreMap.entrySet()) {
+        float maxScore = 0;
+        Map<String, Float> scoreMap = new TreeMap();
+        for (Map.Entry<String, List<AllStudentScore>> entry : allStuScoreMap.entrySet()) {
 
             rowIndex++;
             columnIndex = 0;
             scoreSum = 0;
-            index = 0;
 
             String[] stuNumName = entry.getKey().split("_");
             table.setValueAt(stuNumName[0], rowIndex, columnIndex++);
             table.setValueAt(stuNumName[1], rowIndex, columnIndex++);
-            for (Float score : entry.getValue()) {
-                if(score == -1f) {
-                    table.setValueAt("作弊", rowIndex, columnIndex++);
-                    scoreSum += 0;
-                } else{
-                    table.setValueAt(score, rowIndex, columnIndex++);
-                    scoreSum += score;
+            for (AllStudentScore ass : entry.getValue()) {
+                float score = ass.getScore();
+                //先找到能填充的row和column
+                Integer tmpJ=null;
+                for (int i = 1; i <= column - 4; i++) {
+                    TableChapterNode tmpAss = (TableChapterNode) table.getValueAt(0, i + 1);
+                    if(tmpAss.course.equals(ass.getCourse()) &&
+                            tmpAss.chapter == ass.getChapter()){
+                        tmpJ = i+1;
+                        break;
+                    }
                 }
-                index++;
+                if(tmpJ != null){
+                    if(score == -1f) {
+                        table.setValueAt("作弊", rowIndex, tmpJ);
+                        scoreSum += 0;
+                    } else {
+                        table.setValueAt(ass.getScore(), rowIndex, tmpJ);
+                        scoreSum += score;
+                    }
+                }
+                columnIndex++;
             }
-            table.setValueAt(scoreSum / index, rowIndex, column - 1);
+            float score = scoreSum / tableChapterNodes.size();
+            table.setValueAt(score, rowIndex, column - 2);
+            scoreMap.put(entry.getKey(),score);
+            if(score > maxScore)
+                maxScore = score;
+        }
 
+        rowIndex = 0;
+        for (Map.Entry<String, Float> entry : scoreMap.entrySet()) {
+            rowIndex++;
+            float num = (100*entry.getValue())/maxScore;
+            num = (float)((int)(num * 10f) / 10d);
+            table.setValueAt(num, rowIndex, column - 1);
         }
 
         jDialog.setVisible(true);
+    }
+
+    @Data
+    public static class TableChapterNode {
+        int chapter;
+        String course;
+
+        public TableChapterNode(int chapter,String course){
+            this.chapter = chapter;
+            this.course = course;
+        }
+
+        @Override
+        public String toString(){
+            return Utils.getChapterName(course,chapter,null);
+        }
     }
 }

@@ -54,6 +54,7 @@ public class DBConnecter {
                 question.setId(result.getInt(TableQuestion.ID));
                 question.setCourse(result.getString(TableQuestion.COURSE));
                 question.setChapter(result.getInt(TableQuestion.CHAPTER));
+                question.setChapterDesc(result.getString(TableQuestion.CHAPTER_DESC));
                 question.setType(result.getInt(TableQuestion.TYPE));
                 question.setMain_content(result.getString(TableQuestion.MAIN_CONTENT));
                 question.setEle_content(result.getString(TableQuestion.ELE_CONTENT));
@@ -80,6 +81,31 @@ public class DBConnecter {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public static String getChapterDesc(String course,int chapter){
+        course = "'" + course +"'";
+        String ret = null;
+        Statement sql_statement = null;
+        try {
+            sql_statement = mainConn.createStatement();
+            String sql = "select distinct " + TableQuestion.CHAPTER_DESC +
+                    " from " + QUESTION_TABLE + " where " + TableQuestion.COURSE + "=" + course + " and " +
+                    TableQuestion.CHAPTER + "=" + chapter + ";";
+            ResultSet result = sql_statement.executeQuery(sql);
+//            System.out.println(sql);
+            while (result.next()) {
+                String str = result.getString(TableQuestion.CHAPTER_DESC);
+                if(str != null)
+                    ret = str;
+            }
+//            System.out.println(ret);
+            //关闭连接和声明
+            sql_statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
 
@@ -461,7 +487,7 @@ public class DBConnecter {
                     " and " + AllStudentScore.CHAPTER + " = " + chapter +
                     " and " + AllStudentScore.COURSE + "=" + course;
             int upRet = sql_statement.executeUpdate(sql);
-//            System.out.println(sql);
+            System.out.println(sql);
             if (upRet == 0){
                 String insertSql = "insert into " + ALL_STUDENT_SCORE_TABLE +
                         " (" + AllStudentScore.COURSE + "," + AllStudentScore.CHAPTER + ","

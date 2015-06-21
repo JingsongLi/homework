@@ -119,6 +119,7 @@ public class ContentPanel extends JPanel {
             add(startLabel);
         }else {
             JTextArea area = new MyTextArea();
+            area.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
             area.setText(index + ". " + startSentence);
             area.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
             add(area);
@@ -154,6 +155,7 @@ public class ContentPanel extends JPanel {
                         }
                     });
                     MyPanel myPanel = new MyPanel();
+                    myPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
                     myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
                     myPanel.add(radioButton);
                     JTextArea radioArea = new MyTextArea();
@@ -200,6 +202,7 @@ public class ContentPanel extends JPanel {
                     });
 
                     MyPanel myPanel = new MyPanel();
+                    myPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
                     myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
                     myPanel.add(jCheckBox);
                     JTextArea radioArea = new MyTextArea();
@@ -242,6 +245,9 @@ public class ContentPanel extends JPanel {
         final JButton buttonAnswer = new JButton("ÏÔÊ¾´ð°¸");
         buttonAnswer.addMouseListener(new MouseAdapter() {
             JTextArea answer = new MyTextArea();
+            {
+                answer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+            }
 
             @Override
             public void mouseClicked(MouseEvent e) {

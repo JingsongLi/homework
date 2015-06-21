@@ -5,6 +5,7 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.Score;
 import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
+import org.homework.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -100,6 +101,7 @@ public class CatalogTree{
                         allScore.get(entry1.getKey()).containsKey(entry2.getKey()))
                     score = allScore.get(entry1.getKey()).get(entry2.getKey());
                 //2.chapter name
+
                 DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(
                         new ChapterNode(entry2.getKey(),entry1.getKey(),entry2.getValue(),score));
                 node1.add(node2);
@@ -180,10 +182,7 @@ public class CatalogTree{
 
         @Override
         public String toString(){
-            String name = "ตฺ" + getChineseNum(chapter) + "ีย";
-            if(score != null)
-                name += "(" + score + ")";
-            return name;
+            return Utils.getChapterName(course,chapter,score);
         }
     }
 

@@ -1,5 +1,6 @@
 package org.homework.utils;
 
+import org.homework.db.DBConnecter;
 import org.homework.db.model.Score;
 import org.homework.db.model.StudentAnswer;
 import org.homework.db.model.TableQuestion;
@@ -201,6 +202,22 @@ public class Utils {
         tp.setCaretPosition(len);
         tp.setCharacterAttributes(aset, false);
         tp.replaceSelection(msg);
+    }
+
+    public static String getChapterName(String course,int chapter,Float score){
+        String name = "";
+        String chapterDesc = DBConnecter.getChapterDesc(course, chapter);
+        if(chapter < 100001){
+            name += chapter;
+            if(name.length() == 1)
+                name = "0" + name;
+            name += "  ";
+        }
+        if(chapterDesc != null)
+            name += chapterDesc;
+        if(score != null)
+            name += "(" + score + ")";
+        return name;
     }
 
     public static void main(String[] args){

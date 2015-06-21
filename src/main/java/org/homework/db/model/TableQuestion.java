@@ -11,11 +11,11 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class TableQuestion implements Serializable{
     public static final String ID = "id";
     public static final String COURSE = "course";
     public static final String CHAPTER = "chapter";
+    public static final String CHAPTER_DESC = "chapter_desc";
     public static final String TYPE = "type";
     public static final String MAIN_CONTENT = "main_content";
     public static final String ELE_CONTENT = "element_content";
@@ -31,6 +31,7 @@ public class TableQuestion implements Serializable{
     int id;
     String course;
     int chapter;
+    String chapterDesc;
     int type;
     transient String main_content;
     transient String ele_content;
@@ -39,4 +40,5 @@ public class TableQuestion implements Serializable{
     String myAnswer;
     transient String note;
     transient int collectStatus;
+
 }

@@ -3,6 +3,8 @@ package org.homework.teacher;
 import lombok.Getter;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.StudentAnswer;
+import org.homework.db.model.TableQuestion;
+import org.homework.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -83,7 +85,7 @@ public class TCatalogTree {
             for (Map.Entry<Integer,TreeMap<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>>
                     entry2 : entry1.getValue().entrySet()) {
                 //2.chapter name
-                DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new ChapterNode(entry2.getKey()));
+                DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new ChapterNode(entry2.getKey(),entry1.getKey()));
                 node1.add(node2);
                 for (Map.Entry<String,TreeMap<String, TreeMap<Integer,List<StudentAnswer>>>>
                         entry3 : entry2.getValue().entrySet()) {
@@ -166,19 +168,16 @@ public class TCatalogTree {
 
     public static class ChapterNode {
         int chapter;
-        //String course;
-        //TreeMap<Integer,List<TableQuestion>> map;
+        String course;
 
-        public ChapterNode(int chapter/*,String course, TreeMap<Integer,List<TableQuestion>> map, Integer score*/){
+        public ChapterNode(int chapter,String course){
             this.chapter = chapter;
-            //this.course = course;
-            //this.map = map;
+            this.course = course;
         }
 
         @Override
-        public String toString() {
-            String name = "ตฺ" + getChineseNum(chapter) + "ีย";
-            return name;
+        public String toString(){
+            return Utils.getChapterName(course,chapter,null);
         }
     }
 

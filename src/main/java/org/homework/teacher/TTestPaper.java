@@ -5,6 +5,7 @@ import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
 import org.homework.student.ContentPanel;
 import org.homework.utils.MyScrollPane;
+import org.homework.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -134,6 +135,7 @@ public class TTestPaper extends MouseAdapter {
                         }
                         //questionCount.clear();
                         showCenterPanel();
+
                         break;
                     default:
                         break;
@@ -195,7 +197,7 @@ public class TTestPaper extends MouseAdapter {
                             panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
                             totalPanel.add(panel_3);
 
-                            String s1 = "第" + entry3.getKey() + "章(共" + entry3.getValue().size() + "个小题)";
+                            String s1 = Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) + "(共" + entry3.getValue().size() + "个小题)";
                             JLabel label_1 = new JLabel(s1);
                             panel_3.add(label_1);
                             panel_3.add(textFieldArray.get(i).get(j));
@@ -225,7 +227,7 @@ public class TTestPaper extends MouseAdapter {
                         for (final Map.Entry<Integer,java.util.List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
 
                             for (int k = 1; k <= entry3.getValue().size(); k++) {
-                                String s1 = "第" + entry3.getKey() + "章.第" + k + "题";
+                                String s1 =  Utils.getChapterName(entry1.getKey(), entry3.getKey(), null) + ".第" + k + "题";
                                 JCheckBox checkBox = new JCheckBox(s1);
                                 checkBox.setBackground(Color.WHITE);
                                 totalPanel.add(checkBox);
