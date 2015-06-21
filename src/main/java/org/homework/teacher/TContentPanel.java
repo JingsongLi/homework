@@ -125,6 +125,11 @@ public class TContentPanel extends JPanel {
         sumScorePanel.add(new JLabel("总得分："));
         sumScorePanel.add(sumScoreText);
         sumScoreText.setEditable(false);
+        String[] stu = stuNumName.split("_");
+        Float score = DBConnecter.getStudentScore(stu[0], course, chapter);
+        if(score != null){
+            sumScoreText.setText(String.valueOf(score));
+        }
         final JButton submitScore = new JButton("提交成绩");
         sumScorePanel.add(submitScore);
         submitScore.addMouseListener(new MouseAdapter() {

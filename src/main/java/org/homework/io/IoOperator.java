@@ -385,8 +385,11 @@ public class IoOperator {
 
     /**µ¼³öJTableµ½excel */
     public static void exportTable(JTable table){
-        ExportExcel exportExcel = new ExportExcel(table);
-        exportExcel.export();
+        String direct = getFileDirectChoose();
+        if (direct != null) {
+            ExportExcel exportExcel = new ExportExcel(table,direct);
+            exportExcel.export();
+        }
     }
 
     public static void main(String[] args) {

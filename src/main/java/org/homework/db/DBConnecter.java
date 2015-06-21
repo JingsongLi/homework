@@ -176,6 +176,28 @@ public class DBConnecter {
         return list;
     }
 
+    public static Float getStudentScore(String number,String course,int chapter) {
+        course = "'" + course + "'";
+        number = "'" + number + "'";
+        Float ret = null;
+        String sql = "select " + AllStudentScore.SCORE + " from " + ALL_STUDENT_SCORE_TABLE +
+                " where " + AllStudentScore.COURSE + " = " + course +
+                " and " + AllStudentScore.STUDENT_NUMBER + " = " + number +
+                " and " + AllStudentScore.CHAPTER + " = " + chapter + ";";;
+        try {
+            Statement statement = ownConn.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                ret = result.getFloat(AllStudentScore.SCORE);
+            }
+            //关闭连接和声明
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     public static List<AllStudentScore> getAllStudentScores(String course, String queryAs, String queryAsText) {
 
         List<AllStudentScore> allStudentScoreList = new ArrayList<AllStudentScore>();

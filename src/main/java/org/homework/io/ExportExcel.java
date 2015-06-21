@@ -15,29 +15,15 @@ public class ExportExcel {
 
     JTable table;
     FileOutputStream fos;
-    JFileChooser jfc = new JFileChooser();
 
-    public ExportExcel(JTable table) {
+    public ExportExcel(JTable table,String path) {
         this.table = table;
-        jfc.addChoosableFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.getName().indexOf("xls") != -1);
-            }
-
-            public String getDescription() {
-                return "Excel";
-            }
-        });
-
-        jfc.showSaveDialog(null);
-        File file = jfc.getSelectedFile();
-        if(file != null){
-            try {
-                this.fos = new FileOutputStream(file + ".xls");
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-            }
+        try {
+            this.fos = new FileOutputStream(path + "\\学生成绩统计.xls");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
         }
+
     }
 
     public void export() {
