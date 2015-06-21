@@ -4,7 +4,9 @@ import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
 import org.homework.db.model.User;
 import org.homework.main.MainFrame;
+import org.homework.utils.MyPanel;
 import org.homework.utils.MyScrollPane;
+import org.homework.utils.MyTextArea;
 import org.homework.utils.Utils;
 
 import javax.swing.*;
@@ -102,7 +104,7 @@ public class ContentPanel extends JPanel {
             startLabel.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 0));
             add(startLabel);
         }else {
-            JTextArea area = getMutiLineArea();
+            JTextArea area = new MyTextArea();
             area.setText(index + ". " + startSentence);
             area.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
             add(area);
@@ -122,11 +124,12 @@ public class ContentPanel extends JPanel {
                     JRadioButton radioButton;
                     if(t.getType() == 1){
                         value = num2ABC(i);
-                        radioButton = new JRadioButton(value + "、  " + eles[i]);// 创建单选按钮
+                        radioButton = new JRadioButton(value + "、  ");// 创建单选按钮
                     }else{
                         value = eles[i];
-                        radioButton = new JRadioButton("  " + eles[i]);// 创建单选按钮
+                        radioButton = new JRadioButton("  ");// 创建单选按钮
                     }
+                    radioButton.setAlignmentY(Component.TOP_ALIGNMENT);
                     radioButton.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
                     radioButton.setBackground(Color.WHITE);
                     radioButton.addItemListener(new ItemListener() {
@@ -136,7 +139,15 @@ public class ContentPanel extends JPanel {
                             t.setMyAnswer(answer);
                         }
                     });
-                    add(radioButton);// 应用单选按钮
+                    MyPanel myPanel = new MyPanel();
+                    myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
+                    myPanel.add(radioButton);
+                    JTextArea radioArea = new MyTextArea();
+                    radioArea.setAlignmentY(Component.TOP_ALIGNMENT);
+                    radioArea.setText(eles[i]);
+                    myPanel.add(radioArea);
+
+                    add(myPanel);// 应用单选按钮
                     group.add(radioButton);
                 }
             }
@@ -149,7 +160,8 @@ public class ContentPanel extends JPanel {
                     final String value;
                     final JCheckBox jCheckBox;
                     value = num2ABC(i);
-                    jCheckBox = new JCheckBox(value + "、  " + eles[i]);// 创建复选按钮
+                    jCheckBox = new JCheckBox(value + "、  ");// 创建复选按钮
+                    jCheckBox.setAlignmentY(Component.TOP_ALIGNMENT);
                     boxList.add(jCheckBox);
                     jCheckBox.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
                     jCheckBox.setBackground(Color.WHITE);
@@ -172,7 +184,15 @@ public class ContentPanel extends JPanel {
                             t.setMyAnswer(answer);
                         }
                     });
-                    add(jCheckBox);// 应用单选按钮
+
+                    MyPanel myPanel = new MyPanel();
+                    myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
+                    myPanel.add(jCheckBox);
+                    JTextArea radioArea = new MyTextArea();
+                    radioArea.setAlignmentY(Component.TOP_ALIGNMENT);
+                    radioArea.setText(eles[i]);
+                    myPanel.add(radioArea);
+                    add(myPanel);
                 }
             }
         }else if(t.getType()==4 || t.getType() == 5){//填空或简答
@@ -200,14 +220,14 @@ public class ContentPanel extends JPanel {
         //3.按钮
         final JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         buttonPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         add(buttonPanel);
 
         final JButton buttonAnswer = new JButton("显示答案");
         buttonAnswer.addMouseListener(new MouseAdapter() {
-            JTextArea answer = getMutiLineArea();
+            JTextArea answer = new MyTextArea();
 
             @Override
             public void mouseClicked(MouseEvent e) {

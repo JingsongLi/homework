@@ -189,17 +189,6 @@ public class Utils {
         return (char)(num+65) + "";
     }
 
-    public static JTextArea getMutiLineArea(){
-        JTextArea jTextArea = new JTextArea();
-        jTextArea.setAlignmentX(Component.LEFT_ALIGNMENT);
-        jTextArea.setWrapStyleWord(true);
-        jTextArea.setBackground(null);//±³¾°Í¸Ã÷
-        jTextArea.setEditable(false);//²»¿É±à¼­
-        jTextArea.setLineWrap(true);
-        jTextArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 0));
-        return jTextArea;
-    }
-
     public static void appendToPane(JTextPane tp, String msg, Color c)
     {
         StyleContext sc = StyleContext.getDefaultStyleContext();
