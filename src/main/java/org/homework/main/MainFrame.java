@@ -204,7 +204,9 @@ public class MainFrame extends JFrame {
 
 
 	private void testPaperClick() {
-		StudentPanel.leftPanel.setVisible(true);
+		//重新生成，以免界面出错
+		studentPanel = new StudentPanel();
+		setContentPane(studentPanel);
 		ContentPanel.isCollectPanel = false;
 		CatalogTree.clickFirst();
 	}
