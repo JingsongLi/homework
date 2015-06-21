@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.StudentAnswer;
 import org.homework.db.model.TableQuestion;
+import org.homework.utils.MyTree;
 import org.homework.utils.Utils;
 
 import javax.swing.*;
@@ -48,7 +49,7 @@ public class TCatalogTree {
         top = new DefaultMutableTreeNode("catalog");
 
         defaultTreeModel =new DefaultTreeModel(top);
-        tree = new JTree(defaultTreeModel);
+        tree = new MyTree(defaultTreeModel);
         // 添加选择事件
 
         tree.addMouseListener(new MouseAdapter() {
