@@ -57,7 +57,9 @@ public class TContentPanel extends JPanel {
     public TContentPanel(){
         setBackground(Color.WHITE);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
+        tiankongSumScore.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
+        compSumScore.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
+        sumScoreText.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
     }
 
     private float getUnitScore(String str) {
@@ -96,6 +98,7 @@ public class TContentPanel extends JPanel {
             float unitScore = 0;
             String typeExplain = getTypeExplain(type);
             JLabel labelTypeExplain = buildLabel();
+            labelTypeExplain.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             labelTypeExplain.setText(getChineseNum(type) + "、" + typeExplain);
             unitScore = getUnitScore(typeExplain);
 //            if (unitScore == -1) {
@@ -187,8 +190,11 @@ public class TContentPanel extends JPanel {
         scorePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         scorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JTextField textField = new JTextField(10);
+        textField.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
         textField.setEditable(false);
-        scorePanel.add(new JLabel("成绩："));
+        JLabel chengjiLable = new JLabel("成绩：");
+        chengjiLable.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
+        scorePanel.add(chengjiLable);
         scorePanel.add(textField);
         add(scorePanel);
 
@@ -215,6 +221,7 @@ public class TContentPanel extends JPanel {
         int tableCount = stuAnsList.size()/10 +1;
         for (int i = 0; i < tableCount; i++) {
             JTable table = new JTable(new DefaultTableModel(3, 11));
+            table.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             table.setEnabled(false);
             table.setValueAt("题号", 0, 0);
             table.setValueAt("学生答案", 1, 0);
@@ -268,7 +275,9 @@ public class TContentPanel extends JPanel {
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         scorePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         scorePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scorePanel.add(new JLabel("成绩："));
+        JLabel chengjiLable = new JLabel("成绩：");
+        chengjiLable.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
+        scorePanel.add(chengjiLable);
 
         textLineCount = 5;
         if(type == 4){
@@ -296,8 +305,12 @@ public class TContentPanel extends JPanel {
             scoreNumberPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             scoreNumberPanel.add(new JLabel(i.toString() + "."));
 
-            scoreNumberPanel.add(new JLabel("成绩："));
+            JLabel chengji2Lable = new JLabel("成绩：");
+            chengji2Lable.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
+            scoreNumberPanel.add(chengji2Lable);
+
             JTextField scoreTextFiled = new JTextField(10);
+            scoreTextFiled.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             scoreNumberPanel.add(scoreTextFiled);
             if(type == 4){
                 tiankongFileds.add(scoreTextFiled);
@@ -320,6 +333,7 @@ public class TContentPanel extends JPanel {
             //stuAnsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
             final JTextArea textStuAns = new JTextArea(textLineCount, 120);
+            textStuAns.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             textStuAns.setBackground(Color.WHITE);
             textStuAns.setEditable(false);
             textStuAns.setLineWrap(true);
@@ -333,6 +347,7 @@ public class TContentPanel extends JPanel {
             correctAnsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
             final JTextArea textCorrectAns = new JTextArea(textLineCount,120);
+            textCorrectAns.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             textCorrectAns.setBackground(Color.WHITE);
             textCorrectAns.setEditable(false);
             textCorrectAns.setLineWrap(true);

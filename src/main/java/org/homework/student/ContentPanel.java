@@ -120,6 +120,7 @@ public class ContentPanel extends JPanel {
         }else {
             JTextArea area = new MyTextArea();
             area.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+            area.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             area.setText(index + ". " + startSentence);
             area.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
             add(area);
@@ -144,6 +145,7 @@ public class ContentPanel extends JPanel {
                         value = eles[i];
                         radioButton = new JRadioButton("  ");// 创建单选按钮
                     }
+                    radioButton.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
                     radioButton.setAlignmentY(Component.TOP_ALIGNMENT);
                     radioButton.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
                     radioButton.setBackground(Color.WHITE);
@@ -159,6 +161,7 @@ public class ContentPanel extends JPanel {
                     myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
                     myPanel.add(radioButton);
                     JTextArea radioArea = new MyTextArea();
+                    radioArea.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
                     radioArea.setAlignmentY(Component.TOP_ALIGNMENT);
                     radioArea.setText(eles[i]);
                     myPanel.add(radioArea);
@@ -177,6 +180,7 @@ public class ContentPanel extends JPanel {
                     final JCheckBox jCheckBox;
                     value = num2ABC(i);
                     jCheckBox = new JCheckBox(value + "、  ");// 创建复选按钮
+                    jCheckBox.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
                     jCheckBox.setAlignmentY(Component.TOP_ALIGNMENT);
                     boxList.add(jCheckBox);
                     jCheckBox.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
@@ -206,6 +210,7 @@ public class ContentPanel extends JPanel {
                     myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
                     myPanel.add(jCheckBox);
                     JTextArea radioArea = new MyTextArea();
+                    radioArea.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
                     radioArea.setAlignmentY(Component.TOP_ALIGNMENT);
                     radioArea.setText(eles[i]);
                     myPanel.add(radioArea);
@@ -221,6 +226,7 @@ public class ContentPanel extends JPanel {
             add(textPanel);
 
             final JTextArea text = new JTextArea(5, 90);
+            text.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             text.setLineWrap(true);
             JScrollPane scroll = new MyScrollPane(text);
             textPanel.add(scroll);
@@ -247,6 +253,7 @@ public class ContentPanel extends JPanel {
             JTextArea answer = new MyTextArea();
             {
                 answer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+                answer.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
             }
 
             @Override
@@ -320,6 +327,7 @@ public class ContentPanel extends JPanel {
                 String note = t.getNote();
 
                 JTextArea text = new JTextArea(note, 5, 40);
+                text.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
                 Object[] message = { "学习笔记：", new MyScrollPane(text)};
                 JOptionPane pane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
                 JDialog dialog = pane.createDialog(null, "Input");

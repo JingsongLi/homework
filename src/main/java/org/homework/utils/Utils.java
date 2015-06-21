@@ -21,6 +21,7 @@ import java.util.TreeMap;
  */
 public class Utils {
 
+    public static final int FONT_SIZE = 15;
     static final String[] TYPE_INDEX = {"单选题", "多选题","判断题", "填空题", "主观题"};
     static final String[] TYPE_EXPLAIN = {
             "单选题：每题只有一个正确答案。每题1分。",
@@ -40,6 +41,7 @@ public class Utils {
     }
     public static JLabel buildLabel() {
         JLabel label = new JLabel();
+        label.setFont(new Font("宋体", Font.PLAIN, FONT_SIZE));
         label.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         label.setFont(new Font("宋体", Font.BOLD, 15));
         return label;
