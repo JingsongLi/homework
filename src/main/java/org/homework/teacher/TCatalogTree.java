@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.homework.utils.Utils.add4Index;
-import static org.homework.utils.Utils.getChineseNum;
 
 /**
  * Created by hasee on 2015/5/5.

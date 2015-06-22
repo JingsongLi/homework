@@ -120,14 +120,14 @@ public class IoOperator {
                     if(chapter == -1){//老师出题才有答案
                         String answer = "无";
                         String answerExplain = "无";
-                        if(t.getAnswer() == null)
+                        if(t.getAnswer() != null)
                             answer = t.getAnswer();
-                        if(t.getAnswerExplain() == null)
+                        if(t.getAnswerExplain() != null)
                             answerExplain = t.getAnswerExplain();
                         list.add(new PDFLiner(("正确答案：" + answer), 15, Font.PLAIN));
                         list.add(new PDFLiner(("解题思路：" + answerExplain), 15, Font.PLAIN));
-                        txtList.add("正确答案：" + t.getAnswer());
-                        txtList.add("解题思路：" + t.getAnswerExplain());
+                        txtList.add("正确答案：" + answer);
+                        txtList.add("解题思路：" + answerExplain);
                     }
                 }
             }

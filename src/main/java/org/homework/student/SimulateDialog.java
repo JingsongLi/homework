@@ -3,6 +3,7 @@ package org.homework.student;
 import org.homework.db.model.TableQuestion;
 import org.homework.main.StudentPanel;
 import org.homework.utils.MyScrollPane;
+import org.homework.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -11,8 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-
-import static org.homework.utils.Utils.getChineseNum;
 
 /**
  * Created by hasee on 2015/5/8.
@@ -148,7 +147,7 @@ public class SimulateDialog extends MouseAdapter{
         final Map<JCheckBox,TreeMap<Integer, java.util.List<TableQuestion>>> boxList = new HashMap();
         for (final Map.Entry<String,TreeMap<Integer,TreeMap<Integer, java.util.List<TableQuestion>>>> entry1 : CatalogTree.allData.entrySet()){
             for (Map.Entry<Integer,TreeMap<Integer, java.util.List<TableQuestion>>> entry2 : entry1.getValue().entrySet()){
-                String str = entry1.getKey() + "." + "ตฺ" + getChineseNum(entry2.getKey()) + "ีย";
+                String str = entry1.getKey() + "." + Utils.getChapterName(entry1.getKey(),entry2.getKey(),null);
                 JCheckBox checkBox = new JCheckBox(str);
                 checkPanel.add(checkBox);
                 boxList.put(checkBox, entry2.getValue());
