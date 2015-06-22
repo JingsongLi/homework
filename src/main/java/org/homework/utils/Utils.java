@@ -213,10 +213,11 @@ public class Utils {
             name += chapter;
             if(name.length() == 1)
                 name = "0" + name;
-            name += "  ";
+
         }
-        if(chapterDesc != null)
-            name += chapterDesc;
+        if(chapterDesc != null){
+            name += "  " + chapterDesc;
+        }
         if(score != null)
             name += "(" + score + ")";
         return name;

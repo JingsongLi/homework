@@ -76,7 +76,7 @@ public class CatalogTree{
                     JMenuItem jmenuItem2 = new JMenuItem("µ¼³ö");
                     jmenuItem2.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            IoOperator.generatePDF(chapterNode.chapter, chapterNode.map);
+                            IoOperator.generatePDF(chapterNode.chapter,chapterNode.course, chapterNode.map);
                         }
                     });
                     jPopupMenu.add(jmenuItem1);

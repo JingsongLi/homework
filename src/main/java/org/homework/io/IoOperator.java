@@ -11,6 +11,7 @@ import org.homework.manager.SecurityEncode;
 import org.homework.student.CatalogTree;
 import org.homework.student.ContentPanel;
 import org.homework.teacher.TCatalogTree;
+import org.homework.utils.Utils;
 
 import javax.crypto.Cipher;
 import javax.swing.*;
@@ -60,29 +61,33 @@ public class IoOperator {
         }
     }
 
-    public static void generatePDF(int chapter, TreeMap<Integer, List<TableQuestion>> map) {
+    public static void generatePDF(int chapter,String course, TreeMap<Integer, List<TableQuestion>> map) {
         String direct = getFileDirectChoose();
         String path = null;
         if (direct != null) {
             if (chapter == -1) {
-                path = direct + "\\" + "考试试题.pdf";
+                path = direct + "\\" + "考试试题";
             }
             else {
-                path = direct + "\\" + "第" + getChineseNum(chapter) + "章" +
-                        "试题.pdf";
+                path = direct + "\\" + Utils.getChapterName(course,chapter,null) +
+                        "试题";
             }
 
             List<PDFLiner> list = new ArrayList<PDFLiner>();
+            List<String> txtList = new ArrayList<String>();
             if (chapter == -1) {
                 list.add(new PDFLiner("考试试题", 25, Font.BOLD));
+                txtList.add("考试试题");
             }
             else {
-                list.add(new PDFLiner("第" + getChineseNum(chapter) + "章" + "试题", 25, Font.BOLD));
+                list.add(new PDFLiner(Utils.getChapterName(course,chapter,null) + "试题", 25, Font.BOLD));
+                txtList.add(Utils.getChapterName(course,chapter,null) + "试题");
             }
 
             for (Map.Entry<Integer, List<TableQuestion>> entry : map.entrySet()) {
                 //1.题型
                 list.add(new PDFLiner(getTypeWord(entry.getKey()), 20, Font.BOLD));
+                txtList.add(getTypeWord(entry.getKey()));
                 for (int i = 0; i < entry.getValue().size(); i++) {
                     TableQuestion t = entry.getValue().get(i);
 
@@ -90,6 +95,7 @@ public class IoOperator {
                     //2.题主干
                     if (startSentence.startsWith("[")) {//图片
                         list.add(new PDFLiner((i + 1) + ". ", 15, Font.PLAIN));
+                        txtList.add((i + 1) + ". " + startSentence);
                         try {
                             list.add(new PDFLiner(Image.getInstance(getURL(
                                     ContentPanel.PRE + startSentence.substring(1, startSentence.length() - 1)))
@@ -97,24 +103,31 @@ public class IoOperator {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } else
+                    } else{
                         list.add(new PDFLiner((i + 1) + ". " + t.getMain_content(), 15, Font.PLAIN));
+                        txtList.add((i + 1) + ". " + t.getMain_content());
+                    }
+
                     //3.选项等
                     if (t.getEle_content() != null && !t.getEle_content().equals("")) {
                         String[] strs = t.getEle_content().split(SPLIT);
                         for (int j = 0; j < strs.length; j++) {
                             list.add(new PDFLiner(("  " + num2ABC(j) + ". " + strs[j]), 15, Font.PLAIN));
+                            txtList.add(("  " + num2ABC(j) + ". " + strs[j]));
                         }
                     }
                     //4.答案
                     if(chapter == -1){//老师出题才有答案
                         list.add(new PDFLiner(("正确答案：" + t.getAnswer()), 15, Font.PLAIN));
                         list.add(new PDFLiner(("解题思路：" + t.getAnswerExplain()), 15, Font.PLAIN));
+                        txtList.add("正确答案：" + t.getAnswer());
+                        txtList.add("解题思路：" + t.getAnswerExplain());
                     }
                 }
             }
             try {
-                PDFOperator.writePdf(list, path);
+                PDFOperator.writePdf(list, path + ".pdf");
+                TxtOperator.writeTxt(txtList,path + ".txt");
                 JOptionPane.showMessageDialog(null, "导出成功！");
             } catch (Exception e) {
                 e.printStackTrace();

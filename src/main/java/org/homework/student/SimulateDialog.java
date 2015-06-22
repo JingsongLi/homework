@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 
 import static org.homework.utils.Utils.getChineseNum;
 
@@ -196,12 +197,14 @@ public class SimulateDialog extends MouseAdapter{
     }
 
     private void find2QuestionList(int type,int number){
-        java.util.List<TableQuestion> list = new ArrayList<TableQuestion>();
-        java.util.List<TableQuestion> oldList = questionMap.get(type);
+        List<TableQuestion> list = new ArrayList<TableQuestion>();
+        List<TableQuestion> oldList = questionMap.get(type);
         if(oldList != null){
-            Collections.shuffle(oldList);
-            for (int i = 0; i<number && i<oldList.size(); i++) {
-                list.add(oldList.get(i));
+            List<TableQuestion> tmpList = new ArrayList<TableQuestion>();
+            tmpList.addAll(oldList);
+            Collections.shuffle(tmpList);
+            for (int i = 0; i<number && i<tmpList.size(); i++) {
+                list.add(tmpList.get(i));
             }
             resultMap.put(type,list);
         }

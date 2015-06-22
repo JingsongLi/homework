@@ -5,6 +5,7 @@ import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
 import org.homework.student.ContentPanel;
 import org.homework.utils.MyScrollPane;
+import org.homework.utils.Pair;
 import org.homework.utils.Utils;
 
 import javax.swing.*;
@@ -33,12 +34,8 @@ public class TTestPaper extends MouseAdapter {
     static String course = null;
 
     //每种题型，各章的题量
-    ArrayList<ArrayList<JTextField>> textFieldArray = new ArrayList<ArrayList<JTextField>>();
-    //ArrayList<ArrayList<Integer>> questionCount = new ArrayList<ArrayList<Integer>>();
-    final Map<JCheckBox, TableQuestion> checkboxList = new HashMap();
-
-
-    TreeMap<Integer, TreeMap<Integer, java.util.List<TableQuestion>>> tempTestMap = new TreeMap<Integer, TreeMap<Integer, java.util.List<TableQuestion>>>();
+    List<Pair<JTextField,List<TableQuestion>>> textFieldArray = new ArrayList();
+    List<Pair<JCheckBox,TableQuestion>> checkboxList = new ArrayList();
 
     static {
         java.util.List<TableQuestion> questions = DBConnecter.getAllQuestion();
@@ -67,14 +64,6 @@ public class TTestPaper extends MouseAdapter {
                         }
                     }
                 }
-        }
-
-        for (int j = 0; j < rowMax-1; j++) {
-            ArrayList<JTextField> tmp = new ArrayList<JTextField>();
-            for (int k = 0; k < columnMax; k++) {
-                tmp.add(new JTextField(20));
-            }
-            textFieldArray.add(tmp);
         }
 
                 /* 初始化jDialog1
@@ -126,16 +115,11 @@ public class TTestPaper extends MouseAdapter {
                 switch (e.getStateChange()) {
                     case ItemEvent.SELECTED:
                         TTestPaper.course = (String)e.getItem();
-                        //tempTestMap.clear();
-                        //textFieldArray.clear();
-                        for (ArrayList<JTextField> list : textFieldArray) {
-                            for (JTextField list2 : list) {
-                                list2.setText(null);
-                            }
-                        }
-                        //questionCount.clear();
+                        textFieldArray.clear();
+                        checkboxList.clear();
                         showCenterPanel();
-
+                        jDialog.validate();
+                        jDialog.repaint();
                         break;
                     default:
                         break;
@@ -152,11 +136,6 @@ public class TTestPaper extends MouseAdapter {
      * 不然没设置的，会将所有部件顶到中间
      */
     private void showCenterPanel() {
-//        for (int i = 0; i < 50; i++) {
-//            JLabel lab = new JLabel("i");
-//            centerPanel.add(lab);
-//        }
-
 
         jDialog.getContentPane().remove(centerScrollPane);
         centerPanel.removeAll();
@@ -178,10 +157,9 @@ public class TTestPaper extends MouseAdapter {
             if (TTestPaper.course.equals(entry1.getKey())) {
                 //题型
                 for (Map.Entry<Integer,TreeMap<Integer,java.util.List<TableQuestion>>> entry2 : entry1.getValue().entrySet()) {
-                    tempTestMap.put(entry2.getKey(), entry2.getValue());
 
                     int type = entry2.getKey();
-                    if (entry2.getKey() != 5) {
+                    if (entry2.getKey() != 5 && entry2.getKey() != 4) {
 
                         JLabel labelTypeExplain = buildLabel();
                         labelTypeExplain.setText(getTypeWord(type));
@@ -190,7 +168,7 @@ public class TTestPaper extends MouseAdapter {
                         totalPanel.add(labelTypeExplain);
 
                         //章节
-                        for (Map.Entry<Integer,java.util.List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
+                        for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
                             JPanel panel_3 = new JPanel();
                             panel_3.setLayout(new FlowLayout(FlowLayout.LEFT));
                             panel_3.setBackground(Color.WHITE);
@@ -200,23 +178,15 @@ public class TTestPaper extends MouseAdapter {
                             String s1 = Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) + "(共" + entry3.getValue().size() + "个小题)";
                             JLabel label_1 = new JLabel(s1);
                             panel_3.add(label_1);
-                            panel_3.add(textFieldArray.get(i).get(j));
+                            JTextField field =  new JTextField(20);
+                            textFieldArray.add(new Pair<JTextField, List<TableQuestion>>(field,entry3.getValue()));
+                            panel_3.add(field);
                             panel_3.add(new JLabel("个"));
-
-//                            java.util.List<TableQuestion> list = tempTestMap.get(entry2.getKey());
-//                            if (list == null) {
-//                                list = new ArrayList<TableQuestion>();
-//                                tempTestMap.put(entry2.getKey(), list);
-//                            }
-//                            for (int k = 0; k < entry3.getValue().size(); k++) {
-//                                list.add(entry3.getValue().get(k));
-//                            }
                             j++;
                         }
                         j = 0;
                         i++;
-                    }
-                    else {
+                    } else {
                         JLabel labelTypeExplain = buildLabel();
                         labelTypeExplain.setText(getTypeWord(type));
                         labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
@@ -231,8 +201,7 @@ public class TTestPaper extends MouseAdapter {
                                 JCheckBox checkBox = new JCheckBox(s1);
                                 checkBox.setBackground(Color.WHITE);
                                 totalPanel.add(checkBox);
-                                checkboxList.put(checkBox, entry3.getValue().get(k-1));
-
+                                checkboxList.add(new Pair<JCheckBox, TableQuestion>(checkBox, entry3.getValue().get(k - 1)));
                                 String startSentence = entry3.getValue().get(k-1).getMain_content();
                                 if(startSentence.startsWith("[")){//图片
                                     JLabel startLabel = new JLabel();
@@ -250,19 +219,9 @@ public class TTestPaper extends MouseAdapter {
                                     jTextArea.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
                                     totalPanel.add(jTextArea);
                                 }
-
-                                checkBox.addMouseListener(new MouseAdapter() {
-                                    @Override
-                                    public void mouseClicked(MouseEvent e) {
-
-                                    }
-                                });
                             }
-
                         }
-
                     }
-
                 }
 
                 //有空白Panel才能删除最后一个控件（答案）
@@ -275,8 +234,6 @@ public class TTestPaper extends MouseAdapter {
         }
         jDialog.getContentPane().add(centerScrollPane, BorderLayout.CENTER);
         jDialog.setVisible(true);
-
-
     }
 
     @Override
@@ -284,66 +241,46 @@ public class TTestPaper extends MouseAdapter {
         TreeMap<Integer, List<TableQuestion>> resultTestMap = new TreeMap<Integer, List<TableQuestion>>();
         if (e.getSource() == createPaperBtn) {
             for (int i = 0; i < textFieldArray.size(); i++) {
-                ArrayList<Integer> list = new ArrayList<Integer>();
-                for (int j = 0; j < textFieldArray.get(i).size(); j++) {
-                    String s = textFieldArray.get(i).get(j).getText();
-                    if (!s.equals("")) {
-                        int count = Integer.parseInt(s);
-                        list.add(count);
+                String s = textFieldArray.get(i).getK().getText();
+                if (!s.equals("")) {
+                    int count = Integer.parseInt(s);
+                    List<TableQuestion> questions = textFieldArray.get(i).getV();
 
-                        ArrayList<TableQuestion> list1 = new ArrayList<TableQuestion>();
-                        //System.out.println(list1);
-                        for (int k = 0; k < tempTestMap.get(i+1).get(j+1).size(); k++) {
-                            list1.add(tempTestMap.get(i+1).get(j+1).get(k));
-                        }
 
-                        for (int k = 0; k < count; k++) {
-                            Random random = new Random();
-                            int index = random.nextInt(list1.size());
-                            java.util.List<TableQuestion> list2 = resultTestMap.get(i+1);
-                            if (list2 == null) {
-                                list2 = new ArrayList<TableQuestion>();
-                                resultTestMap.put(i+1, list2);
-                            }
-                            list2.add(list1.get(index));
-                            list1.remove(index);
-                        }
-
+                    List<TableQuestion> tmpResultList = find2QuestionList(count,questions);
+                    List<TableQuestion> resultList = resultTestMap.get(questions.get(0).getType());
+                    if (resultList == null) {
+                        resultList = new ArrayList<TableQuestion>();
+                        resultTestMap.put(questions.get(0).getType(), resultList);
                     }
+                    resultList.addAll(tmpResultList);
                 }
-                //questionCount.add(list);
-
-
             }
-            //System.out.println(questionCount);
-            //System.out.println(tempTestMap);
-            //System.out.println("FUCK：" + resultTestMap);
-
-            //fuxuankuang
-            //super.mouseClicked(e);
-            for (Map.Entry<JCheckBox, TableQuestion> entry4 : checkboxList.entrySet()) {
-                if (entry4.getKey().isSelected()) {
-                    //resultTestMap.put(5, entry.getValue());
-                    java.util.List<TableQuestion> list = resultTestMap.get(5);
-//                    boolean have = false;
+            for (Pair<JCheckBox, TableQuestion> entry4 : checkboxList) {
+                if (entry4.getK().isSelected()) {
+                    List<TableQuestion> list = resultTestMap.get(entry4.getV().getType());
                     if (list == null) {
                         list = new ArrayList<TableQuestion>();
-                        resultTestMap.put(5, list);
+                        resultTestMap.put(entry4.getV().getType(), list);
                     }
-//                    for (TableQuestion t : list){
-//                        if(t.equals(entry4.getValue())) {
-//                            have = true;
-//                            break;
-//                        }
-//                    }
-//                    if(!have)
-                        list.add(entry4.getValue());
+                    list.add(entry4.getV());
                 }
             }
 
-            //System.out.println("FUCK FUCK  FUCK :::::" + resultTestMap);
-
-            IoOperator.generatePDF(-1, resultTestMap);
+            IoOperator.generatePDF(-1,null, resultTestMap);
         }
+    }
+
+    private List<TableQuestion> find2QuestionList(int number,List<TableQuestion> oldList){
+        List<TableQuestion> list = new ArrayList<TableQuestion>();
+        if(oldList != null){
+            List<TableQuestion> tmpList = new ArrayList<TableQuestion>();
+            tmpList.addAll(oldList);
+            Collections.shuffle(tmpList);
+            for (int i = 0; i<number && i<tmpList.size(); i++) {
+                list.add(tmpList.get(i));
+            }
+        }
+        return list;
     }
 }
