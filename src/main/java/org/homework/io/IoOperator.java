@@ -118,8 +118,14 @@ public class IoOperator {
                     }
                     //4.答案
                     if(chapter == -1){//老师出题才有答案
-                        list.add(new PDFLiner(("正确答案：" + t.getAnswer()), 15, Font.PLAIN));
-                        list.add(new PDFLiner(("解题思路：" + t.getAnswerExplain()), 15, Font.PLAIN));
+                        String answer = "无";
+                        String answerExplain = "无";
+                        if(t.getAnswer() == null)
+                            answer = t.getAnswer();
+                        if(t.getAnswerExplain() == null)
+                            answerExplain = t.getAnswerExplain();
+                        list.add(new PDFLiner(("正确答案：" + answer), 15, Font.PLAIN));
+                        list.add(new PDFLiner(("解题思路：" + answerExplain), 15, Font.PLAIN));
                         txtList.add("正确答案：" + t.getAnswer());
                         txtList.add("解题思路：" + t.getAnswerExplain());
                     }

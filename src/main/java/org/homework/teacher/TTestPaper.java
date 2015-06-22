@@ -3,6 +3,7 @@ package org.homework.teacher;
 import org.homework.db.DBConnecter;
 import org.homework.db.model.TableQuestion;
 import org.homework.io.IoOperator;
+import org.homework.main.login.LoginPanel;
 import org.homework.student.ContentPanel;
 import org.homework.utils.MyScrollPane;
 import org.homework.utils.Pair;
@@ -14,6 +15,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.List;
 
@@ -38,37 +40,11 @@ public class TTestPaper extends MouseAdapter {
     List<Pair<JCheckBox,TableQuestion>> checkboxList = new ArrayList();
 
     static {
-        java.util.List<TableQuestion> questions = DBConnecter.getAllQuestion();
+        List<TableQuestion> questions = DBConnecter.getAllQuestion();
         mapAllTestQuestion(allTestQuestion, questions);
     }
 
     public TTestPaper(JFrame jFrame) {
-
-        String[] courseArray = new String[allTestQuestion.size() + 1];
-        courseArray[0] = "";
-        int i = 1;
-        int rowMax = 0;
-        int columnMax = 0;
-
-        //科目       题型         章节
-        for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, List<TableQuestion>>>> entry : allTestQuestion.entrySet()) {
-            courseArray[i++] = entry.getKey();
-            //if (flag) {
-                for (Map.Entry<Integer, TreeMap<Integer, List<TableQuestion>>> entry2 : entry.getValue().entrySet()) {
-                    if (entry.getValue().size() > rowMax) {
-                        rowMax = entry.getValue().size();
-                    }
-                    for (Map.Entry<Integer, List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
-                        if (entry2.getValue().size() > columnMax) {
-                            columnMax = entry2.getValue().size();
-                        }
-                    }
-                }
-        }
-
-                /* 初始化jDialog1
-        * 指定对话框的拥有者为jFrame,标题为"Dialog",当对话框为可视时,其他构件不能
-        * 接受用户的输入(静态对话框) */
         jDialog = new JDialog(jFrame,"生成试卷",true);
 
         jDialog.setSize(new Dimension(650, 620));
@@ -86,6 +62,7 @@ public class TTestPaper extends MouseAdapter {
 
         JLabel courseLabel = new JLabel("科目");
         courseLabel.setBackground(Color.WHITE);
+        String[] courseArray = allTestQuestion.keySet().toArray(new String[0]);
         final JComboBox courseComboBox = new JComboBox(courseArray);
         courseComboBox.setBackground(Color.WHITE);
 
@@ -114,20 +91,32 @@ public class TTestPaper extends MouseAdapter {
             public void itemStateChanged(ItemEvent e) {
                 switch (e.getStateChange()) {
                     case ItemEvent.SELECTED:
-                        TTestPaper.course = (String)e.getItem();
-                        textFieldArray.clear();
-                        checkboxList.clear();
-                        showCenterPanel();
-                        jDialog.validate();
-                        jDialog.repaint();
+                        select((String)e.getItem());
                         break;
                     default:
                         break;
                 }
             }
         });
-
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    select((String)courseComboBox.getSelectedItem());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         jDialog.setVisible(true);
+    }
+
+    private void select(String course){
+        TTestPaper.course = course;
+        textFieldArray.clear();
+        checkboxList.clear();
+        showCenterPanel();
+        jDialog.validate();
+        jDialog.repaint();
     }
 
     /**
@@ -143,24 +132,40 @@ public class TTestPaper extends MouseAdapter {
         JPanel totalPanel = new JPanel();
         totalPanel.setLayout(new BoxLayout(totalPanel, BoxLayout.Y_AXIS));
         totalPanel.setBackground(Color.WHITE);
-//        totalPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         totalPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        centerScrollPane = new MyScrollPane(totalPanel);
 
-        JScrollPane scrollPane = new MyScrollPane(totalPanel);
-        centerPanel.add(scrollPane);
-
-        //用于访问textFieldArray
-        int i = 0;
-        int j = 0;
-        //科目
-        for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, java.util.List<TableQuestion>>>> entry1 : allTestQuestion.entrySet()) {
+        //先寻找最宽的字符
+        int maxSize = 0;
+        for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, List<TableQuestion>>>> entry1 : allTestQuestion.entrySet()) {
             if (TTestPaper.course.equals(entry1.getKey())) {
                 //题型
-                for (Map.Entry<Integer,TreeMap<Integer,java.util.List<TableQuestion>>> entry2 : entry1.getValue().entrySet()) {
-
+                for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()) {
                     int type = entry2.getKey();
-                    if (entry2.getKey() != 5 && entry2.getKey() != 4) {
+                    if (type != 5 && type != 4) {
+                        //章节
+                        for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
+                            String str = Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
+                                    "(共" + entry3.getValue().size() + "个小题)";
+                            if(str.length() > maxSize)
+                                try {
+                                    maxSize = new String(str.getBytes("GBK"),"ISO8859_1").length();
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                        }
+                    }
+                }
+            }
+        }
 
+        //科目
+        for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, List<TableQuestion>>>> entry1 : allTestQuestion.entrySet()) {
+            if (TTestPaper.course.equals(entry1.getKey())) {
+                //题型
+                for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()) {
+                    int type = entry2.getKey();
+                    if (type != 5 && type != 4) {
                         JLabel labelTypeExplain = buildLabel();
                         labelTypeExplain.setText(getTypeWord(type));
                         labelTypeExplain.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
@@ -169,23 +174,21 @@ public class TTestPaper extends MouseAdapter {
 
                         //章节
                         for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
-                            JPanel panel_3 = new JPanel();
-                            panel_3.setLayout(new FlowLayout(FlowLayout.LEFT));
-                            panel_3.setBackground(Color.WHITE);
-                            panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
-                            totalPanel.add(panel_3);
+                            JPanel chapterPanel = new JPanel();
+                            chapterPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+                            chapterPanel.setBackground(Color.WHITE);
+                            chapterPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                            totalPanel.add(chapterPanel);
 
-                            String s1 = Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) + "(共" + entry3.getValue().size() + "个小题)";
-                            JLabel label_1 = new JLabel(s1);
-                            panel_3.add(label_1);
+                            String chapterName = Utils.addPlain2Num(Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
+                                    "(共" + entry3.getValue().size() + "个小题)",maxSize);
+                            JLabel chapterLabel = new JLabel(chapterName);
+                            chapterPanel.add(chapterLabel);
                             JTextField field =  new JTextField(20);
                             textFieldArray.add(new Pair<JTextField, List<TableQuestion>>(field,entry3.getValue()));
-                            panel_3.add(field);
-                            panel_3.add(new JLabel("个"));
-                            j++;
+                            chapterPanel.add(field);
+                            chapterPanel.add(new JLabel("个"));
                         }
-                        j = 0;
-                        i++;
                     } else {
                         JLabel labelTypeExplain = buildLabel();
                         labelTypeExplain.setText(getTypeWord(type));
@@ -224,16 +227,25 @@ public class TTestPaper extends MouseAdapter {
                     }
                 }
 
-                //有空白Panel才能删除最后一个控件（答案）
-                JPanel plaitPanel = new JPanel();
-                plaitPanel.setBackground(Color.white);
-                jDialog.getContentPane().add(plaitPanel);
                 jDialog.getContentPane().validate();
                 jDialog.getContentPane().repaint();
             }
         }
         jDialog.getContentPane().add(centerScrollPane, BorderLayout.CENTER);
         jDialog.setVisible(true);
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    JScrollBar vBar = centerScrollPane.getVerticalScrollBar(); //得到了该JScrollBar
+                    vBar.setValue(vBar.getMinimum()); //设置一个具体位置，value为具体的位置
+
+                    JScrollBar hBar = centerScrollPane.getHorizontalScrollBar(); //得到了该JScrollBar
+                    hBar.setValue(hBar.getMinimum()); //设置一个具体位置，value为具体的位置
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -245,8 +257,6 @@ public class TTestPaper extends MouseAdapter {
                 if (!s.equals("")) {
                     int count = Integer.parseInt(s);
                     List<TableQuestion> questions = textFieldArray.get(i).getV();
-
-
                     List<TableQuestion> tmpResultList = find2QuestionList(count,questions);
                     List<TableQuestion> resultList = resultTestMap.get(questions.get(0).getType());
                     if (resultList == null) {
@@ -282,5 +292,8 @@ public class TTestPaper extends MouseAdapter {
             }
         }
         return list;
+    }
+
+    public static void main(String[] args){
     }
 }

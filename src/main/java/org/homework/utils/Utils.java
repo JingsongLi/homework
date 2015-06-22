@@ -11,6 +11,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -216,11 +217,34 @@ public class Utils {
 
         }
         if(chapterDesc != null){
-            name += "  " + chapterDesc;
+            if(name.length() != 0)
+                name += "  ";
+            name += chapterDesc;
         }
         if(score != null)
             name += "(" + score + ")";
         return name;
+    }
+
+    public static String addPlain2Num(String str,int num){
+
+        char[] arr = new char[num];
+        try {
+            String trueStr = new String(str.getBytes("GBK"),"ISO8859_1");
+            for (int i = 0; i < arr.length; i++) {
+                char c;
+                if(i < trueStr.length())
+                    c = trueStr.charAt(i);
+                else
+                    c = ' ';
+                arr[i] = c;
+            }
+            String newStr = new String(arr);
+            return new String(newStr.getBytes("ISO8859_1"),"GBK");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public static void main(String[] args){
