@@ -257,6 +257,7 @@ public class TScoreQuery extends MouseAdapter {
                 columnIndex++;
             }
             float score = scoreSum / tableChapterNodes.size();
+            score = (float)((int)(score * 10f) / 10d);
             table.setValueAt(score, rowIndex, column - 2);
             scoreMap.put(entry.getKey(),score);
             if(score > maxScore)
