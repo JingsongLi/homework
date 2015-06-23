@@ -10,6 +10,7 @@ import org.homework.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -59,10 +60,6 @@ public class TScoreQuery extends MouseAdapter {
         JLabel courseLabel = new JLabel("科目");
         courseLabel.setBackground(Color.WHITE);
 
-//        final String[] queryAs = {"班级", "学号"};
-//        queryAsComboBox = new JComboBox(queryAs);
-//        queryAsComboBox.setBackground(Color.WHITE);
-
         queryButton = new JButton("查询");
         queryButton.setBackground(Color.WHITE);
         queryButton.addMouseListener(this);
@@ -70,19 +67,6 @@ public class TScoreQuery extends MouseAdapter {
         outputButton = new JButton("导出");
         outputButton.setBackground(Color.WHITE);
         outputButton.addMouseListener(this);
-
-//        queryAsComboBox.addItemListener(new ItemListener() {
-//            public void itemStateChanged(ItemEvent e) {
-//                switch (e.getStateChange()) {
-//                    case ItemEvent.SELECTED:
-//                        TScoreQuery.queryAs = (String)e.getItem();
-//                        break;
-//                    default:
-//                        break;
-//                }
-//
-//            }
-//        });
 
         //
         List<String> distinctCourse = DBConnecter.getDistinctOwnDB(DBConnecter.ALL_STUDENT_SCORE_TABLE,AllStudentScore.COURSE);
@@ -202,14 +186,29 @@ public class TScoreQuery extends MouseAdapter {
         tablePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         jDialog.getContentPane().add(tablePanel, BorderLayout.CENTER);
 
-        table = new JTable(new DefaultTableModel(row, column));
+        Vector columnNames = new Vector(column);
+        for (int i = 0; i < column; i++) {
+            columnNames.add("");
+        }
+        table = new JTable(new DefaultTableModel(columnNames,row));
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        //设置居中
+        DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
+        defaultTableCellRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, defaultTableCellRenderer);
+
+        //设置列宽
+        for(int i = 0; i < column; i++) {
+            table.getColumnModel().getColumn(i).setWidth(30);
+        }
+
         JScrollPane scrollPane = new MyScrollPane();
         scrollPane.setViewportView(table);
         table.setEnabled(false);
         table.setValueAt("学号", 0, 0);
         table.setValueAt("姓名", 0, 1);
         table.setValueAt("平均分", 0, column-2);
-        table.setValueAt("平均率", 0, column-1);
+        table.setValueAt("百分值", 0, column-1);
         List<TableChapterNode> tableChapterNodeList = new ArrayList<TableChapterNode>();
         tableChapterNodeList.addAll(tableChapterNodes);
         for (int i = 1; i <= column - 4; i++) {
