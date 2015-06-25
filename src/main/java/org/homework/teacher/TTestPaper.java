@@ -135,29 +135,29 @@ public class TTestPaper extends MouseAdapter {
         totalPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         centerScrollPane = new MyScrollPane(totalPanel);
 
-        //先寻找最宽的字符
-        int maxSize = 0;
-        for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, List<TableQuestion>>>> entry1 : allTestQuestion.entrySet()) {
-            if (TTestPaper.course.equals(entry1.getKey())) {
-                //题型
-                for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()) {
-                    int type = entry2.getKey();
-                    if (type != 5 && type != 4) {
-                        //章节
-                        for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
-                            String str = Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
-                                    "(共" + entry3.getValue().size() + "个小题)";
-                            if(str.length() > maxSize)
-                                try {
-                                    maxSize = new String(str.getBytes("GBK"),"ISO8859_1").length();
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                        }
-                    }
-                }
-            }
-        }
+//        //先寻找最宽的字符
+//        int maxSize = 0;
+//        for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, List<TableQuestion>>>> entry1 : allTestQuestion.entrySet()) {
+//            if (TTestPaper.course.equals(entry1.getKey())) {
+//                //题型
+//                for (Map.Entry<Integer,TreeMap<Integer,List<TableQuestion>>> entry2 : entry1.getValue().entrySet()) {
+//                    int type = entry2.getKey();
+//                    if (type != 5 && type != 4) {
+//                        //章节
+//                        for (Map.Entry<Integer,List<TableQuestion>> entry3 : entry2.getValue().entrySet()) {
+//                            String str = Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
+//                                    "(共" + entry3.getValue().size() + "个小题)";
+//                            if(str.length() > maxSize)
+//                                try {
+//                                    maxSize = new String(str.getBytes("GBK"),"ISO8859_1").length();
+//                                } catch (UnsupportedEncodingException e) {
+//                                    e.printStackTrace();
+//                                }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         //科目
         for (Map.Entry<String, TreeMap<Integer, TreeMap<Integer, List<TableQuestion>>>> entry1 : allTestQuestion.entrySet()) {
@@ -180,9 +180,11 @@ public class TTestPaper extends MouseAdapter {
                             chapterPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
                             totalPanel.add(chapterPanel);
 
-                            String chapterName = Utils.addPlain2Num(Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
-                                    "(共" + entry3.getValue().size() + "个小题)",maxSize);
-                            JLabel chapterLabel = new JLabel(chapterName);
+//                            String chapterName = Utils.addPlain2Num(Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
+//                                    "(共" + entry3.getValue().size() + "个小题)",maxSize);
+//                            JLabel chapterLabel = new JLabel(chapterName);
+                            JLabel chapterLabel = new JLabel(Utils.getChapterName(entry1.getKey(),entry3.getKey(),null) +
+                                    "(共" + entry3.getValue().size() + "个小题)");
                             chapterPanel.add(chapterLabel);
                             JTextField field =  new JTextField(20);
                             textFieldArray.add(new Pair<JTextField, List<TableQuestion>>(field,entry3.getValue()));
