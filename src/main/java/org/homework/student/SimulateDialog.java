@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
+import static org.homework.utils.Utils.getChineseNum;
+
 /**
  * Created by hasee on 2015/5/8.
  */
@@ -71,7 +73,7 @@ public class SimulateDialog extends MouseAdapter{
 		panel.add(textField);
 		textField.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("1. \u5355\u9009\u9898");
+		JLabel lblNewLabel_1 = new JLabel("1. " + Utils.getTypeWord(1));
 		lblNewLabel_1.setBounds(38, 13, 54, 15);
 		panel.add(lblNewLabel_1);
 
@@ -80,7 +82,7 @@ public class SimulateDialog extends MouseAdapter{
 		textField_2.setBounds(102, 38, 37, 21);
 		panel.add(textField_2);
 
-		JLabel label_4 = new JLabel("2. \u591A\u9009\u9898");
+		JLabel label_4 = new JLabel("2. " + Utils.getTypeWord(2));
 		label_4.setBounds(38, 41, 54, 15);
 		panel.add(label_4);
 
@@ -93,7 +95,7 @@ public class SimulateDialog extends MouseAdapter{
 		textField_3.setBounds(102, 69, 37, 21);
 		panel.add(textField_3);
 
-		JLabel label_6 = new JLabel("3. \u5224\u65AD\u9898");
+		JLabel label_6 = new JLabel("3. " + Utils.getTypeWord(3));
 		label_6.setBounds(38, 72, 54, 15);
 		panel.add(label_6);
 
@@ -106,7 +108,7 @@ public class SimulateDialog extends MouseAdapter{
 		textField_4.setBounds(102, 100, 37, 21);
 		panel.add(textField_4);
 
-		JLabel label_8 = new JLabel("4. \u586B\u7A7A\u9898");
+		JLabel label_8 = new JLabel("4. " + Utils.getTypeWord(4));
 		label_8.setBounds(38, 103, 54, 15);
 		panel.add(label_8);
 
@@ -119,7 +121,7 @@ public class SimulateDialog extends MouseAdapter{
 		textField_5.setBounds(102, 131, 37, 21);
 		panel.add(textField_5);
 
-		JLabel label_10 = new JLabel("5. \u7B80\u7B54\u9898");
+		JLabel label_10 = new JLabel("5. " + Utils.getTypeWord(5));
 		label_10.setBounds(38, 134, 54, 15);
 		panel.add(label_10);
 
